@@ -1,4 +1,5 @@
 package com.flipfit.client;
+
 import com.flipfit.business.*;
 import com.flipfit.bean.*;
 import java.util.Scanner;
@@ -6,33 +7,25 @@ import java.util.Scanner;
 public class FlipFitApplication {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        AdminInterface adminService = new AdminService();
-        CustomerInterface customerService = new CustomerService();
-        GymOwnerInterface ownerService = new GymOwnerService();
+        System.out.println("=== Welcome to FlipFit System ===");
+        System.out.println("1. Login as Admin");
+        System.out.println("2. Login as Gym Owner");
+        System.out.println("3. Login as Customer");
+        System.out.println("4. Register New User");
 
-        System.out.println("=== FlipFit System Console ===");
-        System.out.println("Login as: 1. Admin | 2. Gym Owner | 3. Customer");
-        int roleChoice = sc.nextInt();
-
-        switch (roleChoice) {
+        int choice = sc.nextInt();
+        switch (choice) {
             case 1:
-                System.out.print("Enter Owner ID to approve: ");
-                adminService.approveGymOwner(sc.next());
+                new AdminFlipFitMenu().displayMenu();
                 break;
             case 2:
-                System.out.print("Enter Center ID to manage: ");
-                ownerService.manageSlots(sc.next());
+                new GymOwnerFlipFitMenu().displayMenu();
                 break;
             case 3:
-                System.out.println("1. Book Slot | 2. View History");
-                int action = sc.nextInt();
-                if (action == 1) {
-                    System.out.print("Enter Schedule ID: ");
-                    customerService.bookWorkout("USER_01", sc.next());
-                }
+                new CustomerFlipFitMenu().displayMenu();
                 break;
             default:
-                System.out.println("Invalid Session.");
+                System.out.println("Invalid Selection.");
         }
         sc.close();
     }
