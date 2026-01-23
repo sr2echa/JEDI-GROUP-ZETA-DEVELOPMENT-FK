@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="1497px" preserveAspectRatio="none" style="width:843px;height:1497px;background:#FFFFFF;" version="1.1" viewBox="0 0 843 1497" width="843px" zoomAndPan="magnify"><defs/><g><rect fill="none" height="26.2969" id="_title" style="stroke:none;stroke-width:1.0;" width="56" x="386.75" y="5"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="46" x="391.75" y="22.9951">FlipFit</text><!--MD5=[a3638c1e5b65d287ecad7f06f5c0f212]
+class Role--><g id="elem_Role"><rect codeLine="5" fill="#F1F1F1" height="96.8906" id="Role" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="104" x="50" y="76.7969"/><ellipse cx="83.45" cy="92.7969" fill="#EB937F" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M87.5594,98.7969 L79.8406,98.7969 L79.8406,86.4063 L87.5594,86.4063 L87.5594,88.5625 L82.2938,88.5625 L82.2938,91.2344 L87.0594,91.2344 L87.0594,93.3906 L82.2938,93.3906 L82.2938,96.6406 L87.5594,96.6406 L87.5594,98.7969 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="31" x="101.55" y="97.6436">Role</text><line style="stroke:#181818;stroke-width:0.5;" x1="51" x2="153" y1="108.7969" y2="108.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80" x="56" y="125.792">CUSTOMER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="92" x="56" y="142.0889">GYM_OWNER</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="45" x="56" y="158.3857">ADMIN</text><line style="stroke:#181818;stroke-width:0.5;" x1="51" x2="153" y1="165.6875" y2="165.6875"/></g><!--MD5=[f0d3cee5d9941dbd2390cfc1bead89a2]
+class BookingStatus--><g id="elem_BookingStatus"><rect codeLine="11" fill="#F1F1F1" height="96.8906" id="BookingStatus" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="133" x="189.5" y="76.7969"/><ellipse cx="204.5" cy="92.7969" fill="#EB937F" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M208.6094,98.7969 L200.8906,98.7969 L200.8906,86.4063 L208.6094,86.4063 L208.6094,88.5625 L203.3438,88.5625 L203.3438,91.2344 L208.1094,91.2344 L208.1094,93.3906 L203.3438,93.3906 L203.3438,96.6406 L208.6094,96.6406 L208.6094,98.7969 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="101" x="218.5" y="97.6436">BookingStatus</text><line style="stroke:#181818;stroke-width:0.5;" x1="190.5" x2="321.5" y1="108.7969" y2="108.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="84" x="195.5" y="125.792">CONFIRMED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="82" x="195.5" y="142.0889">WAITLISTED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="82" x="195.5" y="158.3857">CANCELLED</text><line style="stroke:#181818;stroke-width:0.5;" x1="190.5" x2="321.5" y1="165.6875" y2="165.6875"/></g><!--MD5=[f7cfd16e4193b177764fb7ce127a666a]
+class NotificationType--><g id="elem_NotificationType"><rect codeLine="17" fill="#F1F1F1" height="129.4844" id="NotificationType" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="190" x="7" y="267.2969"/><ellipse cx="43.6" cy="283.2969" fill="#EB937F" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M47.7094,289.2969 L39.9906,289.2969 L39.9906,276.9063 L47.7094,276.9063 L47.7094,279.0625 L42.4438,279.0625 L42.4438,281.7344 L47.2094,281.7344 L47.2094,283.8906 L42.4438,283.8906 L42.4438,287.1406 L47.7094,287.1406 L47.7094,289.2969 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="110" x="62.4" y="288.1436">NotificationType</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="196" y1="299.2969" y2="299.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="178" x="13" y="316.292">BOOKING_CONFIRMATION</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131" x="13" y="332.5889">REFUND_INITIATED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="155" x="13" y="348.8857">WAITLIST_PROMOTION</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="133" x="13" y="365.1826">OWNER_APPROVAL</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104" x="13" y="381.4795">CANCELLATION</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="196" y1="388.7813" y2="388.7813"/></g><!--MD5=[3fd616f346a44cd59a91eb10b19e157c]
+class User--><g id="elem_User"><rect codeLine="25" fill="#F1F1F1" height="162.0781" id="User" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="128" x="411" y="44.2969"/><ellipse cx="454.8" cy="60.2969" fill="#A9DCDF" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M454.9094,55.6406 L453.7531,60.7188 L456.0813,60.7188 L454.9094,55.6406 Z M453.425,53.4063 L456.4094,53.4063 L459.7688,65.7969 L457.3156,65.7969 L456.55,62.7344 L453.2688,62.7344 L452.5188,65.7969 L450.0813,65.7969 L453.425,53.4063 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="32" x="475.2" y="65.1436">User</text><line style="stroke:#181818;stroke-width:0.5;" x1="412" x2="538" y1="76.2969" y2="76.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="92" x="417" y="93.292">-String userId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="88" x="417" y="109.5889">-String name</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85" x="417" y="125.8857">-String email</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="116" x="417" y="142.1826">-String password</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="73" x="417" y="158.4795">#Role role</text><line style="stroke:#181818;stroke-width:0.5;" x1="412" x2="538" y1="165.7813" y2="165.7813"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="115" x="417" y="182.7764">+boolean login()</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="98" x="417" y="199.0732">+void logout()</text></g><!--MD5=[2ce0c9fb7f55b1e256ab28a8ea6b25ec]
+class Customer--><g id="elem_Customer"><rect codeLine="35" fill="#F1F1F1" height="113.1875" id="Customer" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="315" x="37.5" y="426.2969"/><ellipse cx="156.75" cy="442.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M159.7188,447.9375 Q159.1406,448.2344 158.5,448.375 Q157.8594,448.5313 157.1563,448.5313 Q154.6563,448.5313 153.3281,446.8906 Q152.0156,445.2344 152.0156,442.1094 Q152.0156,438.9844 153.3281,437.3281 Q154.6563,435.6719 157.1563,435.6719 Q157.8594,435.6719 158.5,435.8281 Q159.1563,435.9844 159.7188,436.2813 L159.7188,439 Q159.0938,438.4219 158.5,438.1563 Q157.9063,437.875 157.2813,437.875 Q155.9375,437.875 155.25,438.9531 Q154.5625,440.0156 154.5625,442.1094 Q154.5625,444.2031 155.25,445.2813 Q155.9375,446.3438 157.2813,446.3438 Q157.9063,446.3438 158.5,446.0781 Q159.0938,445.7969 159.7188,445.2188 L159.7188,447.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="68" x="177.25" y="447.1436">Customer</text><line style="stroke:#181818;stroke-width:0.5;" x1="38.5" x2="351.5" y1="458.2969" y2="458.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="177" x="43.5" y="475.292">-List&lt;Booking&gt; bookings</text><line style="stroke:#181818;stroke-width:0.5;" x1="38.5" x2="351.5" y1="482.5938" y2="482.5938"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="303" x="43.5" y="499.5889">+List&lt;GymCenter&gt; viewCenters(String city)</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="267" x="43.5" y="515.8857">+void bookWorkout(String scheduleId)</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="269" x="43.5" y="532.1826">+void cancelWorkout(String bookingId)</text></g><!--MD5=[e521122602d650906bdcf538962bd41b]
+class GymOwner--><g id="elem_GymOwner"><rect codeLine="42" fill="#F1F1F1" height="113.1875" id="GymOwner" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="257" x="301.5" y="569.2969"/><ellipse cx="387.75" cy="585.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M390.7188,590.9375 Q390.1406,591.2344 389.5,591.375 Q388.8594,591.5313 388.1563,591.5313 Q385.6563,591.5313 384.3281,589.8906 Q383.0156,588.2344 383.0156,585.1094 Q383.0156,581.9844 384.3281,580.3281 Q385.6563,578.6719 388.1563,578.6719 Q388.8594,578.6719 389.5,578.8281 Q390.1563,578.9844 390.7188,579.2813 L390.7188,582 Q390.0938,581.4219 389.5,581.1563 Q388.9063,580.875 388.2813,580.875 Q386.9375,580.875 386.25,581.9531 Q385.5625,583.0156 385.5625,585.1094 Q385.5625,587.2031 386.25,588.2813 Q386.9375,589.3438 388.2813,589.3438 Q388.9063,589.3438 389.5,589.0781 Q390.0938,588.7969 390.7188,588.2188 L390.7188,590.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="408.25" y="590.1436">GymOwner</text><line style="stroke:#181818;stroke-width:0.5;" x1="302.5" x2="557.5" y1="601.2969" y2="601.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="130" x="307.5" y="618.292">-String panNumber</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="142" x="307.5" y="634.5889">-boolean isApproved</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="106" x="307.5" y="650.8857">-String centerId</text><line style="stroke:#181818;stroke-width:0.5;" x1="302.5" x2="557.5" y1="658.1875" y2="658.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="245" x="307.5" y="675.1826">+void manageSlots(String centerId)</text></g><!--MD5=[db6d18d8099558415abc41d00477ab92]
+class Admin--><g id="elem_Admin"><rect codeLine="49" fill="#F1F1F1" height="80.5938" id="Admin" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="298" x="429" y="291.2969"/><ellipse cx="552.25" cy="307.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M555.2188,312.9375 Q554.6406,313.2344 554,313.375 Q553.3594,313.5313 552.6563,313.5313 Q550.1563,313.5313 548.8281,311.8906 Q547.5156,310.2344 547.5156,307.1094 Q547.5156,303.9844 548.8281,302.3281 Q550.1563,300.6719 552.6563,300.6719 Q553.3594,300.6719 554,300.8281 Q554.6563,300.9844 555.2188,301.2813 L555.2188,304 Q554.5938,303.4219 554,303.1563 Q553.4063,302.875 552.7813,302.875 Q551.4375,302.875 550.75,303.9531 Q550.0625,305.0156 550.0625,307.1094 Q550.0625,309.2031 550.75,310.2813 Q551.4375,311.3438 552.7813,311.3438 Q553.4063,311.3438 554,311.0781 Q554.5938,310.7969 555.2188,310.2188 L555.2188,312.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="43" x="572.75" y="312.1436">Admin</text><line style="stroke:#181818;stroke-width:0.5;" x1="430" x2="726" y1="323.2969" y2="323.2969"/><line style="stroke:#181818;stroke-width:0.5;" x1="430" x2="726" y1="331.2969" y2="331.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="285" x="435" y="348.292">+void approveGymOwner(String ownerId)</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="286" x="435" y="364.5889">+void onboardCenter(GymCenter center)</text></g><!--MD5=[92fd31dd6433267e13a6a1b8875c14b2]
+class GymCenter--><g id="elem_GymCenter"><rect codeLine="54" fill="#F1F1F1" height="113.1875" id="GymCenter" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="118" x="371" y="759.2969"/><ellipse cx="389.6" cy="775.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M392.5688,780.9375 Q391.9906,781.2344 391.35,781.375 Q390.7094,781.5313 390.0063,781.5313 Q387.5063,781.5313 386.1781,779.8906 Q384.8656,778.2344 384.8656,775.1094 Q384.8656,771.9844 386.1781,770.3281 Q387.5063,768.6719 390.0063,768.6719 Q390.7094,768.6719 391.35,768.8281 Q392.0063,768.9844 392.5688,769.2813 L392.5688,772 Q391.9438,771.4219 391.35,771.1563 Q390.7563,770.875 390.1313,770.875 Q388.7875,770.875 388.1,771.9531 Q387.4125,773.0156 387.4125,775.1094 Q387.4125,777.2031 388.1,778.2813 Q388.7875,779.3438 390.1313,779.3438 Q390.7563,779.3438 391.35,779.0781 Q391.9438,778.7969 392.5688,778.2188 L392.5688,780.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="78" x="404.4" y="780.1436">GymCenter</text><line style="stroke:#181818;stroke-width:0.5;" x1="372" x2="488" y1="791.2969" y2="791.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="106" x="377" y="808.292">-String centerId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="88" x="377" y="824.5889">-String name</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="72" x="377" y="840.8857">-String city</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="105" x="377" y="857.1826">-String address</text><line style="stroke:#181818;stroke-width:0.5;" x1="372" x2="488" y1="864.4844" y2="864.4844"/></g><!--MD5=[1d6873a4931fa1a310c7423cd3651e69]
+class SlotMaster--><g id="elem_SlotMaster"><rect codeLine="61" fill="#F1F1F1" height="96.8906" id="SlotMaster" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="120" x="524" y="767.2969"/><ellipse cx="545.75" cy="783.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M548.7188,788.9375 Q548.1406,789.2344 547.5,789.375 Q546.8594,789.5313 546.1563,789.5313 Q543.6563,789.5313 542.3281,787.8906 Q541.0156,786.2344 541.0156,783.1094 Q541.0156,779.9844 542.3281,778.3281 Q543.6563,776.6719 546.1563,776.6719 Q546.8594,776.6719 547.5,776.8281 Q548.1563,776.9844 548.7188,777.2813 L548.7188,780 Q548.0938,779.4219 547.5,779.1563 Q546.9063,778.875 546.2813,778.875 Q544.9375,778.875 544.25,779.9531 Q543.5625,781.0156 543.5625,783.1094 Q543.5625,785.2031 544.25,786.2813 Q544.9375,787.3438 546.2813,787.3438 Q546.9063,787.3438 547.5,787.0781 Q548.0938,786.7969 548.7188,786.2188 L548.7188,788.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="73" x="561.25" y="788.1436">SlotMaster</text><line style="stroke:#181818;stroke-width:0.5;" x1="525" x2="643" y1="799.2969" y2="799.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="86" x="530" y="816.292">-String slotId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="108" x="530" y="832.5889">-Time startTime</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104" x="530" y="848.8857">-Time endTime</text><line style="stroke:#181818;stroke-width:0.5;" x1="525" x2="643" y1="856.1875" y2="856.1875"/></g><!--MD5=[689ec1232b5220af8198cd57ea4474c7]
+class SlotSchedule--><g id="elem_SlotSchedule"><rect codeLine="67" fill="#F1F1F1" height="129.4844" id="SlotSchedule" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="158" x="394" y="949.2969"/><ellipse cx="424.75" cy="965.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M427.7188,970.9375 Q427.1406,971.2344 426.5,971.375 Q425.8594,971.5313 425.1563,971.5313 Q422.6563,971.5313 421.3281,969.8906 Q420.0156,968.2344 420.0156,965.1094 Q420.0156,961.9844 421.3281,960.3281 Q422.6563,958.6719 425.1563,958.6719 Q425.8594,958.6719 426.5,958.8281 Q427.1563,958.9844 427.7188,959.2813 L427.7188,962 Q427.0938,961.4219 426.5,961.1563 Q425.9063,960.875 425.2813,960.875 Q423.9375,960.875 423.25,961.9531 Q422.5625,963.0156 422.5625,965.1094 Q422.5625,967.2031 423.25,968.2813 Q423.9375,969.3438 425.2813,969.3438 Q425.9063,969.3438 426.5,969.0781 Q427.0938,968.7969 427.7188,968.2188 L427.7188,970.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="91" x="442.25" y="970.1436">SlotSchedule</text><line style="stroke:#181818;stroke-width:0.5;" x1="395" x2="551" y1="981.2969" y2="981.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="125" x="400" y="998.292">-String scheduleId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="73" x="400" y="1014.5889">-Date date</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95" x="400" y="1030.8857">-int totalSeats</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="123" x="400" y="1047.1826">-int availableSeats</text><line style="stroke:#181818;stroke-width:0.5;" x1="395" x2="551" y1="1054.4844" y2="1054.4844"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="146" x="400" y="1071.4795">+boolean hasSeats()</text></g><!--MD5=[c6c2aa411a70f0170997fbec83374a43]
+class Booking--><g id="elem_Booking"><rect codeLine="75" fill="#F1F1F1" height="96.8906" id="Booking" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="165" x="170.5" y="1171.2969"/><ellipse cx="220.25" cy="1187.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M223.2188,1192.9375 Q222.6406,1193.2344 222,1193.375 Q221.3594,1193.5313 220.6563,1193.5313 Q218.1563,1193.5313 216.8281,1191.8906 Q215.5156,1190.2344 215.5156,1187.1094 Q215.5156,1183.9844 216.8281,1182.3281 Q218.1563,1180.6719 220.6563,1180.6719 Q221.3594,1180.6719 222,1180.8281 Q222.6563,1180.9844 223.2188,1181.2813 L223.2188,1184 Q222.5938,1183.4219 222,1183.1563 Q221.4063,1182.875 220.7813,1182.875 Q219.4375,1182.875 218.75,1183.9531 Q218.0625,1185.0156 218.0625,1187.1094 Q218.0625,1189.2031 218.75,1190.2813 Q219.4375,1191.3438 220.7813,1191.3438 Q221.4063,1191.3438 222,1191.0781 Q222.5938,1190.7969 223.2188,1190.2188 L223.2188,1192.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57" x="240.75" y="1192.1436">Booking</text><line style="stroke:#181818;stroke-width:0.5;" x1="171.5" x2="334.5" y1="1203.2969" y2="1203.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117" x="176.5" y="1220.292">-String bookingId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="153" x="176.5" y="1236.5889">-BookingStatus status</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="143" x="176.5" y="1252.8857">-DateTime createdAt</text><line style="stroke:#181818;stroke-width:0.5;" x1="171.5" x2="334.5" y1="1260.1875" y2="1260.1875"/></g><!--MD5=[04e897a58655dd876513e3435d344829]
+class BookingDetails--><g id="elem_BookingDetails"><rect codeLine="81" fill="#F1F1F1" height="113.1875" id="BookingDetails" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="158" x="83" y="1369.2969"/><ellipse cx="107.9" cy="1385.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M110.8688,1390.9375 Q110.2906,1391.2344 109.65,1391.375 Q109.0094,1391.5313 108.3063,1391.5313 Q105.8063,1391.5313 104.4781,1389.8906 Q103.1656,1388.2344 103.1656,1385.1094 Q103.1656,1381.9844 104.4781,1380.3281 Q105.8063,1378.6719 108.3063,1378.6719 Q109.0094,1378.6719 109.65,1378.8281 Q110.3063,1378.9844 110.8688,1379.2813 L110.8688,1382 Q110.2438,1381.4219 109.65,1381.1563 Q109.0563,1380.875 108.4313,1380.875 Q107.0875,1380.875 106.4,1381.9531 Q105.7125,1383.0156 105.7125,1385.1094 Q105.7125,1387.2031 106.4,1388.2813 Q107.0875,1389.3438 108.4313,1389.3438 Q109.0563,1389.3438 109.65,1389.0781 Q110.2438,1388.7969 110.8688,1388.2188 L110.8688,1390.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104" x="124.1" y="1390.1436">BookingDetails</text><line style="stroke:#181818;stroke-width:0.5;" x1="84" x2="240" y1="1401.2969" y2="1401.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="106" x="89" y="1418.292">-String detailsId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="140" x="89" y="1434.5889">-double paidAmount</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="146" x="89" y="1450.8857">-String paymentTxnId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131" x="89" y="1467.1826">-String refundTxnId</text><line style="stroke:#181818;stroke-width:0.5;" x1="84" x2="240" y1="1474.4844" y2="1474.4844"/></g><!--MD5=[751fb9458a30a2f0e7a4199aa17550f6]
+class Waitlist--><g id="elem_Waitlist"><rect codeLine="88" fill="#F1F1F1" height="113.1875" id="Waitlist" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="186" x="380" y="1163.2969"/><ellipse cx="444.75" cy="1179.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M447.7188,1184.9375 Q447.1406,1185.2344 446.5,1185.375 Q445.8594,1185.5313 445.1563,1185.5313 Q442.6563,1185.5313 441.3281,1183.8906 Q440.0156,1182.2344 440.0156,1179.1094 Q440.0156,1175.9844 441.3281,1174.3281 Q442.6563,1172.6719 445.1563,1172.6719 Q445.8594,1172.6719 446.5,1172.8281 Q447.1563,1172.9844 447.7188,1173.2813 L447.7188,1176 Q447.0938,1175.4219 446.5,1175.1563 Q445.9063,1174.875 445.2813,1174.875 Q443.9375,1174.875 443.25,1175.9531 Q442.5625,1177.0156 442.5625,1179.1094 Q442.5625,1181.2031 443.25,1182.2813 Q443.9375,1183.3438 445.2813,1183.3438 Q445.9063,1183.3438 446.5,1183.0781 Q447.0938,1182.7969 447.7188,1182.2188 L447.7188,1184.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48" x="465.25" y="1184.1436">Waitlist</text><line style="stroke:#181818;stroke-width:0.5;" x1="381" x2="565" y1="1195.2969" y2="1195.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="107" x="386" y="1212.292">-String waitlistId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="174" x="386" y="1228.5889">-List&lt;String&gt; userQueue</text><line style="stroke:#181818;stroke-width:0.5;" x1="381" x2="565" y1="1235.8906" y2="1235.8906"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="167" x="386" y="1252.8857">+void add(String userId)</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="124" x="386" y="1269.1826">+String popNext()</text></g><!--MD5=[76b5e19c9337179d2d7ae334371d68c8]
+class Notification--><g id="elem_Notification"><rect codeLine="95" fill="#F1F1F1" height="129.4844" id="Notification" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="195" x="641.5" y="1155.2969"/><ellipse cx="696.75" cy="1171.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M699.7188,1176.9375 Q699.1406,1177.2344 698.5,1177.375 Q697.8594,1177.5313 697.1563,1177.5313 Q694.6563,1177.5313 693.3281,1175.8906 Q692.0156,1174.2344 692.0156,1171.1094 Q692.0156,1167.9844 693.3281,1166.3281 Q694.6563,1164.6719 697.1563,1164.6719 Q697.8594,1164.6719 698.5,1164.8281 Q699.1563,1164.9844 699.7188,1165.2813 L699.7188,1168 Q699.0938,1167.4219 698.5,1167.1563 Q697.9063,1166.875 697.2813,1166.875 Q695.9375,1166.875 695.25,1167.9531 Q694.5625,1169.0156 694.5625,1171.1094 Q694.5625,1173.2031 695.25,1174.2813 Q695.9375,1175.3438 697.2813,1175.3438 Q697.9063,1175.3438 698.5,1175.0781 Q699.0938,1174.7969 699.7188,1174.2188 L699.7188,1176.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="717.25" y="1176.1436">Notification</text><line style="stroke:#181818;stroke-width:0.5;" x1="642.5" x2="835.5" y1="1187.2969" y2="1187.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="136" x="647.5" y="1204.292">-String notificationId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="149" x="647.5" y="1220.5889">-NotificationType type</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="113" x="647.5" y="1236.8857">-String message</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="183" x="647.5" y="1253.1826">-DateTime scheduledTime</text><line style="stroke:#181818;stroke-width:0.5;" x1="642.5" x2="835.5" y1="1260.4844" y2="1260.4844"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="113" x="647.5" y="1277.4795">+void dispatch()</text></g><!--MD5=[01c36e719321e79e084e32a383933788]
+class SystemLog--><g id="elem_SystemLog"><rect codeLine="103" fill="#F1F1F1" height="129.4844" id="SystemLog" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="138" x="276" y="1361.2969"/><ellipse cx="304.5" cy="1377.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M307.4688,1382.9375 Q306.8906,1383.2344 306.25,1383.375 Q305.6094,1383.5313 304.9063,1383.5313 Q302.4063,1383.5313 301.0781,1381.8906 Q299.7656,1380.2344 299.7656,1377.1094 Q299.7656,1373.9844 301.0781,1372.3281 Q302.4063,1370.6719 304.9063,1370.6719 Q305.6094,1370.6719 306.25,1370.8281 Q306.9063,1370.9844 307.4688,1371.2813 L307.4688,1374 Q306.8438,1373.4219 306.25,1373.1563 Q305.6563,1372.875 305.0313,1372.875 Q303.6875,1372.875 303,1373.9531 Q302.3125,1375.0156 302.3125,1377.1094 Q302.3125,1379.2031 303,1380.2813 Q303.6875,1381.3438 305.0313,1381.3438 Q305.6563,1381.3438 306.25,1381.0781 Q306.8438,1380.7969 307.4688,1380.2188 L307.4688,1382.9375 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="321.5" y="1382.1436">SystemLog</text><line style="stroke:#181818;stroke-width:0.5;" x1="277" x2="413" y1="1393.2969" y2="1393.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="82" x="282" y="1410.292">-String logId</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80" x="282" y="1426.5889">-String level</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="113" x="282" y="1442.8857">-String message</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="101" x="282" y="1459.1826">-String context</text><line style="stroke:#181818;stroke-width:0.5;" x1="277" x2="413" y1="1466.4844" y2="1466.4844"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="126" x="282" y="1483.4795">+void emitMetric()</text></g><!--MD5=[01a41ffe728356ae3116655ed66131ce]
+reverse link User to Customer--><g id="link_User_Customer"><path codeLine="113" d="M395.77,189.8769 C379.8,204.3369 363.72,220.2169 350,236.2969 C298.97,296.1269 252.58,374.1969 224.12,426.0669 " fill="none" id="User-backto-Customer" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="391.34,184.4469,410.98,176.4769,400.6,194.9469,391.34,184.4469" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[933987b91d2b08b1b4941f3221fa6cec]
+reverse link User to Admin--><g id="link_User_Admin"><path codeLine="114" d="M524.46,224.4869 C536.37,248.1469 548.44,272.0969 558.09,291.2669 " fill="none" id="User-backto-Admin" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="518.16,227.5469,515.41,206.5369,530.66,221.2469,518.16,227.5469" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[4d2c36a0075b712b67e004cbb1a08b2b]
+reverse link User to GymOwner--><g id="link_User_GymOwner"><path codeLine="115" d="M424.76,224.9669 C419.51,238.8769 415,253.2369 412,267.2969 C389.61,372.2869 405.63,498.3769 418.42,569.2769 " fill="none" id="User-backto-GymOwner" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="418.31,222.2469,432.31,206.3369,431.28,227.5069,418.31,222.2469" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[ffe6de54bbf3a0648fddff2ed21b9893]
+link GymCenter to SlotSchedule--><g id="link_GymCenter_SlotSchedule"><path codeLine="118" d="M442.21,872.4369 C447.45,896.3169 453.6,924.3569 459.02,949.0669 " fill="none" id="GymCenter-SlotSchedule" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="35" x="453" y="915.3638">hosts</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="435.2619" y="892.7182">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="16" x="440.6159" y="938.2144">0..</text></g><!--MD5=[ff7c8c28a40a1ab3724eb324d0271693]
+link SlotSchedule to Booking--><g id="link_SlotSchedule_Booking"><path codeLine="119" d="M404.3,1078.5069 C372.02,1108.4369 334.2,1143.5069 304.44,1171.0969 " fill="none" id="SlotSchedule-Booking" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="54" x="371" y="1121.3638">contains</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="387.8941" y="1098.9027">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="16" x="294.5488" y="1160.2777">0..</text></g><!--MD5=[263d66a69d07f4a20997c2312faa987c]
+link SlotMaster to SlotSchedule--><g id="link_SlotMaster_SlotSchedule"><path codeLine="122" d="M556.99,864.4969 C542.55,889.9869 524.58,921.7169 508.97,949.2769 " fill="none" id="SlotMaster-SlotSchedule" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="93" x="537" y="915.3638">defines_timing</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="544.823" y="884.1319">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23" x="488.6464" y="938.4474">0..*</text></g><!--MD5=[12c0102345fbdcefdcf8d793d1e09777]
+reverse link Booking to BookingDetails--><g id="link_Booking_BookingDetails"><path codeLine="123" d="M226.4,1280.4369 C213.89,1308.4669 199.07,1341.6869 186.81,1369.1869 " fill="none" id="Booking-backto-BookingDetails" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="231.78,1268.3669,225.6815,1272.215,226.888,1279.3244,232.9865,1275.4763,231.78,1268.3669" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="61" x="212" y="1327.3638">describes</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="220.2334" y="1288.3356">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="181.4763" y="1358.0362">1</text></g><!--MD5=[203682c36a1e17dd49ebfd2395bed1f0]
+link SlotSchedule to Waitlist--><g id="link_SlotSchedule_Waitlist"><path codeLine="126" d="M473,1078.5069 C473,1105.6269 473,1136.9769 473,1163.1469 " fill="none" id="SlotSchedule-Waitlist" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="119" x="474" y="1121.3638">manages_overflow</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="464.5375" y="1098.9027">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="24" x="447.5375" y="1152.3922">0..1</text></g><!--MD5=[a6327d47d12129054315d96cbaf8a9f1]
+link Admin to GymOwner--><g id="link_Admin_GymOwner"><path codeLine="129" d="M557.89,372.4769 C532.12,423.3169 487.32,511.7069 458.17,569.2169 " fill="none" id="Admin-GymOwner" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="59" x="532" y="487.3638">approves</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="546.1982" y="391.9626">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23" x="437.3058" y="558.07">0..*</text></g><!--MD5=[0ba146cb02335ddb9cf81d02f619a4cb]
+link GymOwner to GymCenter--><g id="link_GymOwner_GymCenter"><path codeLine="130" d="M430,682.4369 C430,706.6969 430,735.0569 430,759.2969 " fill="none" id="GymOwner-GymCenter" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="57" x="431" y="725.3638">operates</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="421.4875" y="702.7182">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="421.4875" y="748.1603">1</text></g><!--MD5=[4f3fa4b5142a6857d76fe3fbabbf0a8c]
+link Customer to Booking--><g id="link_Customer_Booking"><path codeLine="131" d="M212.87,539.4169 C226.52,586.8369 243,657.0769 243,719.7969 C243,719.7969 243,719.7969 243,1014.7969 C243,1068.3369 246.48,1129.6969 249.33,1171.0169 " fill="none" id="Customer-Booking" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="244" y="820.3638">initiates</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="206.6471" y="559.6956">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23" x="224.1967" y="1160.1864">0..*</text></g><!--MD5=[2e2e530a658308b38e0151c4d25adf6b]
+link User to Notification--><g id="link_User_Notification"><path codeLine="134" d="M539.31,139.2369 C628.79,161.4069 780,215.8869 780,330.7969 C780,330.7969 780,330.7969 780,1014.7969 C780,1062.4769 769.1,1115.2269 758.54,1155.1369 " fill="none" id="User-Notification" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="53" x="781" y="725.3638">receives</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="547.2083" y="137.0516">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23" x="736.4194" y="1144.292">0..*</text></g><!--MD5=[3d34493c2104a1b5ffad9a2346463054]
+link SlotSchedule to Notification--><g id="link_SlotSchedule_Notification"><path codeLine="135" d="M552.27,1071.2669 C568.82,1083.3369 586.07,1096.1169 602,1108.2969 C621.54,1123.2369 642.34,1139.7169 661.67,1155.2769 " fill="none" id="SlotSchedule-Notification" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="92" x="621" y="1121.3638">triggers_alerts</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="559.9465" y="1072.9242">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23" x="628.9542" y="1144.4474">0..*</text></g><!--MD5=[2ae0e873e26cf63266904ac6ce5b1bf9]
+link Booking to SystemLog--><g id="link_Booking_SystemLog"><path codeLine="136" d="M274.45,1268.3669 C286.93,1296.0369 302.82,1331.2569 316.35,1361.2769 " fill="none" id="Booking-SystemLog" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="120" x="303" y="1327.3638">generates_metrics</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="8" x="268.9039" y="1288.3356">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23" x="288.9586" y="1350.4474">0..*</text></g><!--MD5=[51f2b52e0704ef0ec6d40f7caa192b06]
+@startuml
+skinparam classAttributeIconSize 0
+
+title FlipFit
+
+enum Role {
+    CUSTOMER
+    GYM_OWNER
+    ADMIN
+}
+
+enum BookingStatus {
+    CONFIRMED
+    WAITLISTED
+    CANCELLED
+}
+
+enum NotificationType {
+    BOOKING_CONFIRMATION
+    REFUND_INITIATED
+    WAITLIST_PROMOTION
+    OWNER_APPROVAL
+    CANCELLATION
+}
+
+abstract class User {
+    - String userId
+    - String name
+    - String email
+    - String password
+    # Role role
+    + boolean login()
+    + void logout()
+}
+
+class Customer {
+    - List<Booking> bookings
+    + List<GymCenter> viewCenters(String city)
+    + void bookWorkout(String scheduleId)
+    + void cancelWorkout(String bookingId)
+}
+
+class GymOwner {
+    - String panNumber
+    - boolean isApproved
+    - String centerId
+    + void manageSlots(String centerId)
+}
+
+class Admin {
+    + void approveGymOwner(String ownerId)
+    + void onboardCenter(GymCenter center)
+}
+
+class GymCenter {
+    - String centerId
+    - String name
+    - String city
+    - String address
+}
+
+class SlotMaster {
+    - String slotId
+    - Time startTime
+    - Time endTime
+}
+
+class SlotSchedule {
+    - String scheduleId
+    - Date date
+    - int totalSeats
+    - int availableSeats
+    + boolean hasSeats()
+}
+
+class Booking {
+    - String bookingId
+    - BookingStatus status
+    - DateTime createdAt
+}
+
+class BookingDetails {
+    - String detailsId
+    - double paidAmount
+    - String paymentTxnId
+    - String refundTxnId
+}
+
+class Waitlist {
+    - String waitlistId
+    - List<String> userQueue
+    + void add(String userId)
+    + String popNext()
+}
+
+class Notification {
+    - String notificationId
+    - NotificationType type
+    - String message
+    - DateTime scheduledTime
+    + void dispatch()
+}
+
+class SystemLog {
+    - String logId
+    - String level
+    - String message
+    - String context
+    + void emitMetric()
+}
+
+
+' Inheritance
+User <|- - Customer
+User <|- - Admin
+User <|- - GymOwner
+
+' Composition: Center owns its schedules; Schedule owns its bookings
+GymCenter "1" - - "0.." SlotSchedule : hosts
+SlotSchedule "1" - - "0.." Booking : contains
+
+' Aggregation: Booking references its metadata and a master slot definition
+SlotMaster "1" - - "0..*" SlotSchedule : defines_timing
+Booking "1" o- - "1" BookingDetails : describes
+
+' Association: Waitlist exists as a service for the schedule
+SlotSchedule "1" - - "0..1" Waitlist : manages_overflow
+
+' Direct Associations
+Admin "1" - - "0..*" GymOwner : approves
+GymOwner "1" - - "1" GymCenter : operates
+Customer "1" - - "0..*" Booking : initiates
+
+' System Event Links
+User "1" - - "0..*" Notification : receives
+SlotSchedule "1" - - "0..*" Notification : triggers_alerts
+Booking "1" - - "0..*" SystemLog : generates_metrics
+@enduml
+
+@startuml
+skinparam classAttributeIconSize 0
+
+title FlipFit
+
+enum Role {
+    CUSTOMER
+    GYM_OWNER
+    ADMIN
+}
+
+enum BookingStatus {
+    CONFIRMED
+    WAITLISTED
+    CANCELLED
+}
+
+enum NotificationType {
+    BOOKING_CONFIRMATION
+    REFUND_INITIATED
+    WAITLIST_PROMOTION
+    OWNER_APPROVAL
+    CANCELLATION
+}
+
+abstract class User {
+    - String userId
+    - String name
+    - String email
+    - String password
+    # Role role
+    + boolean login()
+    + void logout()
+}
+
+class Customer {
+    - List<Booking> bookings
+    + List<GymCenter> viewCenters(String city)
+    + void bookWorkout(String scheduleId)
+    + void cancelWorkout(String bookingId)
+}
+
+class GymOwner {
+    - String panNumber
+    - boolean isApproved
+    - String centerId
+    + void manageSlots(String centerId)
+}
+
+class Admin {
+    + void approveGymOwner(String ownerId)
+    + void onboardCenter(GymCenter center)
+}
+
+class GymCenter {
+    - String centerId
+    - String name
+    - String city
+    - String address
+}
+
+class SlotMaster {
+    - String slotId
+    - Time startTime
+    - Time endTime
+}
+
+class SlotSchedule {
+    - String scheduleId
+    - Date date
+    - int totalSeats
+    - int availableSeats
+    + boolean hasSeats()
+}
+
+class Booking {
+    - String bookingId
+    - BookingStatus status
+    - DateTime createdAt
+}
+
+class BookingDetails {
+    - String detailsId
+    - double paidAmount
+    - String paymentTxnId
+    - String refundTxnId
+}
+
+class Waitlist {
+    - String waitlistId
+    - List<String> userQueue
+    + void add(String userId)
+    + String popNext()
+}
+
+class Notification {
+    - String notificationId
+    - NotificationType type
+    - String message
+    - DateTime scheduledTime
+    + void dispatch()
+}
+
+class SystemLog {
+    - String logId
+    - String level
+    - String message
+    - String context
+    + void emitMetric()
+}
+
+
+User <|- - Customer
+User <|- - Admin
+User <|- - GymOwner
+
+GymCenter "1" - - "0.." SlotSchedule : hosts
+SlotSchedule "1" - - "0.." Booking : contains
+
+SlotMaster "1" - - "0..*" SlotSchedule : defines_timing
+Booking "1" o- - "1" BookingDetails : describes
+
+SlotSchedule "1" - - "0..1" Waitlist : manages_overflow
+
+Admin "1" - - "0..*" GymOwner : approves
+GymOwner "1" - - "1" GymCenter : operates
+Customer "1" - - "0..*" Booking : initiates
+
+User "1" - - "0..*" Notification : receives
+SlotSchedule "1" - - "0..*" Notification : triggers_alerts
+Booking "1" - - "0..*" SystemLog : generates_metrics
+@enduml
+
+PlantUML version 1.2022.7(Mon Aug 22 17:01:30 UTC 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>
