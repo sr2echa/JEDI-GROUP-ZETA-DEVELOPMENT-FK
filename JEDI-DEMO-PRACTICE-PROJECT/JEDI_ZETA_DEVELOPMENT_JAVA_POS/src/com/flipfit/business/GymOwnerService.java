@@ -4,13 +4,15 @@ import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Role;
 import com.flipfit.bean.User;
+import com.flipfit.bean.SlotMaster;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalTime;
 
 public class GymOwnerService implements GymOwnerInterface {
-    // Centers are specific to this service
     private static List<GymCenter> centers = new ArrayList<>();
+    private static List<SlotMaster> allSlots = new ArrayList<>();
 
     static {
         // Hardcoded data for a center
@@ -19,9 +21,23 @@ public class GymOwnerService implements GymOwnerInterface {
         center1.setName("Elite Fitness");
         center1.setCity("Bangalore");
         center1.setAddress("Indiranagar");
-        center1.setOwnerId("owner1"); // owner1 is hardcoded in UserService
+        center1.setOwnerId("owner1");
         center1.setApproved(true);
         centers.add(center1);
+
+        // Hardcoded slot for CENT1
+        SlotMaster slot1 = new SlotMaster();
+        slot1.setSlotId("SLOT101");
+        slot1.setCenterId("CENT1");
+        slot1.setStartTime(LocalTime.of(10, 0));
+        slot1.setEndTime(LocalTime.of(11, 0));
+        slot1.setCapacity(2); // Small capacity for easy waitlist testing
+        allSlots.add(slot1);
+    }
+
+    @Override
+    public List<GymCenter> getAllCenters() {
+        return centers.stream().filter(GymCenter::isApproved).collect(Collectors.toList());
     }
 
     @Override
@@ -31,7 +47,11 @@ public class GymOwnerService implements GymOwnerInterface {
 
     @Override
     public void updateSlotCapacity(String scheduleId, int newCapacity) {
-        System.out.println("[SYSTEM] Slot " + scheduleId + " capacity updated to " + newCapacity);
+        SlotMaster slot = getSlot(scheduleId);
+        if (slot != null) {
+            slot.setCapacity(newCapacity);
+            System.out.println("[SYSTEM] Slot " + scheduleId + " capacity updated to " + newCapacity);
+        }
     }
 
     @Override
@@ -42,11 +62,8 @@ public class GymOwnerService implements GymOwnerInterface {
         newOwner.setPassword(password);
         newOwner.setPanNumber(pan);
         newOwner.setRole(Role.GYM_OWNER);
-        newOwner.setApproved(false); // Admin must approve
-
-        // Add to the shared user map in UserService
+        newOwner.setApproved(false);
         UserService.addUser(newOwner);
-
         System.out.println(
                 "[SYSTEM] Gym Owner registration successful for " + username + ". Waiting for admin approval.");
     }
@@ -59,7 +76,7 @@ public class GymOwnerService implements GymOwnerInterface {
         center.setCity(location);
         center.setAddress(location);
         center.setOwnerId(ownerId);
-        center.setApproved(false); // Admin must approve center
+        center.setApproved(false);
         centers.add(center);
         System.out.println("[SYSTEM] Center added successfully. Pending admin approval.");
     }
@@ -71,7 +88,38 @@ public class GymOwnerService implements GymOwnerInterface {
                 .collect(Collectors.toList());
     }
 
-    // Static helper for AdminService to query global user list for pending owners
+    @Override
+    public boolean addSlot(String centerId, LocalTime startTime, LocalTime endTime, int capacity) {
+        for (SlotMaster slot : allSlots) {
+            if (slot.getCenterId().equals(centerId)) {
+                if (startTime.isBefore(slot.getEndTime()) && endTime.isAfter(slot.getStartTime())) {
+                    System.out.println("[ERROR] Slot overlaps with existing slot: " + slot.getStartTime() + " - "
+                            + slot.getEndTime());
+                    return false;
+                }
+            }
+        }
+
+        SlotMaster newSlot = new SlotMaster();
+        newSlot.setSlotId("SLOT" + (allSlots.size() + 101));
+        newSlot.setCenterId(centerId);
+        newSlot.setStartTime(startTime);
+        newSlot.setEndTime(endTime);
+        newSlot.setCapacity(capacity);
+
+        allSlots.add(newSlot);
+        System.out.println("[SUCCESS] Slot added: " + newSlot.getSlotId() + " [" + startTime + " to " + endTime
+                + "] Capacity: " + capacity);
+        return true;
+    }
+
+    @Override
+    public List<SlotMaster> viewSlots(String centerId) {
+        return allSlots.stream()
+                .filter(s -> s.getCenterId().equals(centerId))
+                .collect(Collectors.toList());
+    }
+
     public static List<GymOwner> getPendingOwners() {
         return UserService.getAllUsers().values().stream()
                 .filter(u -> u instanceof GymOwner)
@@ -80,12 +128,22 @@ public class GymOwnerService implements GymOwnerInterface {
                 .collect(Collectors.toList());
     }
 
-    // Static helper for AdminService to approve owner in the global map
     public static void approveOwner(String ownerId) {
         User user = UserService.getUser(ownerId);
         if (user instanceof GymOwner) {
             ((GymOwner) user).setApproved(true);
-            System.out.println("[SYSTEM] Gym Owner " + ownerId + " has been approved.");
+        }
+    }
+
+    public static SlotMaster getSlot(String slotId) {
+        return allSlots.stream().filter(s -> s.getSlotId().equals(slotId)).findFirst().orElse(null);
+    }
+
+    // Static helper to update available seats
+    public static void updateAvailability(String slotId, int delta) {
+        SlotMaster slot = getSlot(slotId);
+        if (slot != null) {
+            slot.setAvailableSeats(slot.getAvailableSeats() + delta);
         }
     }
 }

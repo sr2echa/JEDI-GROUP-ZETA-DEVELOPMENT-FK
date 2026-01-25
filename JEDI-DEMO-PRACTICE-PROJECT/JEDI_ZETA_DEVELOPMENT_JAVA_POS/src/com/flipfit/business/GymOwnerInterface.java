@@ -1,7 +1,9 @@
 package com.flipfit.business;
 
 import com.flipfit.bean.GymCenter;
+import com.flipfit.bean.SlotMaster;
 import java.util.List;
+import java.time.LocalTime;
 
 public interface GymOwnerInterface {
     void manageSlots(String centerId);
@@ -13,4 +15,12 @@ public interface GymOwnerInterface {
     void addGymCenter(String ownerId, String centerName, String location);
 
     List<GymCenter> viewMyCenters(String ownerId);
+
+    // Updated method for adding slots with capacity
+    boolean addSlot(String centerId, LocalTime startTime, LocalTime endTime, int capacity);
+
+    List<SlotMaster> viewSlots(String centerId);
+
+    // Global lookup for customers
+    List<GymCenter> getAllCenters();
 }

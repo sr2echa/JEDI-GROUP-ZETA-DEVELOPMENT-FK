@@ -8,38 +8,52 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class BookingService implements BookingInterface {
-    // In-memory waitlist map: ScheduleID -> List of Bookings (Waiting)
     private static Map<String, List<Booking>> waitlistMap = new HashMap<>();
 
     @Override
-    public void addCustomerToWaitlist(String userId, String scheduleId) {
+    public int addCustomerToWaitlist(String userId, String scheduleId) {
         Booking waitlistEntry = new Booking();
-        waitlistEntry.setBookingId("W" + System.currentTimeMillis());
+        waitlistEntry.setBookingId("WLT" + System.currentTimeMillis());
         waitlistEntry.setUserId(userId);
         waitlistEntry.setScheduleId(scheduleId);
         waitlistEntry.setStatus(BookingStatus.WAITLISTED);
 
-        waitlistMap.computeIfAbsent(scheduleId, k -> new ArrayList<>()).add(waitlistEntry);
+        List<Booking> waitlist = waitlistMap.computeIfAbsent(scheduleId, k -> new ArrayList<>());
+        waitlist.add(waitlistEntry);
 
-        System.out.println("[SYSTEM] Slot Full. User " + userId + " added to WAITLIST for " + scheduleId);
+        return waitlist.size();
     }
 
     @Override
-    public void promoteUserFromWaitlist(String scheduleId) {
+    public Booking promoteUserFromWaitlist(String scheduleId) {
         List<Booking> waitlist = waitlistMap.get(scheduleId);
 
         if (waitlist != null && !waitlist.isEmpty()) {
-            // FIFO Promotion
             Booking promotedBooking = waitlist.remove(0);
+            promotedBooking.setBookingId("B_PROM" + System.currentTimeMillis());
             promotedBooking.setStatus(BookingStatus.CONFIRMED);
 
-            System.out.println("[SYSTEM] Progressing Waitlist: User " + promotedBooking.getUserId()
-                    + " promoted to CONFIRMED for " + scheduleId);
-
-            // In a real app, this would then be moved to the active bookings list in
-            // CustomerService
-        } else {
-            System.out.println("[SYSTEM] No users found in waitlist for schedule: " + scheduleId);
+            System.out.println("[SYSTEM] Waitlist Progress for " + scheduleId + ": User " + promotedBooking.getUserId()
+                    + " promoted.");
+            return promotedBooking;
         }
+        return null;
+    }
+
+    @Override
+    public List<String> getUserWaitlist(String userId) {
+        List<String> userWaitlistDetails = new ArrayList<>();
+
+        for (Map.Entry<String, List<Booking>> entry : waitlistMap.entrySet()) {
+            String scheduleId = entry.getKey();
+            List<Booking> waitlist = entry.getValue();
+
+            for (int i = 0; i < waitlist.size(); i++) {
+                if (waitlist.get(i).getUserId().equals(userId)) {
+                    userWaitlistDetails.add("Slot: " + scheduleId + " | Position: " + (i + 1));
+                }
+            }
+        }
+        return userWaitlistDetails;
     }
 }

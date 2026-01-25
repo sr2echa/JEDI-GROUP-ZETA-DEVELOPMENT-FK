@@ -1,9 +1,15 @@
 package com.flipfit.business;
 
-public interface BookingInterface {
-    // Logic to handle the transition from waitlist to confirmed
-    void promoteUserFromWaitlist(String scheduleId);
+import com.flipfit.bean.Booking;
+import java.util.List;
 
-    // Logic to handle initial waitlist placement
-    void addCustomerToWaitlist(String userId, String scheduleId);
+public interface BookingInterface {
+    // Returns waitlist position
+    int addCustomerToWaitlist(String userId, String scheduleId);
+
+    // Returns the promoted Booking if successful, null otherwise
+    Booking promoteUserFromWaitlist(String scheduleId);
+
+    // Returns a summary of a user's waitlisted items with positions
+    List<String> getUserWaitlist(String userId);
 }
