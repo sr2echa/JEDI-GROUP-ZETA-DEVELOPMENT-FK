@@ -11,10 +11,13 @@ public class GymOwnerFlipFitMenu {
         System.out.println("\n--- Registration of the GymOwner ---");
         System.out.print("Enter Username: ");
         String username = sc.next();
-        System.out.print("Enter License ID: ");
-        String license = sc.next();
         System.out.print("Enter Password: ");
         String password = sc.next();
+        System.out.print("Enter PAN Number: ");
+        String pan = sc.next();
+
+        // licenseId is auto-assigned (handled by service/DAO)
+        ownerService.onboardGymOwner(username, password, pan);
         System.out.println("[SYSTEM] GymOwner " + username + " Registration Requested (Pending Approval)!");
     }
 

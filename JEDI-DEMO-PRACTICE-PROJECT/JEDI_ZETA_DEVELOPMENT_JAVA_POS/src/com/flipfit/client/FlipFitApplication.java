@@ -1,8 +1,12 @@
 package com.flipfit.client;
 
+import com.flipfit.business.UserInterface;
+import com.flipfit.business.UserService;
 import java.util.Scanner;
 
 public class FlipFitApplication {
+    private static UserInterface userService = new UserService();
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean exit = false;
@@ -75,18 +79,21 @@ public class FlipFitApplication {
             return;
         }
 
-        switch (role) {
-            case 1:
-                owner.displayMenu(sc, username);
-                break;
-            case 2:
-                customer.displayMenu(sc, username);
-                break;
-            case 3:
-                admin.displayMenu(sc);
-                break;
-            default:
-                System.out.println("Invalid Role selected.");
+        if (userService.login(username, password, role)) {
+            System.out.println("[SUCCESS] Login successful!");
+            switch (role) {
+                case 1:
+                    owner.displayMenu(sc, username);
+                    break;
+                case 2:
+                    customer.displayMenu(sc, username);
+                    break;
+                case 3:
+                    admin.displayMenu(sc);
+                    break;
+            }
+        } else {
+            System.out.println("[ERROR] Invalid credentials or Role mismatch.");
         }
     }
 
@@ -98,6 +105,11 @@ public class FlipFitApplication {
         String oldPwd = sc.nextLine();
         System.out.print("Enter New Password: ");
         String newPwd = sc.nextLine();
-        System.out.println("[SYSTEM] Password for " + username + " updated successfully!");
+
+        if (userService.changePassword(username, oldPwd, newPwd)) {
+            System.out.println("[SYSTEM] Password updated successfully!");
+        } else {
+            System.out.println("[ERROR] Password update failed. Check credentials.");
+        }
     }
 }

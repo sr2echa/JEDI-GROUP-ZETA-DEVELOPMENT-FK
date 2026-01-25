@@ -2,10 +2,13 @@ package com.flipfit.client;
 
 import com.flipfit.business.CustomerInterface;
 import com.flipfit.business.CustomerService;
+import com.flipfit.business.UserInterface;
+import com.flipfit.business.UserService;
 import java.util.Scanner;
 
 public class CustomerFlipFitMenu {
     CustomerInterface customerService = new CustomerService();
+    UserInterface userService = new UserService();
 
     public void registerCustomer(Scanner sc) {
         System.out.println("\n--- Registration of the GymCustomer ---");
@@ -15,7 +18,10 @@ public class CustomerFlipFitMenu {
         String email = sc.next();
         System.out.print("Enter Password: ");
         String password = sc.next();
-        System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
+
+        if (userService.register(username, password, email, 2)) {
+            System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
+        }
     }
 
     public void displayMenu(Scanner sc, String userId) {
