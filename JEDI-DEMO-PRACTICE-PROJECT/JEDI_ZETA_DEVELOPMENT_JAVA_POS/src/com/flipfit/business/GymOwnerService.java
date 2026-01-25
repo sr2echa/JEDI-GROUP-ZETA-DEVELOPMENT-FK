@@ -3,29 +3,23 @@ package com.flipfit.business;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Role;
+import com.flipfit.bean.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GymOwnerService implements GymOwnerInterface {
+    // Centers are specific to this service
     private static List<GymCenter> centers = new ArrayList<>();
-    private static List<GymOwner> owners = new ArrayList<>();
 
     static {
-        // Hardcoded data
-        GymOwner owner1 = new GymOwner();
-        owner1.setUserId("owner1");
-        owner1.setName("Gym Master");
-        owner1.setPanNumber("ABCDE1234F");
-        owner1.setApproved(true);
-        owners.add(owner1);
-
+        // Hardcoded data for a center
         GymCenter center1 = new GymCenter();
         center1.setCenterId("CENT1");
         center1.setName("Elite Fitness");
         center1.setCity("Bangalore");
         center1.setAddress("Indiranagar");
-        center1.setOwnerId("owner1");
+        center1.setOwnerId("owner1"); // owner1 is hardcoded in UserService
         center1.setApproved(true);
         centers.add(center1);
     }
@@ -48,9 +42,13 @@ public class GymOwnerService implements GymOwnerInterface {
         newOwner.setPassword(password);
         newOwner.setPanNumber(pan);
         newOwner.setRole(Role.GYM_OWNER);
-        newOwner.setApproved(false);
-        owners.add(newOwner);
-        System.out.println("[SYSTEM] Gym Owner registration successful. Waiting for admin approval.");
+        newOwner.setApproved(false); // Admin must approve
+
+        // Add to the shared user map in UserService
+        UserService.addUser(newOwner);
+
+        System.out.println(
+                "[SYSTEM] Gym Owner registration successful for " + username + ". Waiting for admin approval.");
     }
 
     @Override
@@ -61,7 +59,7 @@ public class GymOwnerService implements GymOwnerInterface {
         center.setCity(location);
         center.setAddress(location);
         center.setOwnerId(ownerId);
-        center.setApproved(false);
+        center.setApproved(false); // Admin must approve center
         centers.add(center);
         System.out.println("[SYSTEM] Center added successfully. Pending admin approval.");
     }
@@ -73,13 +71,21 @@ public class GymOwnerService implements GymOwnerInterface {
                 .collect(Collectors.toList());
     }
 
+    // Static helper for AdminService to query global user list for pending owners
     public static List<GymOwner> getPendingOwners() {
-        return owners.stream().filter(o -> !o.isApproved()).collect(Collectors.toList());
+        return UserService.getAllUsers().values().stream()
+                .filter(u -> u instanceof GymOwner)
+                .map(u -> (GymOwner) u)
+                .filter(o -> !o.isApproved())
+                .collect(Collectors.toList());
     }
 
+    // Static helper for AdminService to approve owner in the global map
     public static void approveOwner(String ownerId) {
-        owners.stream()
-                .filter(o -> o.getUserId().equals(ownerId))
-                .forEach(o -> o.setApproved(true));
+        User user = UserService.getUser(ownerId);
+        if (user instanceof GymOwner) {
+            ((GymOwner) user).setApproved(true);
+            System.out.println("[SYSTEM] Gym Owner " + ownerId + " has been approved.");
+        }
     }
 }

@@ -2,6 +2,8 @@ package com.flipfit.client;
 
 import com.flipfit.business.UserInterface;
 import com.flipfit.business.UserService;
+import com.flipfit.bean.User;
+import com.flipfit.bean.Role;
 import java.util.Scanner;
 
 public class FlipFitApplication {
@@ -16,7 +18,7 @@ public class FlipFitApplication {
         GymOwnerFlipFitMenu ownerMenu = new GymOwnerFlipFitMenu();
 
         while (!exit) {
-            System.out.println("\nWelcome to the Flipfit Application for GYM");
+            System.out.println("\n--- Welcome to the Flipfit Application for GYM ---");
             System.out.println("1. Login");
             System.out.println("2. Registration of the GymCustomer");
             System.out.println("3. Registration of the GymOwner");
@@ -66,35 +68,22 @@ public class FlipFitApplication {
         System.out.print("Password: ");
         String password = sc.nextLine();
 
-        System.out.println("Role: 1. GYMOwner 2. GymCustomer 3. GymAdmin");
-        System.out.print("Select Role (1-3): ");
+        // Roles are auto-detected by the service based on the account type
+        User loggedInUser = userService.login(username, password);
 
-        int role = 0;
-        if (sc.hasNextInt()) {
-            role = sc.nextInt();
-            sc.nextLine(); // consume newline
-        } else {
-            sc.nextLine();
-            System.out.println("Invalid role selection.");
-            return;
-        }
+        if (loggedInUser != null) {
+            Role role = loggedInUser.getRole();
 
-        if (userService.login(username, password, role)) {
-            System.out.println("[SUCCESS] Login successful!");
-            switch (role) {
-                case 1:
-                    owner.displayMenu(sc, username);
-                    break;
-                case 2:
-                    customer.displayMenu(sc, username);
-                    break;
-                case 3:
-                    admin.displayMenu(sc);
-                    break;
+            // Navigate based on auto-detected role
+            if (role == Role.ADMIN) {
+                admin.displayMenu(sc);
+            } else if (role == Role.CUSTOMER) {
+                customer.displayMenu(sc, username);
+            } else if (role == Role.GYM_OWNER) {
+                owner.displayMenu(sc, username);
             }
-        } else {
-            System.out.println("[ERROR] Invalid credentials or Role mismatch.");
         }
+        // If loggedInUser is null, UserService.login already printed the error message.
     }
 
     private static void handleChangePassword(Scanner sc) {

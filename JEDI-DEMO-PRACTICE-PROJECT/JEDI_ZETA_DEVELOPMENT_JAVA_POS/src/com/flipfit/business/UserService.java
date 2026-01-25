@@ -8,7 +8,7 @@ public class UserService implements UserInterface {
     private static Map<String, User> userMap = new HashMap<>();
 
     static {
-        // Hardcoded data initialization
+        // STATIC LOGIN FOR ADMIN
         Customer admin = new Customer();
         admin.setUserId("admin");
         admin.setName("Admin User");
@@ -16,6 +16,7 @@ public class UserService implements UserInterface {
         admin.setRole(Role.ADMIN);
         userMap.put("admin", admin);
 
+        // Pre-loaded data for testing
         Customer customer = new Customer();
         customer.setUserId("customer1");
         customer.setName("John Doe");
@@ -29,43 +30,50 @@ public class UserService implements UserInterface {
         owner.setPassword("owner123");
         owner.setRole(Role.GYM_OWNER);
         owner.setApproved(true);
+        owner.setPanNumber("ABCDE1234F");
         userMap.put("owner1", owner);
     }
 
     @Override
-    public boolean login(String username, String password, int roleChoice) {
+    public User login(String username, String password) {
         User user = userMap.get(username);
+
+        // 1. Check if account exists and password matches
         if (user != null && user.getPassword().equals(password)) {
-            Role expectedRole = getRoleFromChoice(roleChoice);
-            if (user.getRole() == expectedRole) {
-                if (user.getRole() == Role.GYM_OWNER) {
-                    GymOwner owner = (GymOwner) user;
-                    if (!owner.isApproved()) {
-                        System.out.println("[ERROR] Gym Owner account not yet approved by Admin.");
-                        return false;
-                    }
+
+            // 2. Role-specific logic (e.g., Approval for Gym Owners)
+            if (user.getRole() == Role.GYM_OWNER) {
+                GymOwner owner = (GymOwner) user;
+                if (!owner.isApproved()) {
+                    System.out.println("[ERROR] Gym Owner account '" + username + "' is pending Admin approval.");
+                    return null;
                 }
-                return true;
             }
+
+            System.out.println("[SUCCESS] Welcome back, " + user.getName() + "!");
+            return user;
         }
-        return false;
+
+        System.out.println("[ERROR] Invalid Username or Password. Please try again or Register.");
+        return null;
     }
 
     @Override
     public boolean register(String username, String password, String email, int roleChoice) {
         if (userMap.containsKey(username)) {
-            System.out.println("[ERROR] Username already exists.");
+            System.out.println("[ERROR] Username '" + username + "' already exists.");
             return false;
         }
 
         User newUser;
         Role role = getRoleFromChoice(roleChoice);
+
         if (role == Role.CUSTOMER) {
             newUser = new Customer();
         } else if (role == Role.GYM_OWNER) {
             newUser = new GymOwner();
         } else {
-            System.out.println("[ERROR] Invalid registration role.");
+            System.out.println("[ERROR] Invalid registration path.");
             return false;
         }
 
@@ -73,7 +81,7 @@ public class UserService implements UserInterface {
         newUser.setName(username);
         newUser.setPassword(password);
         newUser.setEmail(email);
-        newUser.setRole(role);
+        newUser.setRole(role); // Role auto-assigned based on account type registration
 
         userMap.put(username, newUser);
         return true;
@@ -95,15 +103,20 @@ public class UserService implements UserInterface {
                 return Role.GYM_OWNER;
             case 2:
                 return Role.CUSTOMER;
-            case 3:
-                return Role.ADMIN;
             default:
                 return null;
         }
     }
 
-    // Helper method to get user for other services
+    public static void addUser(User user) {
+        userMap.put(user.getUserId(), user);
+    }
+
     public static User getUser(String username) {
         return userMap.get(username);
+    }
+
+    public static Map<String, User> getAllUsers() {
+        return userMap;
     }
 }
