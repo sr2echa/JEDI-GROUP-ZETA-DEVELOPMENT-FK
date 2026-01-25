@@ -31,10 +31,12 @@ public class BookingService implements BookingInterface {
         if (waitlist != null && !waitlist.isEmpty()) {
             Booking promotedBooking = waitlist.remove(0);
             promotedBooking.setBookingId("B_PROM" + System.currentTimeMillis());
-            promotedBooking.setStatus(BookingStatus.CONFIRMED);
+            // Set to PENDING_PAYMENT instead of CONFIRMED - payment required
+            promotedBooking.setStatus(BookingStatus.PENDING_PAYMENT);
+            promotedBooking.setCreatedAt(java.time.LocalDateTime.now());
 
             System.out.println("[SYSTEM] Waitlist Progress for " + scheduleId + ": User " + promotedBooking.getUserId()
-                    + " promoted.");
+                    + " has been promoted from waitlist. Payment required to confirm booking.");
             return promotedBooking;
         }
         return null;
