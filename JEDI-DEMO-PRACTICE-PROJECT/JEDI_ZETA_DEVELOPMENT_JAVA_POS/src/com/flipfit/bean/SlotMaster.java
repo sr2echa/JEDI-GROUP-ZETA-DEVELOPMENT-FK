@@ -9,7 +9,8 @@ public class SlotMaster {
     private LocalTime endTime;
     private int capacity = 5; // Default capacity for testing
     private int availableSeats = 5;
-
+    private double price = 500.0;
+    
     public String getSlotId() {
         return slotId;
     }
@@ -57,5 +58,14 @@ public class SlotMaster {
 
     public void setAvailableSeats(int availableSeats) {
         this.availableSeats = availableSeats;
+    }
+    
+    public double getPrice() {
+    	return price;
+    }
+    
+    public void setPrice(double price)
+    {
+    	this.price = price;
     }
 }

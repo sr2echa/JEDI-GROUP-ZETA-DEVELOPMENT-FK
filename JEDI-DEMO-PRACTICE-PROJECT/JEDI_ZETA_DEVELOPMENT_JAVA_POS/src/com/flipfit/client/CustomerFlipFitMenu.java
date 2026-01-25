@@ -3,6 +3,7 @@ package com.flipfit.client;
 import com.flipfit.business.*;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
+import com.flipfit.bean.Booking;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,6 +11,7 @@ public class CustomerFlipFitMenu {
     CustomerInterface customerService = new CustomerService();
     GymOwnerInterface ownerService = new GymOwnerService();
     UserInterface userService = new UserService();
+    PaymentService paymentService = new PaymentService();
 
     public void registerCustomer(Scanner sc) {
         System.out.println("\n--- Registration ---");
@@ -31,8 +33,9 @@ public class CustomerFlipFitMenu {
             System.out.println("\n--- Customer Dashboard (" + userId + ") ---");
             System.out.println("1. Book Workout Slot (Browse Centers)");
             System.out.println("2. View My Plan");
-            System.out.println("3. Cancel Booking");
-            System.out.println("4. Back to Main Menu");
+            System.out.println("3. Pay for Pending Bookings");
+            System.out.println("4. Cancel Booking");
+            System.out.println("5. Back to Main Menu");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -52,10 +55,13 @@ public class CustomerFlipFitMenu {
                     customerService.getCustomerPlan(userId);
                     break;
                 case 3:
+                    handlePendingPayments(sc, userId);
+                    break;
+                case 4:
                     System.out.print("Enter Booking ID: ");
                     customerService.cancelWorkout(sc.next());
                     break;
-                case 4:
+                case 5:
                     back = true;
                     break;
                 default:
@@ -89,12 +95,103 @@ public class CustomerFlipFitMenu {
         System.out.println("\nAvailable Slots for " + centerId + ":");
         slots.forEach(s -> System.out.println(" - Slot ID: " + s.getSlotId() +
                 " | Timing: " + s.getStartTime() + " - " + s.getEndTime() +
-                " | Seats Left: " + s.getAvailableSeats() + "/" + s.getCapacity()));
+                " | Seats Left: " + s.getAvailableSeats() + "/" + s.getCapacity() +
+                " | Price: ₹" + s.getPrice()));
 
         System.out.print("\nEnter Slot ID to book: ");
         String slotId = sc.next();
 
-        // 3. Confirm selection and book
+        // 3. Get slot details for payment
+        SlotMaster selectedSlot = slots.stream()
+                .filter(s -> s.getSlotId().equals(slotId))
+                .findFirst()
+                .orElse(null);
+        
+        if (selectedSlot == null) {
+            System.out.println("[ERROR] Slot ID not found.");
+            return;
+        }
+
+        // 4. Create booking and immediately request payment
         customerService.bookWorkout(userId, slotId);
+        
+        // Get the latest booking that was just created
+        List<Booking> pending = customerService.getPendingPayments(userId);
+        if (!pending.isEmpty()) {
+            Booking latestBooking = pending.get(pending.size() - 1);
+            // Immediately process payment - no option to defer
+            processPaymentForBooking(sc, latestBooking, selectedSlot.getPrice());
+        }
+    }
+
+    private void handlePendingPayments(Scanner sc, String userId) {
+        List<Booking> pendingBookings = customerService.getPendingPayments(userId);
+        
+        if (pendingBookings.isEmpty()) {
+            System.out.println("\n[INFO] No pending payments.");
+            return;
+        }
+
+        System.out.println("\n--- Pending Payments ---");
+        for (int i = 0; i < pendingBookings.size(); i++) {
+            Booking booking = pendingBookings.get(i);
+            SlotMaster slot = GymOwnerService.getSlot(booking.getScheduleId());
+            String time = (slot != null) ? slot.getStartTime() + " - " + slot.getEndTime() : "N/A";
+            double amount = (slot != null) ? slot.getPrice() : 0.0;
+            String source = booking.getBookingId().startsWith("B_PROM") ? " [From Waitlist]" : "";
+            
+            System.out.println((i + 1) + ". Booking ID: " + booking.getBookingId() + source + 
+                    " | Slot: " + booking.getScheduleId() + 
+                    " | Time: " + time + 
+                    " | Amount: ₹" + amount);
+        }
+
+        System.out.print("\nEnter Booking ID to pay (or 'back' to go back): ");
+        String input = sc.next();
+        
+        if (input.equalsIgnoreCase("back")) {
+            return;
+        }
+
+        // Find the booking
+        Booking selectedBooking = pendingBookings.stream()
+                .filter(b -> b.getBookingId().equals(input))
+                .findFirst()
+                .orElse(null);
+
+        if (selectedBooking == null) {
+            System.out.println("[ERROR] Booking ID not found in pending payments.");
+            return;
+        }
+
+        SlotMaster slot = GymOwnerService.getSlot(selectedBooking.getScheduleId());
+        if (slot == null) {
+            System.out.println("[ERROR] Slot information not found.");
+            return;
+        }
+
+        processPaymentForBooking(sc, selectedBooking, slot.getPrice());
+    }
+
+    private void processPaymentForBooking(Scanner sc, Booking booking, double amount) {
+        System.out.println("\n--- Payment Required ---");
+        System.out.println("Booking ID: " + booking.getBookingId());
+        System.out.println("Amount: ₹" + amount);
+        
+        if (paymentService.processPaymentInteractive(sc, booking.getBookingId(), amount)) {
+            // Payment successful, now confirm the booking
+            String paymentMethod = paymentService.getPaymentMethod(booking.getBookingId());
+            if (customerService.processPaymentAndConfirm(booking.getBookingId(), amount, paymentMethod)) {
+                System.out.println("\n[SUCCESS] Your booking has been confirmed!");
+            }
+        } else {
+            System.out.println("\n[ERROR] Payment was not completed. Booking has been cancelled.");
+            // Cancel the booking if payment fails
+            customerService.cancelPendingBooking(booking.getBookingId());
+            // If it was from waitlist, we need to free up the slot for next person
+            if (booking.getBookingId().startsWith("B_PROM")) {
+                GymOwnerService.updateAvailability(booking.getScheduleId(), 1);
+            }
+        }
     }
 }

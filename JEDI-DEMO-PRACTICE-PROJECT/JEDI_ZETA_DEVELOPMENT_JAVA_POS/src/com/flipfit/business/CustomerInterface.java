@@ -10,4 +10,10 @@ public interface CustomerInterface {
     void cancelWorkout(String bookingId);
 
     List<Booking> getCustomerPlan(String userId);
+    
+    boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod);
+    
+    List<Booking> getPendingPayments(String userId);
+    
+    boolean cancelPendingBooking(String bookingId);
 }
