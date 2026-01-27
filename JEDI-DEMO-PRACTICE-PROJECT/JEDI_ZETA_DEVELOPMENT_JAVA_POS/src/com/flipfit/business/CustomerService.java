@@ -154,9 +154,10 @@ public class CustomerService implements CustomerInterface {
     }
 
     /**
-     * Process payment for a pending booking and confirm it
+     * Confirm a pending booking after payment has been processed
+     * Note: Payment processing should be done before calling this method
      */
-    public boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod) {
+    public boolean processPaymentAndConfirm(String bookingId) {
         Booking booking = getBookingById(bookingId);
         if (booking == null) {
             System.out.println("[ERROR] Booking ID " + bookingId + " not found.");

@@ -11,7 +11,7 @@ public interface CustomerInterface {
 
     List<Booking> getCustomerPlan(String userId);
     
-    boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod);
+    boolean processPaymentAndConfirm(String bookingId);
     
     List<Booking> getPendingPayments(String userId);
     
