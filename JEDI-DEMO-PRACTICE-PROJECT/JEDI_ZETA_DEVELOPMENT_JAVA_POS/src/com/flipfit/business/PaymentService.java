@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class PaymentService implements PaymentInterface {
     private static Map<String, Double> paymentRecords = new HashMap<>();
@@ -37,7 +38,7 @@ public class PaymentService implements PaymentInterface {
         
         // Create payment record with PROCESSING status
         com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
-        String txnId = "TXN" + System.currentTimeMillis();
+        String txnId = "TXN" + UUID.randomUUID().toString();
         history.setTransactionId(txnId);
         history.setBookingId(bookingId);
         history.setAmount(amount);
@@ -148,7 +149,7 @@ public class PaymentService implements PaymentInterface {
             paymentRecords.remove(bookingId);
             paymentMethods.remove(bookingId);
             System.out.println("[SUCCESS] Refund processed successfully!");
-            System.out.println("Refund Transaction ID: REF" + System.currentTimeMillis());
+            System.out.println("Refund Transaction ID: REF" + UUID.randomUUID().toString());
             System.out.println("[INFO] Refund will be credited to your original payment method within 5-7 business days.");
             return true;
         } else {
