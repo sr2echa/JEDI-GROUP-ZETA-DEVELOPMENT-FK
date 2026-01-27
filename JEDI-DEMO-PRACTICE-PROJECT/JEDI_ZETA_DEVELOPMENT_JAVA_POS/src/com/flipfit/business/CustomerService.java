@@ -168,29 +168,14 @@ public class CustomerService implements CustomerInterface {
             return false;
         }
 
-        SlotMaster slot = GymOwnerService.getSlot(booking.getScheduleId());
-        if (slot == null) {
-            System.out.println("[ERROR] Slot not found for booking " + bookingId);
-            return false;
-        }
-
-        // Verify amount
-        if (Math.abs(amount - slot.getPrice()) > 0.01) {
-            System.out.println("[ERROR] Payment amount mismatch. Expected: ₹" + slot.getPrice() + ", Received: ₹" + amount);
-            return false;
-        }
-
-        // Process payment
-        if (paymentService.processPayment(bookingId, amount, paymentMethod)) {
-            // Confirm booking
-            booking.setStatus(BookingStatus.CONFIRMED);
-            GymOwnerService.updateAvailability(booking.getScheduleId(), -1);
-            System.out.println("[SUCCESS] Booking Confirmed! Slot: " + booking.getScheduleId());
-            return true;
-        } else {
-            System.out.println("[ERROR] Payment failed. Booking remains pending.");
-            return false;
-        }
+        // REMOVED: paymentService.processPayment call here because it is 
+        // already called in CustomerFlipFitMenu.java.
+        
+        // Confirm booking
+        booking.setStatus(BookingStatus.CONFIRMED);
+        GymOwnerService.updateAvailability(booking.getScheduleId(), -1);
+        System.out.println("[SUCCESS] Booking Confirmed! Slot: " + booking.getScheduleId());
+        return true;
     }
 
     /**

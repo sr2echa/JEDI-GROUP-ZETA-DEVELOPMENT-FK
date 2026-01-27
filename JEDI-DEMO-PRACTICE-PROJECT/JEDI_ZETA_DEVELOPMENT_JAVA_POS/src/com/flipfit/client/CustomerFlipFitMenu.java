@@ -36,6 +36,7 @@ public class CustomerFlipFitMenu {
             System.out.println("3. Pay for Pending Bookings");
             System.out.println("4. Cancel Booking");
             System.out.println("5. Back to Main Menu");
+            System.out.println("6. View My Payment History");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -63,6 +64,15 @@ public class CustomerFlipFitMenu {
                     break;
                 case 5:
                     back = true;
+                    break;
+                case 6:
+                    List<com.flipfit.bean.PaymentRecord> history = paymentService.getCustomerHistory(userId);
+                    if (history.isEmpty()) {
+                        System.out.println("\n[INFO] No payment history found.");
+                    } else {
+                        System.out.println("\n--- Your Payment History ---");
+                        history.forEach(h -> System.out.println("TXN ID: " + h.getTransactionId() + " | Amount: ₹" + h.getAmount() + " | Status: " + h.getStatus() + " | Date: " + h.getTimestamp()));
+                    }
                     break;
                 default:
                     System.out.println("Invalid Selection.");

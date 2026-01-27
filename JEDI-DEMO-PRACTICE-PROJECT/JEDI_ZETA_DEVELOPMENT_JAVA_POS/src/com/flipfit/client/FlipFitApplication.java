@@ -76,7 +76,7 @@ public class FlipFitApplication {
 
             // Navigate based on auto-detected role
             if (role == Role.ADMIN) {
-                admin.displayMenu(sc);
+                admin.displayMenu(sc, loggedInUser);
             } else if (role == Role.CUSTOMER) {
                 customer.displayMenu(sc, username);
             } else if (role == Role.GYM_OWNER) {

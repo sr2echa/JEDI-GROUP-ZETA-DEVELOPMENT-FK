@@ -7,6 +7,7 @@ import com.flipfit.bean.User;
 import com.flipfit.bean.SlotMaster;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.time.LocalTime;
 
@@ -55,12 +56,15 @@ public class GymOwnerService implements GymOwnerInterface {
     }
 
     @Override
-    public void onboardGymOwner(String username, String password, String pan) {
+    public void onboardGymOwner(String username, String password, String pan, String gst, String aadhar, String location) {
         GymOwner newOwner = new GymOwner();
         newOwner.setUserId(username);
         newOwner.setName(username);
         newOwner.setPassword(password);
         newOwner.setPanNumber(pan);
+        newOwner.setGstNumber(gst);      // New addition
+        newOwner.setAadharNumber(aadhar); // New addition
+        newOwner.setLocation(location);   // New addition
         newOwner.setRole(Role.GYM_OWNER);
         newOwner.setApproved(false);
         UserService.addUser(newOwner);
@@ -106,10 +110,11 @@ public class GymOwnerService implements GymOwnerInterface {
         newSlot.setStartTime(startTime);
         newSlot.setEndTime(endTime);
         newSlot.setCapacity(capacity);
+        newSlot.setApproved(false); // Set default to unapproved
 
         allSlots.add(newSlot);
         System.out.println("[SUCCESS] Slot added: " + newSlot.getSlotId() + " [" + startTime + " to " + endTime
-                + "] Capacity: " + capacity);
+                + "] Capacity: " + capacity + ". Pending Admin approval.");
         return true;
     }
 
@@ -145,5 +150,42 @@ public class GymOwnerService implements GymOwnerInterface {
         if (slot != null) {
             slot.setAvailableSeats(slot.getAvailableSeats() + delta);
         }
+    }
+       
+    public static void approveSlot(String slotId) {
+        SlotMaster slot = getSlot(slotId);
+        if (slot != null) {
+            slot.setApproved(true);
+            System.out.println("Slot with ID " + slotId + " has been approved.");
+        } else {
+            System.out.println("Unable to approve slot: no slot found with ID " + slotId + ".");
+        }
+    }
+
+    public static List<SlotMaster> getAllSlots() {
+        return allSlots;
+    }
+
+    public static GymCenter getCenterById(String centerId) {
+        if (centerId == null) {
+            return null;
+        }
+        return centers.stream()
+                .filter(c -> Objects.equals(c.getCenterId(), centerId))
+                .findFirst()
+                .orElse(null);
+
+    /**
+     * Verify if a gym center belongs to the specified owner
+     * @param centerId The ID of the gym center
+     * @param ownerId The ID of the owner to verify
+     * @return true if the owner owns the center, false otherwise
+     */
+    public static boolean verifyCenterOwnership(String centerId, String ownerId) {
+        if (centerId == null || ownerId == null) {
+            return false;
+        }
+        return centers.stream()
+                .anyMatch(c -> c.getCenterId().equals(centerId) && c.getOwnerId().equals(ownerId));
     }
 }

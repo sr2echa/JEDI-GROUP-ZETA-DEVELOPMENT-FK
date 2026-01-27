@@ -2,6 +2,7 @@ package com.flipfit.client;
 
 import com.flipfit.business.GymOwnerInterface;
 import com.flipfit.business.GymOwnerService;
+import com.flipfit.business.PaymentService;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
 import java.util.Scanner;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class GymOwnerFlipFitMenu {
     GymOwnerInterface ownerService = new GymOwnerService();
+    PaymentService paymentService = new PaymentService();
 
     public void registerGymOwner(Scanner sc) {
         System.out.println("\n--- Registration of the GymOwner ---");
@@ -20,8 +22,17 @@ public class GymOwnerFlipFitMenu {
         String password = sc.next();
         System.out.print("Enter PAN Number: ");
         String pan = sc.next();
+        
+        // New Additions
+        System.out.print("Enter GST Number: ");
+        String gst = sc.next();
+        System.out.print("Enter Aadhar Number: ");
+        String aadhar = sc.next();
+        System.out.print("Enter Location: ");
+        String location = sc.next();
 
-        ownerService.onboardGymOwner(username, password, pan);
+        // Updated call with new parameters
+        ownerService.onboardGymOwner(username, password, pan, gst, aadhar, location);
     }
 
     public void displayMenu(Scanner sc, String ownerId) {
@@ -33,6 +44,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println("3. Add Slot to Center");
             System.out.println("4. View Slots in Center");
             System.out.println("5. Back to Main Menu");
+            System.out.println("6. View Center Revenue & History");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -95,6 +107,11 @@ public class GymOwnerFlipFitMenu {
                     break;
                 case 5:
                     back = true;
+                    break;
+                case 6:
+                    System.out.print("Enter Center ID to view revenue: ");
+                    String centerId = sc.next();
+                    paymentService.displayGymRevenue(centerId, ownerId);
                     break;
                 default:
                     System.out.println("Invalid Selection.");

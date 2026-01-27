@@ -10,6 +10,7 @@ public class SlotMaster {
     private int capacity = 5; // Default capacity for testing
     private int availableSeats = 5;
     private double price = 500.0;
+    private boolean isApproved = false;
     
     public String getSlotId() {
         return slotId;
@@ -67,5 +68,13 @@ public class SlotMaster {
     public void setPrice(double price)
     {
     	this.price = price;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
     }
 }

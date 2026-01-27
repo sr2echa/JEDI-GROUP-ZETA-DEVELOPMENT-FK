@@ -2,19 +2,38 @@ package com.flipfit.business;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
+import com.flipfit.bean.GymCenter;
+import com.flipfit.bean.PaymentRecord;
+import com.flipfit.bean.Role;
 import com.flipfit.bean.SlotMaster;
+import com.flipfit.bean.User;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
 
 public class PaymentService implements PaymentInterface {
     private static Map<String, Double> paymentRecords = new HashMap<>();
     private static Map<String, String> paymentMethods = new HashMap<>();
-    private CustomerService customerService;
+    private static List<PaymentRecord> globalPaymentHistory = new CopyOnWriteArrayList<>();
 
     public PaymentService() {
         // We'll need to access CustomerService to update booking status
         // This creates a circular dependency, so we'll handle it differently
+    }
+    
+    /**
+     * Generate a unique transaction ID with the given prefix
+     * @param prefix The prefix for the transaction ID (e.g., "TXN", "REF")
+     * @return A unique transaction ID string
+     */
+    private String generateTransactionId(String prefix) {
+        return prefix + UUID.randomUUID().toString().replace("-", "");
     }
     
     /**
@@ -32,6 +51,16 @@ public class PaymentService implements PaymentInterface {
         System.out.println("Amount: ₹" + amount);
         System.out.println("Payment Method: " + paymentMethod);
         
+        // Create payment record with PROCESSING status
+        PaymentRecord history = new PaymentRecord();
+        String txnId = generateTransactionId("TXN");
+        history.setTransactionId(txnId);
+        history.setBookingId(bookingId);
+        history.setAmount(amount);
+        history.setMethod(paymentMethod);
+        history.setTimestamp(java.time.LocalDateTime.now());
+        history.setStatus(com.flipfit.bean.PaymentStatus.PROCESSING);
+        
         // Simulate payment gateway processing
         try {
             Thread.sleep(500); // Simulate network delay
@@ -47,10 +76,27 @@ public class PaymentService implements PaymentInterface {
             paymentRecords.put(bookingId, amount);
             paymentMethods.put(bookingId, paymentMethod);
             System.out.println("[SUCCESS] Payment processed successfully!");
-            System.out.println("Transaction ID: TXN" + System.currentTimeMillis());
+            System.out.println("Transaction ID: " + txnId);
+            
+            // Update status to COMPLETED
+            history.setStatus(com.flipfit.bean.PaymentStatus.COMPLETED);
+
+            Booking b = CustomerService.getBookingById(bookingId);
+            if (b != null) {
+                history.setUserId(b.getUserId());
+                SlotMaster slot = GymOwnerService.getSlot(b.getScheduleId());
+                if (slot != null) {
+                    history.setCenterId(slot.getCenterId());
+                } else {
+                    System.out.println("[WARN] Slot not found for scheduleId: " + b.getScheduleId() + ". Payment history will not include centerId.");
+                }
+            }
+            globalPaymentHistory.add(history);
             return true;
         } else {
             System.out.println("[ERROR] Payment failed. Please try again.");
+            history.setStatus(com.flipfit.bean.PaymentStatus.CANCELLED);
+            globalPaymentHistory.add(history);
             return false;
         }
     }
@@ -113,11 +159,17 @@ public class PaymentService implements PaymentInterface {
         boolean refundSuccess = true;
         
         if (refundSuccess) {
+            // Update the payment record status to REFUNDED
+            globalPaymentHistory.stream()
+                .filter(p -> p.getBookingId().equals(bookingId))
+                .findFirst()
+                .ifPresent(p -> p.setStatus(com.flipfit.bean.PaymentStatus.REFUNDED));
+            
             // Remove payment record (or mark as refunded)
             paymentRecords.remove(bookingId);
             paymentMethods.remove(bookingId);
             System.out.println("[SUCCESS] Refund processed successfully!");
-            System.out.println("Refund Transaction ID: REF" + System.currentTimeMillis());
+            System.out.println("Refund Transaction ID: " + generateTransactionId("REF"));
             System.out.println("[INFO] Refund will be credited to your original payment method within 5-7 business days.");
             return true;
         } else {
@@ -204,5 +256,68 @@ public class PaymentService implements PaymentInterface {
         }
         
         return processPayment(bookingId, amount, paymentMethod);
+    }
+    public List<PaymentRecord> getCustomerHistory(String userId) {
+    return globalPaymentHistory.stream()
+            .filter(r -> r.getUserId() != null && r.getUserId().equals(userId))
+            .collect(Collectors.toList());
+    }
+
+    public void displayGymRevenue(String centerId, String ownerId) {
+        displayGymRevenue(centerId, ownerId, null);
+    }
+
+    /**
+     * Display gym revenue for a center with role-based access control.
+     * Admins can view any center's revenue, gym owners can only view their own.
+     * 
+     * @param centerId The ID of the center
+     * @param ownerId The ID of the owner/user requesting the revenue
+     * @param user The User object (if available) to check admin privileges
+     */
+    public void displayGymRevenue(String centerId, String ownerId, User user) {
+        // Validate parameters
+        if (centerId == null) {
+            System.out.println("[ERROR] Center ID cannot be null.");
+            return;
+        }
+        
+        if (ownerId == null) {
+            System.out.println("[ERROR] Owner ID cannot be null.");
+            return;
+        }
+        
+        // Validate center exists
+        GymCenter center = GymOwnerService.getCenterById(centerId);
+        if (center == null) {
+            System.out.println("[ERROR] Center not found with ID: " + centerId);
+            return;
+        }
+        
+        // Check if user is admin - admins can view any center's revenue
+        boolean isAdmin = user != null && user.getRole() == Role.ADMIN;
+        
+        // Validate ownership if not admin
+        if (!isAdmin) {
+            if (center.getOwnerId() == null || !Objects.equals(center.getOwnerId(), ownerId)) {
+                System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
+                return;
+            }
+        }
+        
+        List<PaymentRecord> gymPayments = globalPaymentHistory.stream()
+                .filter(r -> r.getCenterId() != null && r.getCenterId().equals(centerId))
+                .collect(Collectors.toList());
+
+        double totalRevenue = gymPayments.stream().mapToDouble(PaymentRecord::getAmount).sum();
+
+        System.out.println("\n--- Revenue Report for " + centerId + " ---");
+        System.out.println("Total Revenue Generated: ₹" + totalRevenue);
+        System.out.println("Transaction History:");
+        if (gymPayments.isEmpty()) {
+            System.out.println("  No transactions found.");
+        } else {
+            gymPayments.forEach(p -> System.out.println("  - TXN: " + p.getTransactionId() + " | Amount: ₹" + p.getAmount() + " | Status: " + p.getStatus() + " | Date: " + p.getTimestamp()));
+        }
     }
 }

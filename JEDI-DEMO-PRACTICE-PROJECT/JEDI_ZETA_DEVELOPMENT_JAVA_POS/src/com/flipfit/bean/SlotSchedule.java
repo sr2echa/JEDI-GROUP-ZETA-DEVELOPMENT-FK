@@ -1,6 +1,5 @@
 package com.flipfit.bean;
 
-import java.util.Date;
 
 public class SlotSchedule {
     private String scheduleId;
