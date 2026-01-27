@@ -16,6 +16,7 @@ import java.util.Scanner;
 public class AdminFlipFitMenu {
     AdminInterface adminService = new AdminService();
     PaymentService paymentService = new PaymentService();
+    UserService userService = new UserService();
 
     public void displayMenu(Scanner sc) {
         displayMenu(sc, null);
@@ -75,7 +76,7 @@ public class AdminFlipFitMenu {
                             GymCenter center = GymOwnerService.getCenterById(s.getCenterId());
                             String ownerName = "Unknown";
                             if (center != null) {
-                                User owner = UserService.getUser(center.getOwnerId());
+                                User owner = userService.getUser(center.getOwnerId());
                                 if (owner != null) {
                                     ownerName = owner.getName();
                                 }
