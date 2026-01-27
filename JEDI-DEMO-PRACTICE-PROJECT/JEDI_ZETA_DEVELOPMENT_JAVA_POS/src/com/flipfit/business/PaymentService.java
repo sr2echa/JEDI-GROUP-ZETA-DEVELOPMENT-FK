@@ -242,7 +242,19 @@ public class PaymentService implements PaymentInterface {
             .collect(java.util.stream.Collectors.toList());
     }
 
-    public void displayGymRevenue(String centerId) {
+    public void displayGymRevenue(String centerId, String ownerId) {
+        // Validate ownership before displaying revenue
+        com.flipfit.bean.GymCenter center = GymOwnerService.getCenterById(centerId);
+        if (center == null) {
+            System.out.println("[ERROR] Center not found with ID: " + centerId);
+            return;
+        }
+        
+        if (!center.getOwnerId().equals(ownerId)) {
+            System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
+            return;
+        }
+        
         List<com.flipfit.bean.PaymentRecord> gymPayments = globalPaymentHistory.stream()
                 .filter(r -> r.getCenterId() != null && r.getCenterId().equals(centerId))
                 .collect(java.util.stream.Collectors.toList());

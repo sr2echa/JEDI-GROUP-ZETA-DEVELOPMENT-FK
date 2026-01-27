@@ -164,4 +164,11 @@ public class GymOwnerService implements GymOwnerInterface {
     public static List<SlotMaster> getAllSlots() {
         return allSlots;
     }
+
+    public static GymCenter getCenterById(String centerId) {
+        return centers.stream()
+                .filter(c -> c.getCenterId().equals(centerId))
+                .findFirst()
+                .orElse(null);
+    }
 }
