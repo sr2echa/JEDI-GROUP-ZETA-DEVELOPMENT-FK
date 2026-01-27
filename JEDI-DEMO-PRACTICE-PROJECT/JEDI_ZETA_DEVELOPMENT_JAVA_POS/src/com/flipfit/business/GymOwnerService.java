@@ -7,6 +7,7 @@ import com.flipfit.bean.User;
 import com.flipfit.bean.SlotMaster;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.time.LocalTime;
 
@@ -165,11 +166,15 @@ public class GymOwnerService implements GymOwnerInterface {
         return allSlots;
     }
 
-    public static GymCenter getCenter(String centerId) {
+    public static GymCenter getCenterById(String centerId) {
+        if (centerId == null) {
+            return null;
+        }
         return centers.stream()
-                .filter(c -> c.getCenterId().equals(centerId))
+                .filter(c -> Objects.equals(c.getCenterId(), centerId))
                 .findFirst()
                 .orElse(null);
+
     /**
      * Verify if a gym center belongs to the specified owner
      * @param centerId The ID of the gym center

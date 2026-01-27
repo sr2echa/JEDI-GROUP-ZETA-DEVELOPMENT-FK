@@ -2,19 +2,25 @@ package com.flipfit.business;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
+import com.flipfit.bean.GymCenter;
+import com.flipfit.bean.PaymentRecord;
+import com.flipfit.bean.Role;
 import com.flipfit.bean.SlotMaster;
+import com.flipfit.bean.User;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.UUID;
 
 public class PaymentService implements PaymentInterface {
     private static Map<String, Double> paymentRecords = new HashMap<>();
     private static Map<String, String> paymentMethods = new HashMap<>();
-    private static List<com.flipfit.bean.PaymentRecord> globalPaymentHistory = new CopyOnWriteArrayList<>();
+    private static List<PaymentRecord> globalPaymentHistory = new CopyOnWriteArrayList<>();
 
     public PaymentService() {
         // We'll need to access CustomerService to update booking status
@@ -46,7 +52,7 @@ public class PaymentService implements PaymentInterface {
         System.out.println("Payment Method: " + paymentMethod);
         
         // Create payment record with PROCESSING status
-        com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
+        PaymentRecord history = new PaymentRecord();
         String txnId = generateTransactionId("TXN");
         history.setTransactionId(txnId);
         history.setBookingId(bookingId);
@@ -251,24 +257,59 @@ public class PaymentService implements PaymentInterface {
         
         return processPayment(bookingId, amount, paymentMethod);
     }
-    public List<com.flipfit.bean.PaymentRecord> getCustomerHistory(String userId) {
+    public List<PaymentRecord> getCustomerHistory(String userId) {
     return globalPaymentHistory.stream()
             .filter(r -> r.getUserId() != null && r.getUserId().equals(userId))
-            .collect(java.util.stream.Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     public void displayGymRevenue(String centerId, String ownerId) {
-        // Verify that the owner actually owns this center
-        if (!GymOwnerService.verifyCenterOwnership(centerId, ownerId)) {
-            System.out.println("\n[ERROR] Access denied: Unable to view revenue for this center");
+        displayGymRevenue(centerId, ownerId, null);
+    }
+
+    /**
+     * Display gym revenue for a center with role-based access control.
+     * Admins can view any center's revenue, gym owners can only view their own.
+     * 
+     * @param centerId The ID of the center
+     * @param ownerId The ID of the owner/user requesting the revenue
+     * @param user The User object (if available) to check admin privileges
+     */
+    public void displayGymRevenue(String centerId, String ownerId, User user) {
+        // Validate parameters
+        if (centerId == null) {
+            System.out.println("[ERROR] Center ID cannot be null.");
             return;
         }
-
-        List<com.flipfit.bean.PaymentRecord> gymPayments = globalPaymentHistory.stream()
+        
+        if (ownerId == null) {
+            System.out.println("[ERROR] Owner ID cannot be null.");
+            return;
+        }
+        
+        // Validate center exists
+        GymCenter center = GymOwnerService.getCenterById(centerId);
+        if (center == null) {
+            System.out.println("[ERROR] Center not found with ID: " + centerId);
+            return;
+        }
+        
+        // Check if user is admin - admins can view any center's revenue
+        boolean isAdmin = user != null && user.getRole() == Role.ADMIN;
+        
+        // Validate ownership if not admin
+        if (!isAdmin) {
+            if (center.getOwnerId() == null || !Objects.equals(center.getOwnerId(), ownerId)) {
+                System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
+                return;
+            }
+        }
+        
+        List<PaymentRecord> gymPayments = globalPaymentHistory.stream()
                 .filter(r -> r.getCenterId() != null && r.getCenterId().equals(centerId))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
 
-        double totalRevenue = gymPayments.stream().mapToDouble(com.flipfit.bean.PaymentRecord::getAmount).sum();
+        double totalRevenue = gymPayments.stream().mapToDouble(PaymentRecord::getAmount).sum();
 
         System.out.println("\n--- Revenue Report for " + centerId + " ---");
         System.out.println("Total Revenue Generated: ₹" + totalRevenue);

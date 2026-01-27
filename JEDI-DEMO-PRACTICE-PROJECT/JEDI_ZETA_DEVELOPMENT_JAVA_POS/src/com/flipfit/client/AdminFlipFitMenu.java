@@ -2,6 +2,7 @@ package com.flipfit.client;
 
 import com.flipfit.business.AdminInterface;
 import com.flipfit.business.AdminService;
+import com.flipfit.business.PaymentService;
 import com.flipfit.business.GymOwnerService;
 import com.flipfit.business.UserService;
 import com.flipfit.bean.GymCenter;
@@ -14,8 +15,13 @@ import java.util.Scanner;
 
 public class AdminFlipFitMenu {
     AdminInterface adminService = new AdminService();
+    PaymentService paymentService = new PaymentService();
 
     public void displayMenu(Scanner sc) {
+        displayMenu(sc, null);
+    }
+
+    public void displayMenu(Scanner sc, User adminUser) {
         boolean back = false;
         while (!back) {
             System.out.println("\n--- Admin Dashboard ---");
@@ -25,6 +31,7 @@ public class AdminFlipFitMenu {
             System.out.println("4. Back to Main Menu");
             System.out.println("5. View Pending Slots");
             System.out.println("6. Approve Slot");
+            System.out.println("7. View Center Revenue & History");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -84,6 +91,16 @@ public class AdminFlipFitMenu {
                 case 6: // Approve Slot
                     System.out.print("Enter Slot ID to approve: ");
                     adminService.approveSlot(sc.next());
+                    break;
+                case 7: // View Center Revenue
+                    System.out.print("Enter Center ID to view revenue: ");
+                    String centerId = sc.next();
+                    // Admins can view any center's revenue
+                    if (adminUser != null) {
+                        paymentService.displayGymRevenue(centerId, adminUser.getUserId(), adminUser);
+                    } else {
+                        System.out.println("[ERROR] Admin user information not available.");
+                    }
                     break;
                 default:
                     System.out.println("Invalid Selection.");
