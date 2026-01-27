@@ -4,12 +4,15 @@ import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.PaymentRecord;
+import com.flipfit.bean.Role;
 import com.flipfit.bean.SlotMaster;
+import com.flipfit.bean.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -246,6 +249,18 @@ public class PaymentService implements PaymentInterface {
     }
 
     public void displayGymRevenue(String centerId, String ownerId) {
+        displayGymRevenue(centerId, ownerId, null);
+    }
+
+    /**
+     * Display gym revenue for a center with role-based access control.
+     * Admins can view any center's revenue, gym owners can only view their own.
+     * 
+     * @param centerId The ID of the center
+     * @param ownerId The ID of the owner/user requesting the revenue
+     * @param user The User object (if available) to check admin privileges
+     */
+    public void displayGymRevenue(String centerId, String ownerId, User user) {
         // Validate parameters
         if (centerId == null) {
             System.out.println("[ERROR] Center ID cannot be null.");
@@ -257,14 +272,18 @@ public class PaymentService implements PaymentInterface {
             return;
         }
         
-        // Validate ownership before displaying revenue
+        // Validate center exists
         GymCenter center = GymOwnerService.getCenterById(centerId);
         if (center == null) {
             System.out.println("[ERROR] Center not found with ID: " + centerId);
             return;
         }
         
-        if (center.getOwnerId() == null || !center.getOwnerId().equals(ownerId)) {
+        // Check if user is admin - admins can view any center's revenue
+        boolean isAdmin = user != null && user.getRole() == Role.ADMIN;
+        
+        // Validate ownership if not admin
+        if (!isAdmin && (center.getOwnerId() == null || !Objects.equals(center.getOwnerId(), ownerId))) {
             System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
             return;
         }
