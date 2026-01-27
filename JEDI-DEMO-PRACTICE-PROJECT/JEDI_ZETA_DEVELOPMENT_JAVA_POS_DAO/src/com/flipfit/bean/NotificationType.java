@@ -1,0 +1,5 @@
+package com.flipfit.bean;
+
+public enum NotificationType {
+    BOOKING_CONFIRMATION, REFUND_INITIATED, WAITLIST_PROMOTION, OWNER_APPROVAL, CANCELLATION
+}
