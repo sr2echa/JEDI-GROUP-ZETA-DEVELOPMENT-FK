@@ -85,8 +85,12 @@ public class GymUserDAOImpl implements GymUserDAO {
                         GymOwner owner = new GymOwner();
                         // Set userId before calling loadGymOwnerDetails
                         owner.setUserId(rs.getString("userId"));
+                        owner.setName(rs.getString("name"));
+                        owner.setEmail(rs.getString("email"));
+                        owner.setPassword(rs.getString("password"));
+                        owner.setRole(role);
                         loadGymOwnerDetails(owner);
-                        user = owner;
+                        return owner;
                     } else if (role == Role.CUSTOMER) {
                         user = new Customer();
                     } else {

@@ -101,22 +101,9 @@ public class GymOwnerService implements GymOwnerInterface {
     }
 
     public static void updateAvailability(String slotId, int delta) {
-        // Update slot availability by delta
+        // Delegate to DAO layer
         GymOwnerDAO ownerDAO = new GymOwnerDAOImpl();
-        SlotMaster slot = ownerDAO.getSlotById(slotId);
-        if (slot != null) {
-            int newAvailable = slot.getAvailableSeats() + delta;
-            // We need to update available seats directly - using a SQL update
-            java.sql.Connection conn = com.flipfit.utils.DBConnection.getConnection();
-            String sql = "UPDATE Slot SET availableSeats = availableSeats + ? WHERE slotId = ?";
-            try (java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, delta);
-                pstmt.setString(2, slotId);
-                pstmt.executeUpdate();
-            } catch (java.sql.SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        ownerDAO.updateAvailableSeats(slotId, delta);
     }
 
     public static GymCenter getCenterById(String centerId) {

@@ -16,4 +16,6 @@ public interface GymOwnerDAO {
     public void updateSlotCapacity(String slotId, int newCapacity);
     
     public SlotMaster getSlotById(String slotId);
+    
+    public void updateAvailableSeats(String slotId, int delta);
 }
