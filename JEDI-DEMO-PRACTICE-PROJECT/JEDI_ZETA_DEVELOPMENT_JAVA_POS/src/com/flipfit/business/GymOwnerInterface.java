@@ -10,7 +10,7 @@ public interface GymOwnerInterface {
 
     void updateSlotCapacity(String scheduleId, int newCapacity);
 
-    void onboardGymOwner(String username, String password, String pan);
+    void onboardGymOwner(String username, String password, String pan, String gst, String aadhar, String location);
 
     void addGymCenter(String ownerId, String centerName, String location);
 

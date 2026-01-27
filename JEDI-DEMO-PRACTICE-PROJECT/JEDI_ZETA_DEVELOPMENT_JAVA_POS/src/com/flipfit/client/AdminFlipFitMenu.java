@@ -3,6 +3,8 @@ package com.flipfit.client;
 import com.flipfit.business.AdminInterface;
 import com.flipfit.business.AdminService;
 import com.flipfit.bean.GymOwner;
+import com.flipfit.bean.SlotMaster;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,6 +19,8 @@ public class AdminFlipFitMenu {
             System.out.println("2. Approve Gym Owner");
             System.out.println("3. View Pending Centers");
             System.out.println("4. Back to Main Menu");
+            System.out.println("5. View Pending Slots");
+            System.out.println("6. Approve Slot");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -49,6 +53,18 @@ public class AdminFlipFitMenu {
                     break;
                 case 4:
                     back = true;
+                    break;
+                case 5: // View Pending Slots
+                    List<SlotMaster> pendingSlots = adminService.viewPendingSlots();
+                    if (pendingSlots.isEmpty()) {
+                        System.out.println("No pending slots.");
+                    } else {
+                        pendingSlots.forEach(s -> System.out.println("Slot ID: " + s.getSlotId() + " | Center: " + s.getCenterId()));
+                    }
+                    break;
+                case 6: // Approve Slot
+                    System.out.print("Enter Slot ID to approve: ");
+                    adminService.approveSlot(sc.next());
                     break;
                 default:
                     System.out.println("Invalid Selection.");

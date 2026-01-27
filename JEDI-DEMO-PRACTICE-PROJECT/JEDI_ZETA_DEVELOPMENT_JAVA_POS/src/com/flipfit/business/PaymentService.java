@@ -3,14 +3,17 @@ package com.flipfit.business;
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.SlotMaster;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 public class PaymentService implements PaymentInterface {
     private static Map<String, Double> paymentRecords = new HashMap<>();
     private static Map<String, String> paymentMethods = new HashMap<>();
-    private CustomerService customerService;
+    private static List<com.flipfit.bean.PaymentRecord> globalPaymentHistory = new ArrayList<>();
 
     public PaymentService() {
         // We'll need to access CustomerService to update booking status
@@ -48,6 +51,22 @@ public class PaymentService implements PaymentInterface {
             paymentMethods.put(bookingId, paymentMethod);
             System.out.println("[SUCCESS] Payment processed successfully!");
             System.out.println("Transaction ID: TXN" + System.currentTimeMillis());
+            
+            com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
+            String txnId = "TXN" + System.currentTimeMillis();
+            history.setTransactionId(txnId);
+            history.setBookingId(bookingId);
+            history.setAmount(amount);
+            history.setMethod(paymentMethod);
+            history.setTimestamp(java.time.LocalDateTime.now());
+
+
+            Booking b = CustomerService.getBookingById(bookingId);
+            if (b != null) {
+                history.setUserId(b.getUserId());
+                history.setCenterId(GymOwnerService.getSlot(b.getScheduleId()).getCenterId());
+            }
+            globalPaymentHistory.add(history);
             return true;
         } else {
             System.out.println("[ERROR] Payment failed. Please try again.");
@@ -204,5 +223,27 @@ public class PaymentService implements PaymentInterface {
         }
         
         return processPayment(bookingId, amount, paymentMethod);
+    }
+    public List<com.flipfit.bean.PaymentRecord> getCustomerHistory(String userId) {
+    return globalPaymentHistory.stream()
+            .filter(r -> r.getUserId() != null && r.getUserId().equals(userId))
+            .collect(java.util.stream.Collectors.toList());
+    }
+
+    public void displayGymRevenue(String centerId) {
+        List<com.flipfit.bean.PaymentRecord> gymPayments = globalPaymentHistory.stream()
+                .filter(r -> r.getCenterId() != null && r.getCenterId().equals(centerId))
+                .collect(java.util.stream.Collectors.toList());
+
+        double totalRevenue = gymPayments.stream().mapToDouble(com.flipfit.bean.PaymentRecord::getAmount).sum();
+
+        System.out.println("\n--- Revenue Report for " + centerId + " ---");
+        System.out.println("Total Revenue Generated: ₹" + totalRevenue);
+        System.out.println("Transaction History:");
+        if (gymPayments.isEmpty()) {
+            System.out.println("  No transactions found.");
+        } else {
+            gymPayments.forEach(p -> System.out.println("  - TXN: " + p.getTransactionId() + " | Amount: ₹" + p.getAmount() + " | Date: " + p.getTimestamp()));
+        }
     }
 }

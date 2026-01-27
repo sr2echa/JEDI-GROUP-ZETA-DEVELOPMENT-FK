@@ -55,12 +55,15 @@ public class GymOwnerService implements GymOwnerInterface {
     }
 
     @Override
-    public void onboardGymOwner(String username, String password, String pan) {
+    public void onboardGymOwner(String username, String password, String pan, String gst, String aadhar, String location) {
         GymOwner newOwner = new GymOwner();
         newOwner.setUserId(username);
         newOwner.setName(username);
         newOwner.setPassword(password);
         newOwner.setPanNumber(pan);
+        newOwner.setGstNumber(gst);      // New addition
+        newOwner.setAadharNumber(aadhar); // New addition
+        newOwner.setLocation(location);   // New addition
         newOwner.setRole(Role.GYM_OWNER);
         newOwner.setApproved(false);
         UserService.addUser(newOwner);
@@ -106,17 +109,18 @@ public class GymOwnerService implements GymOwnerInterface {
         newSlot.setStartTime(startTime);
         newSlot.setEndTime(endTime);
         newSlot.setCapacity(capacity);
+        newSlot.setApproved(false); // Set default to unapproved
 
         allSlots.add(newSlot);
         System.out.println("[SUCCESS] Slot added: " + newSlot.getSlotId() + " [" + startTime + " to " + endTime
-                + "] Capacity: " + capacity);
+                + "] Capacity: " + capacity + ". Pending Admin approval.");
         return true;
     }
 
     @Override
     public List<SlotMaster> viewSlots(String centerId) {
         return allSlots.stream()
-                .filter(s -> s.getCenterId().equals(centerId))
+                .filter(s -> s.getCenterId().equals(centerId) && s.isApproved()) // Added isApproved check
                 .collect(Collectors.toList());
     }
 
@@ -145,5 +149,16 @@ public class GymOwnerService implements GymOwnerInterface {
         if (slot != null) {
             slot.setAvailableSeats(slot.getAvailableSeats() + delta);
         }
+    }
+       
+    public static void approveSlot(String slotId) {
+        SlotMaster slot = getSlot(slotId);
+        if (slot != null) {
+            slot.setApproved(true); 
+        }
+    }
+
+    public static List<SlotMaster> getAllSlots() {
+        return allSlots;
     }
 }

@@ -2,7 +2,6 @@
 package com.flipfit.bean;
 import java.time.LocalDateTime;
 
-import com.flipfit.bean.BookingStatus;
 
 public class Booking {
     private String bookingId;
