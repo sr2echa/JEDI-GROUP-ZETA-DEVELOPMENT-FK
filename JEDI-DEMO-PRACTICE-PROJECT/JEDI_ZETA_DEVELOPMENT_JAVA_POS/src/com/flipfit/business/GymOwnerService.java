@@ -154,7 +154,10 @@ public class GymOwnerService implements GymOwnerInterface {
     public static void approveSlot(String slotId) {
         SlotMaster slot = getSlot(slotId);
         if (slot != null) {
-            slot.setApproved(true); 
+            slot.setApproved(true);
+            System.out.println("Slot with ID " + slotId + " has been approved.");
+        } else {
+            System.out.println("Unable to approve slot: no slot found with ID " + slotId + ".");
         }
     }
 
