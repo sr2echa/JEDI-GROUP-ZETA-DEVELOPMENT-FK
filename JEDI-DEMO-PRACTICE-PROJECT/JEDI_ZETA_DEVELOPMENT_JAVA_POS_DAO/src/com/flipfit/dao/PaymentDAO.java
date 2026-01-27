@@ -9,4 +9,6 @@ public interface PaymentDAO {
     public List<PaymentRecord> getPaymentHistory(String userId);
 
     public List<PaymentRecord> getCenterRevenue(String centerId);
+
+    public List<PaymentRecord> getPaymentsByBookingId(String bookingId);
 }

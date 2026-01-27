@@ -108,20 +108,18 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
     @Override
     public void updateSlotCapacity(String slotId, int newCapacity) {
         Connection conn = DBConnection.getConnection();
-        // Preserve booking state by adjusting availableSeats proportionally:
-        // If capacity increases by N, availableSeats increases by N
-        // If capacity decreases by N, availableSeats decreases by N (but won't go below currently booked)
-        String sql = "UPDATE Slot SET capacity = ?, availableSeats = availableSeats + (? - capacity) WHERE slotId = ?";
+        // availableSeats = availableSeats + (newCapacity - oldCapacity)
+        String sql = "UPDATE Slot SET availableSeats = availableSeats + (? - capacity), capacity = ? WHERE slotId = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, newCapacity);
             pstmt.setInt(2, newCapacity);
             pstmt.setString(3, slotId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to update slot capacity", e);
         }
     }
-    
+
     @Override
     public SlotMaster getSlotById(String slotId) {
         Connection conn = DBConnection.getConnection();
@@ -147,7 +145,7 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         }
         return null;
     }
-    
+
     @Override
     public void updateAvailableSeats(String slotId, int delta) {
         Connection conn = DBConnection.getConnection();

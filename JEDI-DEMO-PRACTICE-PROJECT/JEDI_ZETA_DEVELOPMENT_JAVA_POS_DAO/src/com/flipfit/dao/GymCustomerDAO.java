@@ -15,6 +15,8 @@ public interface GymCustomerDAO {
     public List<Booking> viewMyBookings(String userId);
 
     public void cancelBooking(String bookingId);
-    
+
     public Booking getBookingById(String bookingId);
+
+    public void updateBookingStatus(String bookingId, String status);
 }

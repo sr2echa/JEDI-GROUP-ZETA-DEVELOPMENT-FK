@@ -4,7 +4,6 @@ import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Role;
 import com.flipfit.bean.SlotMaster;
-import com.flipfit.dao.GymAdminDAO;
 import com.flipfit.dao.GymOwnerDAO;
 import com.flipfit.dao.impl.GymAdminDAOImpl;
 import com.flipfit.dao.impl.GymOwnerDAOImpl;
@@ -107,7 +106,8 @@ public class GymOwnerService implements GymOwnerInterface {
     }
 
     public static GymCenter getCenterById(String centerId) {
-        // Use admin DAO to fetch center by ID without relying on customer-approved filtering
+        // Use admin DAO to fetch center by ID without relying on customer-approved
+        // filtering
         return new GymAdminDAOImpl().getCenterById(centerId);
     }
 

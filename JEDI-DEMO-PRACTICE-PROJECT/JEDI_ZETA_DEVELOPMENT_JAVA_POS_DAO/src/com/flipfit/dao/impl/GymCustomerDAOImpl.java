@@ -25,7 +25,7 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymCenter WHERE isApproved = true";
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymCenter center = new GymCenter();
                 center.setCenterId(rs.getString("centerId"));
@@ -74,7 +74,7 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         Connection conn = DBConnection.getConnection();
         String checkSql = "SELECT availableSeats FROM Slot WHERE slotId = ?";
         String updateSql = "UPDATE Slot SET availableSeats = availableSeats - 1 WHERE slotId = ? AND availableSeats > 0";
-        String insertSql = "INSERT INTO Booking (bookingId, slotId, userId, status, createdAt) VALUES (?, ?, ?, ?, ?)";
+        String insertSql = "INSERT INTO Booking (bookingId, slotId, userId, status, bookingDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             conn.setAutoCommit(false);
@@ -94,8 +94,9 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
                                     insertStmt.setString(1, bookingId);
                                     insertStmt.setString(2, slotId);
                                     insertStmt.setString(3, userId);
-                                    insertStmt.setString(4, BookingStatus.CONFIRMED.toString());
-                                    insertStmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+                                    insertStmt.setString(4, BookingStatus.PENDING_PAYMENT.toString());
+                                    insertStmt.setDate(5, java.sql.Date.valueOf(date));
+                                    insertStmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
                                     insertStmt.executeUpdate();
 
                                     conn.commit();
@@ -163,13 +164,15 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
                     if (rs.next()) {
                         String slotId = rs.getString("slotId");
                         String currentStatus = rs.getString("status");
-                        
+
                         // Only cancel if not already cancelled
                         if (!BookingStatus.CANCELLED.toString().equals(currentStatus)) {
-                            // Update Slot
-                            try (PreparedStatement updateSlotStmt = conn.prepareStatement(updateSlotSql)) {
-                                updateSlotStmt.setString(1, slotId);
-                                updateSlotStmt.executeUpdate();
+                            // Only increment seats if it was CONFIRMED (actual occupancy)
+                            if (BookingStatus.CONFIRMED.toString().equals(currentStatus)) {
+                                try (PreparedStatement updateSlotStmt = conn.prepareStatement(updateSlotSql)) {
+                                    updateSlotStmt.setString(1, slotId);
+                                    updateSlotStmt.executeUpdate();
+                                }
                             }
 
                             // Update Booking
@@ -203,7 +206,7 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
             }
         }
     }
-    
+
     @Override
     public Booking getBookingById(String bookingId) {
         Connection conn = DBConnection.getConnection();
@@ -225,5 +228,18 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void updateBookingStatus(String bookingId, String status) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "UPDATE Booking SET status = ? WHERE bookingId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setString(2, bookingId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update booking status", e);
+        }
     }
 }

@@ -30,7 +30,7 @@ public class PaymentDAOImpl implements PaymentDAO {
             pstmt.setString(8, payment.getStatus().toString());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to save payment", e);
         }
     }
 
@@ -43,16 +43,7 @@ public class PaymentDAOImpl implements PaymentDAO {
             pstmt.setString(1, userId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    PaymentRecord p = new PaymentRecord();
-                    p.setTransactionId(rs.getString("transactionId"));
-                    p.setBookingId(rs.getString("bookingId"));
-                    p.setUserId(rs.getString("userId"));
-                    p.setCenterId(rs.getString("centerId"));
-                    p.setAmount(rs.getDouble("amount"));
-                    p.setMethod(rs.getString("method"));
-                    p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
-                    p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
-                    list.add(p);
+                    list.add(mapPayment(rs));
                 }
             }
         } catch (SQLException e) {
@@ -70,21 +61,43 @@ public class PaymentDAOImpl implements PaymentDAO {
             pstmt.setString(1, centerId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    PaymentRecord p = new PaymentRecord();
-                    p.setTransactionId(rs.getString("transactionId"));
-                    p.setBookingId(rs.getString("bookingId"));
-                    p.setUserId(rs.getString("userId"));
-                    p.setCenterId(rs.getString("centerId"));
-                    p.setAmount(rs.getDouble("amount"));
-                    p.setMethod(rs.getString("method"));
-                    p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
-                    p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
-                    list.add(p);
+                    list.add(mapPayment(rs));
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    @Override
+    public List<PaymentRecord> getPaymentsByBookingId(String bookingId) {
+        List<PaymentRecord> list = new ArrayList<>();
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Payment WHERE bookingId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, bookingId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapPayment(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    private PaymentRecord mapPayment(ResultSet rs) throws SQLException {
+        PaymentRecord p = new PaymentRecord();
+        p.setTransactionId(rs.getString("transactionId"));
+        p.setBookingId(rs.getString("bookingId"));
+        p.setUserId(rs.getString("userId"));
+        p.setCenterId(rs.getString("centerId"));
+        p.setAmount(rs.getDouble("amount"));
+        p.setMethod(rs.getString("method"));
+        p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+        p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
+        return p;
     }
 }

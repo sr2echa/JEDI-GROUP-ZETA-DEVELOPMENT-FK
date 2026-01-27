@@ -2,7 +2,6 @@ package com.flipfit.business;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
-import com.flipfit.bean.SlotMaster;
 import com.flipfit.dao.GymCustomerDAO;
 import com.flipfit.dao.impl.GymCustomerDAOImpl;
 import java.util.List;
@@ -12,9 +11,12 @@ public class CustomerService implements CustomerInterface {
 
     @Override
     public void bookWorkout(String userId, String slotId) {
-        boolean success = customerDAO.bookSlot(userId, slotId, "2024-01-01"); // Date placeholder
+        String bookingDate = java.time.LocalDate.now().plusDays(1).toString(); // Book for tomorrow
+        System.out.println("[INFO] Booking slot " + slotId + " for User: " + userId + " on " + bookingDate);
+
+        boolean success = customerDAO.bookSlot(userId, slotId, bookingDate);
         if (success) {
-            System.out.println("[SUCCESS] Booking successful for User: " + userId + " Slot: " + slotId);
+            System.out.println("[SUCCESS] Booking initiated! Please complete your payment to confirm.");
         } else {
             System.out.println("[ERROR] Booking failed. Slot might be full or not found.");
         }
@@ -42,13 +44,14 @@ public class CustomerService implements CustomerInterface {
         // Delegate to payment service and update booking status
         PaymentService paymentService = new PaymentService();
         boolean paymentSuccess = paymentService.processPayment(bookingId, amount, paymentMethod);
-        
+
         if (!paymentSuccess) {
             System.err.println("[ERROR] processPaymentAndConfirm: Payment failed for booking " + bookingId);
             return false;
         }
-        
-        // Payment succeeded, booking is already confirmed in the DB (status: CONFIRMED)
+
+        // Payment succeeded, update status to CONFIRMED
+        customerDAO.updateBookingStatus(bookingId, BookingStatus.CONFIRMED.toString());
         System.out.println("[SUCCESS] Payment and confirmation completed for booking " + bookingId);
         return true;
     }
@@ -68,9 +71,8 @@ public class CustomerService implements CustomerInterface {
         return true;
     }
 
-    public static Booking getBookingById(String bookingId) {
-        // Implementation for other services to use
-        return null;
+    public Booking getBookingById(String bookingId) {
+        return customerDAO.getBookingById(bookingId);
     }
 
     public static void cancelAllBookingsForSlot(String slotId) {
