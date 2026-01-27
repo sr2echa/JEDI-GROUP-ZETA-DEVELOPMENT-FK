@@ -4,6 +4,7 @@ import com.flipfit.business.UserInterface;
 import com.flipfit.business.UserService;
 import com.flipfit.bean.User;
 import com.flipfit.bean.Role;
+import com.flipfit.exception.*;
 import java.util.Scanner;
 
 public class FlipFitApplication {
@@ -68,22 +69,32 @@ public class FlipFitApplication {
         System.out.print("Password: ");
         String password = sc.nextLine();
 
-        // Roles are auto-detected by the service based on the account type
-        User loggedInUser = userService.login(username, password);
+        try {
+            // Roles are auto-detected by the service based on the account type
+            User loggedInUser = userService.login(username, password);
 
-        if (loggedInUser != null) {
-            Role role = loggedInUser.getRole();
+            if (loggedInUser != null) {
+                Role role = loggedInUser.getRole();
 
-            // Navigate based on auto-detected role
-            if (role == Role.ADMIN) {
-                admin.displayMenu(sc, loggedInUser);
-            } else if (role == Role.CUSTOMER) {
-                customer.displayMenu(sc, username);
-            } else if (role == Role.GYM_OWNER) {
-                owner.displayMenu(sc, username);
+                // Navigate based on auto-detected role
+                if (role == Role.ADMIN) {
+                    admin.displayMenu(sc, loggedInUser);
+                } else if (role == Role.CUSTOMER) {
+                    customer.displayMenu(sc, username);
+                } else if (role == Role.GYM_OWNER) {
+                    owner.displayMenu(sc, username);
+                }
             }
+        } catch (AuthenticationException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (ValidationException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (UserNotFoundException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("[ERROR] An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
         }
-        // If loggedInUser is null, UserService.login already printed the error message.
     }
 
     private static void handleChangePassword(Scanner sc) {
@@ -95,10 +106,20 @@ public class FlipFitApplication {
         System.out.print("Enter New Password: ");
         String newPwd = sc.nextLine();
 
-        if (userService.changePassword(username, oldPwd, newPwd)) {
-            System.out.println("[SYSTEM] Password updated successfully!");
-        } else {
-            System.out.println("[ERROR] Password update failed. Check credentials.");
+        try {
+            if (userService.changePassword(username, oldPwd, newPwd)) {
+                System.out.println("[SYSTEM] Password updated successfully!");
+            }
+        } catch (AuthenticationException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (ValidationException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (UserNotFoundException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (DatabaseException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("[ERROR] An unexpected error occurred: " + e.getMessage());
         }
     }
 }

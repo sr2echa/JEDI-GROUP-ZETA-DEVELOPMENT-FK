@@ -5,6 +5,7 @@ import com.flipfit.business.GymOwnerService;
 import com.flipfit.business.PaymentService;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
+import com.flipfit.exception.*;
 import java.util.Scanner;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -32,7 +33,11 @@ public class GymOwnerFlipFitMenu {
         String location = sc.next();
 
         // Updated call with new parameters
-        ownerService.onboardGymOwner(username, password, pan, gst, aadhar, location);
+        try {
+            ownerService.onboardGymOwner(username, password, pan, gst, aadhar, location);
+        } catch (ValidationException | DatabaseException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+        }
     }
 
     public void displayMenu(Scanner sc, String ownerId) {
@@ -62,15 +67,23 @@ public class GymOwnerFlipFitMenu {
                     String name = sc.next();
                     System.out.print("Enter Location: ");
                     String loc = sc.next();
-                    ownerService.addGymCenter(ownerId, name, loc);
+                    try {
+                        ownerService.addGymCenter(ownerId, name, loc);
+                    } catch (ValidationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
+                    }
                     break;
                 case 2:
-                    List<GymCenter> centers = ownerService.viewMyCenters(ownerId);
-                    if (centers.isEmpty()) {
-                        System.out.println("No centers found.");
-                    } else {
-                        centers.forEach(c -> System.out.println(" - ID: " + c.getCenterId() + " | Name: " + c.getName()
-                                + " [" + (c.isApproved() ? "ACTIVE" : "PENDING") + "]"));
+                    try {
+                        List<GymCenter> centers = ownerService.viewMyCenters(ownerId);
+                        if (centers.isEmpty()) {
+                            System.out.println("No centers found.");
+                        } else {
+                            centers.forEach(c -> System.out.println(" - ID: " + c.getCenterId() + " | Name: " + c.getName()
+                                    + " [" + (c.isApproved() ? "ACTIVE" : "PENDING") + "]"));
+                        }
+                    } catch (ValidationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
                     }
                     break;
                 case 3:
@@ -92,17 +105,23 @@ public class GymOwnerFlipFitMenu {
                         }
                     } catch (DateTimeParseException e) {
                         System.out.println("[ERROR] Invalid time format. Use HH:MM (e.g. 21:00)");
+                    } catch (ValidationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
                     }
                     break;
                 case 4:
                     System.out.print("Enter Center ID: ");
                     String viewCid = sc.next();
-                    List<SlotMaster> slots = ownerService.viewSlots(viewCid);
-                    if (slots.isEmpty()) {
-                        System.out.println("No slots found for this center.");
-                    } else {
-                        slots.forEach(s -> System.out.println(" - Slot ID: " + s.getSlotId() + " | Time: "
-                                + s.getStartTime() + " - " + s.getEndTime() + " | Capacity: " + s.getCapacity()));
+                    try {
+                        List<SlotMaster> slots = ownerService.viewSlots(viewCid);
+                        if (slots.isEmpty()) {
+                            System.out.println("No slots found for this center.");
+                        } else {
+                            slots.forEach(s -> System.out.println(" - Slot ID: " + s.getSlotId() + " | Time: "
+                                    + s.getStartTime() + " - " + s.getEndTime() + " | Capacity: " + s.getCapacity()));
+                        }
+                    } catch (ValidationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
                     }
                     break;
                 case 5:
@@ -111,7 +130,11 @@ public class GymOwnerFlipFitMenu {
                 case 6:
                     System.out.print("Enter Center ID to view revenue: ");
                     String centerId = sc.next();
-                    paymentService.displayGymRevenue(centerId, ownerId);
+                    try {
+                        paymentService.displayGymRevenue(centerId, ownerId);
+                    } catch (ValidationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
+                    }
                     break;
                 default:
                     System.out.println("Invalid Selection.");

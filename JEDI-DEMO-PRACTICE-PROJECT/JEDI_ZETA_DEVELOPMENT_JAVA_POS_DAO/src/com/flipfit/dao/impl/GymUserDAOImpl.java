@@ -69,46 +69,20 @@ public class GymUserDAOImpl implements GymUserDAO {
         return false;
     }
 
+    /**
+     * Retrieves a user by username for login purposes.
+     * Note: Password verification is handled in the service layer using hashed passwords.
+     * 
+     * @param username the username to look up
+     * @param password this parameter is kept for interface compatibility but is not used
+     *                 (password verification happens in service layer)
+     * @return the User object if found, null otherwise
+     */
     @Override
     public User loginUser(String username, String password) {
-        Connection conn = DBConnection.getConnection();
-        String sql = "SELECT * FROM User WHERE userId = ? AND password = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    String roleStr = rs.getString("role");
-                    Role role = Role.valueOf(roleStr);
-                    User user;
-                    if (role == Role.GYM_OWNER) {
-                        GymOwner owner = new GymOwner();
-                        // Set userId before calling loadGymOwnerDetails
-                        owner.setUserId(rs.getString("userId"));
-                        owner.setName(rs.getString("name"));
-                        owner.setEmail(rs.getString("email"));
-                        owner.setPassword(rs.getString("password"));
-                        owner.setRole(role);
-                        loadGymOwnerDetails(owner);
-                        return owner;
-                    } else if (role == Role.CUSTOMER) {
-                        user = new Customer();
-                    } else {
-                        // Admin or other
-                        user = new Admin();
-                    }
-                    user.setUserId(rs.getString("userId"));
-                    user.setName(rs.getString("name"));
-                    user.setEmail(rs.getString("email"));
-                    user.setPassword(rs.getString("password"));
-                    user.setRole(role);
-                    return user;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        // Password verification is now handled in service layer with hashed passwords
+        // This method just retrieves the user by username
+        return getUser(username);
     }
 
     private void loadGymOwnerDetails(GymOwner owner) {
@@ -130,9 +104,19 @@ public class GymUserDAOImpl implements GymUserDAO {
         }
     }
 
+    /**
+     * Changes a user's password.
+     * Both oldPassword and newPassword are expected to be hashed passwords.
+     * 
+     * @param username the username of the user
+     * @param oldPassword the current hashed password (for verification)
+     * @param newPassword the new hashed password to set
+     * @return true if password change successful, false otherwise
+     */
     @Override
     public boolean changePassword(String username, String oldPassword, String newPassword) {
         Connection conn = DBConnection.getConnection();
+        // Update password where userId matches and old password hash matches
         String sql = "UPDATE User SET password = ? WHERE userId = ? AND password = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, newPassword);

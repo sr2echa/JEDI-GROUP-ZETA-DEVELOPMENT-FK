@@ -9,7 +9,7 @@ import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.SlotMaster;
 import com.flipfit.bean.User;
-
+import com.flipfit.exception.*;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,72 +47,118 @@ public class AdminFlipFitMenu {
 
             switch (choice) {
                 case 1:
-                    List<GymOwner> pending = adminService.viewPendingGymOwners();
-                    if (pending.isEmpty()) {
-                        System.out.println("No pending gym owners.");
-                    } else {
-                        System.out.println("Pending Gym Owners:");
-                        pending.forEach(o -> System.out.println(
-                                " - ID: " + o.getUserId() + ", Name: " + o.getName() + ", PAN: " + o.getPanNumber()));
+                    try {
+                        List<GymOwner> pending = adminService.viewPendingGymOwners();
+                        if (pending.isEmpty()) {
+                            System.out.println("No pending gym owners.");
+                        } else {
+                            System.out.println("Pending Gym Owners:");
+                            pending.forEach(o -> System.out.println(
+                                    " - ID: " + o.getUserId() + ", Name: " + o.getName() + ", PAN: " + o.getPanNumber()));
+                        }
+                    } catch (DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
                     }
                     break;
                 case 2:
                     System.out.print("Enter Owner ID to approve: ");
-                    adminService.approveGymOwner(sc.next());
+                    try {
+                        adminService.approveGymOwner(sc.next());
+                    } catch (ValidationException | AuthorizationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
+                    }
                     break;
                 case 3:
-                    List<GymCenter> pendingCenters = adminService.viewPendingGymCenters();
-                    if (pendingCenters.isEmpty()) {
-                        System.out.println("No pending gym centers.");
-                    } else {
-                        System.out.println("Pending Gym Centers:");
-                        pendingCenters.forEach(c -> {
-                            User owner = userService.getUser(c.getOwnerId());
-                            String ownerName = owner != null ? owner.getName() : "Unknown";
-                            System.out.println(" - Center ID: " + c.getCenterId() +
-                                    ", Name: " + c.getName() +
-                                    ", City: " + c.getCity() +
-                                    ", Owner: " + ownerName + " (" + c.getOwnerId() + ")");
-                        });
+                    try {
+                        List<GymCenter> pendingCenters = adminService.viewPendingGymCenters();
+                        if (pendingCenters.isEmpty()) {
+                            System.out.println("No pending gym centers.");
+                        } else {
+                            System.out.println("Pending Gym Centers:");
+                            pendingCenters.forEach(c -> {
+                                try {
+                                    User owner = userService.getUser(c.getOwnerId());
+                                    String ownerName = owner != null ? owner.getName() : "Unknown";
+                                    System.out.println(" - Center ID: " + c.getCenterId() +
+                                            ", Name: " + c.getName() +
+                                            ", City: " + c.getCity() +
+                                            ", Owner: " + ownerName + " (" + c.getOwnerId() + ")");
+                                } catch (Exception e) {
+                                    System.out.println(" - Center ID: " + c.getCenterId() +
+                                            ", Name: " + c.getName() +
+                                            ", City: " + c.getCity() +
+                                            ", Owner: Unknown");
+                                }
+                            });
+                        }
+                    } catch (DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
                     }
                     break;
                 case 4:
                     System.out.print("Enter Center ID to approve: ");
-                    adminService.approveGymCenter(sc.next());
+                    try {
+                        adminService.approveGymCenter(sc.next());
+                    } catch (ValidationException | AuthorizationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
+                    }
                     break;
                 case 5: // View Pending Slots
-                    List<SlotMaster> pendingSlots = adminService.viewPendingSlots();
-                    if (pendingSlots.isEmpty()) {
-                        System.out.println("No pending slots.");
-                    } else {
-                        System.out.println("Pending Slots:");
-                        pendingSlots.forEach(s -> {
-                            GymCenter center = GymOwnerService.getCenterById(s.getCenterId());
-                            String ownerName = "Unknown";
-                            if (center != null) {
-                                User owner = userService.getUser(center.getOwnerId());
-                                if (owner != null) {
-                                    ownerName = owner.getName();
+                    try {
+                        List<SlotMaster> pendingSlots = adminService.viewPendingSlots();
+                        if (pendingSlots.isEmpty()) {
+                            System.out.println("No pending slots.");
+                        } else {
+                            System.out.println("Pending Slots:");
+                            pendingSlots.forEach(s -> {
+                                try {
+                                    GymCenter center = GymOwnerService.getCenterById(s.getCenterId());
+                                    String ownerName = "Unknown";
+                                    if (center != null) {
+                                        try {
+                                            User owner = userService.getUser(center.getOwnerId());
+                                            if (owner != null) {
+                                                ownerName = owner.getName();
+                                            }
+                                        } catch (Exception e) {
+                                            // Ignore
+                                        }
+                                    }
+                                    System.out.println(" - Slot ID: " + s.getSlotId() +
+                                            ", Center: " + s.getCenterId() +
+                                            ", Time: " + s.getStartTime() + "-" + s.getEndTime() +
+                                            ", Capacity: " + s.getCapacity() +
+                                            ", Owner: " + ownerName);
+                                } catch (Exception e) {
+                                    System.out.println(" - Slot ID: " + s.getSlotId() +
+                                            ", Center: " + s.getCenterId() +
+                                            ", Time: " + s.getStartTime() + "-" + s.getEndTime() +
+                                            ", Capacity: " + s.getCapacity());
                                 }
-                            }
-                            System.out.println(" - Slot ID: " + s.getSlotId() +
-                                    ", Center: " + s.getCenterId() +
-                                    ", Time: " + s.getStartTime() + "-" + s.getEndTime() +
-                                    ", Capacity: " + s.getCapacity() +
-                                    ", Owner: " + ownerName);
-                        });
+                            });
+                        }
+                    } catch (DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
                     }
                     break;
                 case 6: // Approve Slot
                     System.out.print("Enter Slot ID to approve: ");
-                    adminService.approveSlot(sc.next());
+                    try {
+                        adminService.approveSlot(sc.next());
+                    } catch (ValidationException | AuthorizationException | DatabaseException e) {
+                        System.out.println("[ERROR] " + e.getMessage());
+                    }
                     break;
                 case 7: // View Center Revenue
                     System.out.print("Enter Center ID to view revenue: ");
                     String centerId = sc.next();
                     // Admins can view any center's revenue
                     if (adminUser != null) {
-                        paymentService.displayGymRevenue(centerId, adminUser.getUserId(), adminUser);
+                        try {
+                            paymentService.displayGymRevenue(centerId, adminUser.getUserId(), adminUser);
+                        } catch (ValidationException | AuthorizationException | DatabaseException e) {
+                            System.out.println("[ERROR] " + e.getMessage());
+                        }
                     } else {
                         System.out.println("[ERROR] Admin user information not available.");
                     }
