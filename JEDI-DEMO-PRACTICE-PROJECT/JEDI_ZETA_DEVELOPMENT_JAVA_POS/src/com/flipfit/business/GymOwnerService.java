@@ -165,6 +165,11 @@ public class GymOwnerService implements GymOwnerInterface {
         return allSlots;
     }
 
+    public static GymCenter getCenter(String centerId) {
+        return centers.stream()
+                .filter(c -> c.getCenterId().equals(centerId))
+                .findFirst()
+                .orElse(null);
     /**
      * Verify if a gym center belongs to the specified owner
      * @param centerId The ID of the gym center
