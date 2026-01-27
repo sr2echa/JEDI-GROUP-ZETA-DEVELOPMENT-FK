@@ -71,6 +71,8 @@ public class PaymentService implements PaymentInterface {
                 SlotMaster slot = GymOwnerService.getSlot(b.getScheduleId());
                 if (slot != null) {
                     history.setCenterId(slot.getCenterId());
+                } else {
+                    System.out.println("[WARN] Slot not found for scheduleId: " + b.getScheduleId() + ". Payment history will not include centerId.");
                 }
             }
             globalPaymentHistory.add(history);
