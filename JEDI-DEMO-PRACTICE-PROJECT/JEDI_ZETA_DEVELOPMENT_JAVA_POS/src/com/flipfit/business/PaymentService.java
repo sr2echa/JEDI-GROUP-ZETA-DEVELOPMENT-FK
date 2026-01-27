@@ -242,7 +242,13 @@ public class PaymentService implements PaymentInterface {
             .collect(java.util.stream.Collectors.toList());
     }
 
-    public void displayGymRevenue(String centerId) {
+    public void displayGymRevenue(String centerId, String ownerId) {
+        // Verify that the owner actually owns this center
+        if (!GymOwnerService.verifyCenterOwnership(centerId, ownerId)) {
+            System.out.println("\n[ERROR] Unauthorized access: You do not own the gym center " + centerId);
+            return;
+        }
+
         List<com.flipfit.bean.PaymentRecord> gymPayments = globalPaymentHistory.stream()
                 .filter(r -> r.getCenterId() != null && r.getCenterId().equals(centerId))
                 .collect(java.util.stream.Collectors.toList());
