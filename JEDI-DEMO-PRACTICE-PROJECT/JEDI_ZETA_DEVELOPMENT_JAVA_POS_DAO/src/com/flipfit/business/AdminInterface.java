@@ -10,6 +10,8 @@ public interface AdminInterface {
     void approveGymOwner(String ownerId);
 
     void onboardCenter(GymCenter center);
+    
+    void approveGymCenter(String centerId);
 
     void approveSlot(String slotId);
     

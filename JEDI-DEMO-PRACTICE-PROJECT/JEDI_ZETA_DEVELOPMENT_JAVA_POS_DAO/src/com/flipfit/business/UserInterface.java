@@ -8,4 +8,8 @@ public interface UserInterface {
     boolean register(String username, String password, String email, int roleChoice);
 
     boolean changePassword(String username, String oldPassword, String newPassword);
+
+    User getUser(String userId);
+
+    java.util.List<User> getAllUsers();
 }
