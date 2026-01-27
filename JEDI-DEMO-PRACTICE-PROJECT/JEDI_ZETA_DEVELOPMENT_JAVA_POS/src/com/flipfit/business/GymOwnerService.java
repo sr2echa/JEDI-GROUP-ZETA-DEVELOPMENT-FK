@@ -120,7 +120,7 @@ public class GymOwnerService implements GymOwnerInterface {
     @Override
     public List<SlotMaster> viewSlots(String centerId) {
         return allSlots.stream()
-                .filter(s -> s.getCenterId().equals(centerId) && s.isApproved()) // Added isApproved check
+                .filter(s -> s.getCenterId().equals(centerId))
                 .collect(Collectors.toList());
     }
 
