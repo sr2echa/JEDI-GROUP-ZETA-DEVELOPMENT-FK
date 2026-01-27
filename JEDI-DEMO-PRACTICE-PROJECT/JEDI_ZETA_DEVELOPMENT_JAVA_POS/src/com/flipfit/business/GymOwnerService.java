@@ -169,6 +169,9 @@ public class GymOwnerService implements GymOwnerInterface {
      * @return true if the owner owns the center, false otherwise
      */
     public static boolean verifyCenterOwnership(String centerId, String ownerId) {
+        if (centerId == null || ownerId == null) {
+            return false;
+        }
         return centers.stream()
                 .anyMatch(c -> c.getCenterId().equals(centerId) && c.getOwnerId().equals(ownerId));
     }

@@ -245,7 +245,7 @@ public class PaymentService implements PaymentInterface {
     public void displayGymRevenue(String centerId, String ownerId) {
         // Verify that the owner actually owns this center
         if (!GymOwnerService.verifyCenterOwnership(centerId, ownerId)) {
-            System.out.println("\n[ERROR] Unauthorized access: You do not own the gym center " + centerId);
+            System.out.println("\n[ERROR] Access denied: Unable to view revenue for this center");
             return;
         }
 
