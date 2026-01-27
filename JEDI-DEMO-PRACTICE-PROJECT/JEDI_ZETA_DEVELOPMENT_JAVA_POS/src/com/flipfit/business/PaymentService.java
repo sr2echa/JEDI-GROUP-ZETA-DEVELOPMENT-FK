@@ -22,6 +22,15 @@ public class PaymentService implements PaymentInterface {
     }
     
     /**
+     * Generate a unique transaction ID with the given prefix
+     * @param prefix The prefix for the transaction ID (e.g., "TXN", "REF")
+     * @return A unique transaction ID string
+     */
+    private String generateTransactionId(String prefix) {
+        return prefix + UUID.randomUUID().toString().replace("-", "");
+    }
+    
+    /**
      * Get the payment method used for a booking
      */
     public String getPaymentMethod(String bookingId) {
@@ -38,7 +47,7 @@ public class PaymentService implements PaymentInterface {
         
         // Create payment record with PROCESSING status
         com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
-        String txnId = "TXN" + UUID.randomUUID().toString().replace("-", "");
+        String txnId = generateTransactionId("TXN");
         history.setTransactionId(txnId);
         history.setBookingId(bookingId);
         history.setAmount(amount);
@@ -149,7 +158,7 @@ public class PaymentService implements PaymentInterface {
             paymentRecords.remove(bookingId);
             paymentMethods.remove(bookingId);
             System.out.println("[SUCCESS] Refund processed successfully!");
-            System.out.println("Refund Transaction ID: REF" + UUID.randomUUID().toString().replace("-", ""));
+            System.out.println("Refund Transaction ID: " + generateTransactionId("REF"));
             System.out.println("[INFO] Refund will be credited to your original payment method within 5-7 business days.");
             return true;
         } else {
