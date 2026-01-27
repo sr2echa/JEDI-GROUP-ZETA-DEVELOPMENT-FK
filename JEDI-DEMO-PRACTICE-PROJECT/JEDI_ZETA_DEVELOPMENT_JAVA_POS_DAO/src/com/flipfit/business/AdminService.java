@@ -23,6 +23,12 @@ public class AdminService implements AdminInterface {
         // If this is meant to be admin-initiated onboarding:
         System.out.println("[ADMIN] Gym Center " + center.getName() + " onboarded successfully.");
     }
+    
+    @Override
+    public void approveGymCenter(String centerId) {
+        adminDAO.approveGymCenter(centerId);
+        System.out.println("[ADMIN] Gym Center " + centerId + " has been approved.");
+    }
 
     @Override
     public List<GymOwner> viewPendingGymOwners() {

@@ -29,10 +29,11 @@ public class AdminFlipFitMenu {
             System.out.println("1. View Pending Gym Owners");
             System.out.println("2. Approve Gym Owner");
             System.out.println("3. View Pending Centers");
-            System.out.println("4. Back to Main Menu");
+            System.out.println("4. Approve Gym Center");
             System.out.println("5. View Pending Slots");
             System.out.println("6. Approve Slot");
             System.out.println("7. View Center Revenue & History");
+            System.out.println("8. Back to Main Menu");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -60,11 +61,24 @@ public class AdminFlipFitMenu {
                     adminService.approveGymOwner(sc.next());
                     break;
                 case 3:
-                    System.out.println("[SYSTEM] Fetching pending centers...");
-                    // Logic for pending centers
+                    List<GymCenter> pendingCenters = adminService.viewPendingGymCenters();
+                    if (pendingCenters.isEmpty()) {
+                        System.out.println("No pending gym centers.");
+                    } else {
+                        System.out.println("Pending Gym Centers:");
+                        pendingCenters.forEach(c -> {
+                            User owner = userService.getUser(c.getOwnerId());
+                            String ownerName = owner != null ? owner.getName() : "Unknown";
+                            System.out.println(" - Center ID: " + c.getCenterId() +
+                                    ", Name: " + c.getName() +
+                                    ", City: " + c.getCity() +
+                                    ", Owner: " + ownerName + " (" + c.getOwnerId() + ")");
+                        });
+                    }
                     break;
                 case 4:
-                    back = true;
+                    System.out.print("Enter Center ID to approve: ");
+                    adminService.approveGymCenter(sc.next());
                     break;
                 case 5: // View Pending Slots
                     List<SlotMaster> pendingSlots = adminService.viewPendingSlots();
@@ -102,6 +116,9 @@ public class AdminFlipFitMenu {
                     } else {
                         System.out.println("[ERROR] Admin user information not available.");
                     }
+                    break;
+                case 8:
+                    back = true;
                     break;
                 default:
                     System.out.println("Invalid Selection.");
