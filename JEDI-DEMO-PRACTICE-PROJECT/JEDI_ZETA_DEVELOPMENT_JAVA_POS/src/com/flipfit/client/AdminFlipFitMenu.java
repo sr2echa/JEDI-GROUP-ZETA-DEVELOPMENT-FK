@@ -3,6 +3,9 @@ package com.flipfit.client;
 import com.flipfit.business.AdminInterface;
 import com.flipfit.business.AdminService;
 import com.flipfit.business.PaymentService;
+import com.flipfit.business.GymOwnerService;
+import com.flipfit.business.UserService;
+import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.SlotMaster;
 import com.flipfit.bean.User;
@@ -67,7 +70,22 @@ public class AdminFlipFitMenu {
                     if (pendingSlots.isEmpty()) {
                         System.out.println("No pending slots.");
                     } else {
-                        pendingSlots.forEach(s -> System.out.println("Slot ID: " + s.getSlotId() + " | Center: " + s.getCenterId()));
+                        System.out.println("Pending Slots:");
+                        pendingSlots.forEach(s -> {
+                            GymCenter center = GymOwnerService.getCenter(s.getCenterId());
+                            String ownerName = "Unknown";
+                            if (center != null) {
+                                User owner = UserService.getUser(center.getOwnerId());
+                                if (owner != null) {
+                                    ownerName = owner.getName();
+                                }
+                            }
+                            System.out.println(" - Slot ID: " + s.getSlotId() + 
+                                    ", Center: " + s.getCenterId() + 
+                                    ", Time: " + s.getStartTime() + "-" + s.getEndTime() + 
+                                    ", Capacity: " + s.getCapacity() + 
+                                    ", Owner: " + ownerName);
+                        });
                     }
                     break;
                 case 6: // Approve Slot

@@ -174,5 +174,18 @@ public class GymOwnerService implements GymOwnerInterface {
                 .filter(c -> Objects.equals(c.getCenterId(), centerId))
                 .findFirst()
                 .orElse(null);
+
+    /**
+     * Verify if a gym center belongs to the specified owner
+     * @param centerId The ID of the gym center
+     * @param ownerId The ID of the owner to verify
+     * @return true if the owner owns the center, false otherwise
+     */
+    public static boolean verifyCenterOwnership(String centerId, String ownerId) {
+        if (centerId == null || ownerId == null) {
+            return false;
+        }
+        return centers.stream()
+                .anyMatch(c -> c.getCenterId().equals(centerId) && c.getOwnerId().equals(ownerId));
     }
 }
