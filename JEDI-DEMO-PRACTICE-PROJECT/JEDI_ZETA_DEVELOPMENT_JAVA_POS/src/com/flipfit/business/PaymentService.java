@@ -2,6 +2,7 @@ package com.flipfit.business;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
+import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
 
 import java.util.ArrayList;
@@ -244,7 +245,7 @@ public class PaymentService implements PaymentInterface {
 
     public void displayGymRevenue(String centerId, String ownerId) {
         // Validate ownership before displaying revenue
-        com.flipfit.bean.GymCenter center = GymOwnerService.getCenterById(centerId);
+        GymCenter center = GymOwnerService.getCenterById(centerId);
         if (center == null) {
             System.out.println("[ERROR] Center not found with ID: " + centerId);
             return;

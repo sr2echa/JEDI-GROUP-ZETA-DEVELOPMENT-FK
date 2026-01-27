@@ -166,6 +166,9 @@ public class GymOwnerService implements GymOwnerInterface {
     }
 
     public static GymCenter getCenterById(String centerId) {
+        if (centerId == null) {
+            return null;
+        }
         return centers.stream()
                 .filter(c -> c.getCenterId().equals(centerId))
                 .findFirst()
