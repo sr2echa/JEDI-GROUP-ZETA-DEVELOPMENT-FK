@@ -78,7 +78,12 @@ public class PaymentService implements PaymentInterface {
             Booking b = CustomerService.getBookingById(bookingId);
             if (b != null) {
                 history.setUserId(b.getUserId());
-                history.setCenterId(GymOwnerService.getSlot(b.getScheduleId()).getCenterId());
+                SlotMaster slot = GymOwnerService.getSlot(b.getScheduleId());
+                if (slot != null) {
+                    history.setCenterId(slot.getCenterId());
+                } else {
+                    System.out.println("[WARN] Slot not found for scheduleId: " + b.getScheduleId() + ". Payment history will not include centerId.");
+                }
             }
             globalPaymentHistory.add(history);
             return true;
