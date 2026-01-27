@@ -283,9 +283,11 @@ public class PaymentService implements PaymentInterface {
         boolean isAdmin = user != null && user.getRole() == Role.ADMIN;
         
         // Validate ownership if not admin
-        if (!isAdmin && (center.getOwnerId() == null || !Objects.equals(center.getOwnerId(), ownerId))) {
-            System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
-            return;
+        if (!isAdmin) {
+            if (center.getOwnerId() == null || !Objects.equals(center.getOwnerId(), ownerId)) {
+                System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
+                return;
+            }
         }
         
         List<PaymentRecord> gymPayments = globalPaymentHistory.stream()

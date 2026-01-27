@@ -78,7 +78,11 @@ public class AdminFlipFitMenu {
                     System.out.print("Enter Center ID to view revenue: ");
                     String centerId = sc.next();
                     // Admins can view any center's revenue
-                    paymentService.displayGymRevenue(centerId, adminUser != null ? adminUser.getUserId() : "admin", adminUser);
+                    if (adminUser != null) {
+                        paymentService.displayGymRevenue(centerId, adminUser.getUserId(), adminUser);
+                    } else {
+                        System.out.println("[ERROR] Admin user information not available.");
+                    }
                     break;
                 default:
                     System.out.println("Invalid Selection.");
