@@ -255,7 +255,7 @@ public class PaymentService implements PaymentInterface {
         if (gymPayments.isEmpty()) {
             System.out.println("  No transactions found.");
         } else {
-            gymPayments.forEach(p -> System.out.println("  - TXN: " + p.getTransactionId() + " | Amount: ₹" + p.getAmount() + " | Status: " + p.getStatus() + " | Date: " + p.getTimestamp()));
+            gymPayments.forEach(p -> System.out.println("  - TXN: " + p.getTransactionId() + " | Amount: ₹" + p.getAmount() + " | Method: " + p.getMethod() + " | Status: " + p.getStatus() + " | Date: " + p.getTimestamp()));
         }
     }
 }
