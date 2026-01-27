@@ -38,7 +38,7 @@ public class PaymentService implements PaymentInterface {
         
         // Create payment record with PROCESSING status
         com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
-        String txnId = "TXN" + UUID.randomUUID().toString();
+        String txnId = "TXN" + UUID.randomUUID().toString().replace("-", "");
         history.setTransactionId(txnId);
         history.setBookingId(bookingId);
         history.setAmount(amount);
@@ -149,7 +149,7 @@ public class PaymentService implements PaymentInterface {
             paymentRecords.remove(bookingId);
             paymentMethods.remove(bookingId);
             System.out.println("[SUCCESS] Refund processed successfully!");
-            System.out.println("Refund Transaction ID: REF" + UUID.randomUUID().toString());
+            System.out.println("Refund Transaction ID: REF" + UUID.randomUUID().toString().replace("-", ""));
             System.out.println("[INFO] Refund will be credited to your original payment method within 5-7 business days.");
             return true;
         } else {
