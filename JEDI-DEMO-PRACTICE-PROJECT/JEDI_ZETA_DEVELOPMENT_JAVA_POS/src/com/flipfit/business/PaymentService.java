@@ -244,6 +244,12 @@ public class PaymentService implements PaymentInterface {
     }
 
     public void displayGymRevenue(String centerId, String ownerId) {
+        // Validate parameters
+        if (ownerId == null) {
+            System.out.println("[ERROR] Owner ID cannot be null.");
+            return;
+        }
+        
         // Validate ownership before displaying revenue
         GymCenter center = GymOwnerService.getCenterById(centerId);
         if (center == null) {
@@ -251,7 +257,7 @@ public class PaymentService implements PaymentInterface {
             return;
         }
         
-        if (!center.getOwnerId().equals(ownerId)) {
+        if (center.getOwnerId() == null || !center.getOwnerId().equals(ownerId)) {
             System.out.println("[ERROR] Access denied. You are not authorized to view revenue for this center.");
             return;
         }
