@@ -119,4 +119,30 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
             e.printStackTrace();
         }
     }
+    
+    @Override
+    public SlotMaster getSlotById(String slotId) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Slot WHERE slotId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, slotId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    SlotMaster slot = new SlotMaster();
+                    slot.setSlotId(rs.getString("slotId"));
+                    slot.setCenterId(rs.getString("centerId"));
+                    slot.setStartTime(rs.getTime("startTime").toLocalTime());
+                    slot.setEndTime(rs.getTime("endTime").toLocalTime());
+                    slot.setCapacity(rs.getInt("capacity"));
+                    slot.setAvailableSeats(rs.getInt("availableSeats"));
+                    slot.setPrice(rs.getDouble("price"));
+                    slot.setApproved(rs.getBoolean("isApproved"));
+                    return slot;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

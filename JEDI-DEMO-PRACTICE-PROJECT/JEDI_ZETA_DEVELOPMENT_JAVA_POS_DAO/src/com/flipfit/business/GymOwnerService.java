@@ -39,6 +39,7 @@ public class GymOwnerService implements GymOwnerInterface {
         GymOwner newOwner = new GymOwner();
         newOwner.setUserId(username);
         newOwner.setName(username);
+        newOwner.setEmail(username + "@flipfit.com");
         newOwner.setPassword(password);
         newOwner.setPanNumber(pan);
         newOwner.setGstNumber(gst);
@@ -47,10 +48,9 @@ public class GymOwnerService implements GymOwnerInterface {
         newOwner.setRole(Role.GYM_OWNER);
         newOwner.setApproved(false);
 
-        new UserService().register(username, password, username + "@flipfit.com", 1);
-        // The register above handles the basic user part, but we might need to update
-        // owner specific details
-        // In our DAO implementation, registerUser handles both.
+        // Register using the populated GymOwner instance
+        com.flipfit.dao.GymUserDAO userDAO = new com.flipfit.dao.impl.GymUserDAOImpl();
+        userDAO.registerUser(newOwner);
         System.out.println(
                 "[SYSTEM] Gym Owner registration successful for " + username + ". Waiting for admin approval.");
     }
@@ -96,18 +96,32 @@ public class GymOwnerService implements GymOwnerInterface {
 
     // These static methods are used by AdminService
     public static SlotMaster getSlot(String slotId) {
-        // We can use GymOwnerDAO or GymCustomerDAO
-        return new GymOwnerDAOImpl().viewSlots(null).stream() // This is not ideal, need a select-by-ID
-                .filter(s -> s.getSlotId().equals(slotId)).findFirst().orElse(null);
+        // Use the new getSlotById method from DAO
+        return new GymOwnerDAOImpl().getSlotById(slotId);
     }
 
     public static void updateAvailability(String slotId, int delta) {
-        // Implementation logic
+        // Update slot availability by delta
+        GymOwnerDAO ownerDAO = new GymOwnerDAOImpl();
+        SlotMaster slot = ownerDAO.getSlotById(slotId);
+        if (slot != null) {
+            int newAvailable = slot.getAvailableSeats() + delta;
+            // We need to update available seats directly - using a SQL update
+            java.sql.Connection conn = com.flipfit.utils.DBConnection.getConnection();
+            String sql = "UPDATE Slot SET availableSeats = availableSeats + ? WHERE slotId = ?";
+            try (java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, delta);
+                pstmt.setString(2, slotId);
+                pstmt.executeUpdate();
+            } catch (java.sql.SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static GymCenter getCenterById(String centerId) {
-        return new com.flipfit.dao.impl.GymCustomerDAOImpl().viewCenters().stream()
-                .filter(c -> c.getCenterId().equals(centerId)).findFirst().orElse(null);
+        // Use admin DAO to fetch center by ID without relying on customer-approved filtering
+        return new GymAdminDAOImpl().getCenterById(centerId);
     }
 
     public static List<GymOwner> getPendingOwners() {

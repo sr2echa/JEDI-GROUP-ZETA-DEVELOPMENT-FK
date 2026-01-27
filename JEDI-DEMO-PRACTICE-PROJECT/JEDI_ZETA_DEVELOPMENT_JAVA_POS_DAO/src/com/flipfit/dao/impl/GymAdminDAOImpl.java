@@ -120,4 +120,28 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         }
         return slots;
     }
+    
+    @Override
+    public GymCenter getCenterById(String centerId) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM GymCenter WHERE centerId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, centerId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    GymCenter center = new GymCenter();
+                    center.setCenterId(rs.getString("centerId"));
+                    center.setName(rs.getString("name"));
+                    center.setCity(rs.getString("city"));
+                    center.setAddress(rs.getString("address"));
+                    center.setOwnerId(rs.getString("ownerId"));
+                    center.setApproved(rs.getBoolean("isApproved"));
+                    return center;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

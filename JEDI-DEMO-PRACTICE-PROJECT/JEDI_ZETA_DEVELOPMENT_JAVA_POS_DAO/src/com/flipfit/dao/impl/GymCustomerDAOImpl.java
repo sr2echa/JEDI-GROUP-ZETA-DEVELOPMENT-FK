@@ -203,4 +203,27 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
             }
         }
     }
+    
+    @Override
+    public Booking getBookingById(String bookingId) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Booking WHERE bookingId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, bookingId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Booking booking = new Booking();
+                    booking.setBookingId(rs.getString("bookingId"));
+                    booking.setScheduleId(rs.getString("slotId"));
+                    booking.setUserId(rs.getString("userId"));
+                    booking.setStatus(BookingStatus.valueOf(rs.getString("status")));
+                    booking.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
+                    return booking;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

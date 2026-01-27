@@ -33,6 +33,24 @@ public class PaymentService implements PaymentInterface {
     public boolean processPayment(String bookingId, double amount, String paymentMethod) {
         System.out.println("\n--- Processing Payment ---");
 
+        // Fetch booking details to get userId and centerId
+        com.flipfit.dao.GymCustomerDAO customerDAO = new com.flipfit.dao.impl.GymCustomerDAOImpl();
+        Booking booking = customerDAO.getBookingById(bookingId);
+        
+        if (booking == null) {
+            System.err.println("[ERROR] Booking not found: " + bookingId);
+            return false;
+        }
+        
+        // Get slot details to find centerId
+        com.flipfit.dao.GymOwnerDAO ownerDAO = new com.flipfit.dao.impl.GymOwnerDAOImpl();
+        SlotMaster slot = ownerDAO.getSlotById(booking.getScheduleId());
+        
+        if (slot == null) {
+            System.err.println("[ERROR] Slot not found for booking: " + bookingId);
+            return false;
+        }
+
         PaymentRecord history = new PaymentRecord();
         String txnId = generateTransactionId("TXN");
         history.setTransactionId(txnId);
@@ -41,10 +59,10 @@ public class PaymentService implements PaymentInterface {
         history.setMethod(paymentMethod);
         history.setTimestamp(java.time.LocalDateTime.now());
         history.setStatus(com.flipfit.bean.PaymentStatus.COMPLETED);
-
-        // In a real app, we'd fetch userId and centerId from the booking
-        history.setUserId("dummyUser");
-        history.setCenterId("dummyCenter");
+        
+        // Set actual userId and centerId from booking
+        history.setUserId(booking.getUserId());
+        history.setCenterId(slot.getCenterId());
 
         paymentDAO.savePayment(history);
         System.out.println("[SUCCESS] Payment processed successfully! TXN: " + txnId);

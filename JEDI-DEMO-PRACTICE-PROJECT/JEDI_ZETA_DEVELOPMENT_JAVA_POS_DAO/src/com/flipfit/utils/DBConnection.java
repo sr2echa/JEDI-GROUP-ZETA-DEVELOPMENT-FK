@@ -1,5 +1,6 @@
 package com.flipfit.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,8 +15,29 @@ public class DBConnection {
         if (connection == null) {
             try {
                 Properties props = new Properties();
-                try (FileInputStream fis = new FileInputStream(".env")) {
-                    props.load(fis);
+                
+                // Try multiple locations for .env file
+                String[] envPaths = {
+                    ".env",  // Current working directory
+                    "JEDI-DEMO-PRACTICE-PROJECT/JEDI_ZETA_DEVELOPMENT_JAVA_POS_DAO/.env",  // Relative to project root
+                    System.getProperty("user.dir") + "/.env",  // Explicit cwd
+                    System.getProperty("user.dir") + "/JEDI-DEMO-PRACTICE-PROJECT/JEDI_ZETA_DEVELOPMENT_JAVA_POS_DAO/.env"
+                };
+                
+                boolean loaded = false;
+                for (String envPath : envPaths) {
+                    File envFile = new File(envPath);
+                    if (envFile.exists()) {
+                        try (FileInputStream fis = new FileInputStream(envFile)) {
+                            props.load(fis);
+                            loaded = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!loaded) {
+                    throw new RuntimeException("Could not find .env file. Tried locations: " + String.join(", ", envPaths));
                 }
 
                 String url = props.getProperty("DB_URL");
