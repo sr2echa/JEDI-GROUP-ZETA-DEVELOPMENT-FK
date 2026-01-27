@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
 
 public class PaymentService implements PaymentInterface {
     private static Map<String, Double> paymentRecords = new HashMap<>();
@@ -18,6 +19,15 @@ public class PaymentService implements PaymentInterface {
     public PaymentService() {
         // We'll need to access CustomerService to update booking status
         // This creates a circular dependency, so we'll handle it differently
+    }
+    
+    /**
+     * Generate a unique transaction ID with the given prefix
+     * @param prefix The prefix for the transaction ID (e.g., "TXN", "REF")
+     * @return A unique transaction ID string
+     */
+    private String generateTransactionId(String prefix) {
+        return prefix + UUID.randomUUID().toString().replace("-", "");
     }
     
     /**
@@ -37,7 +47,7 @@ public class PaymentService implements PaymentInterface {
         
         // Create payment record with PROCESSING status
         com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
-        String txnId = "TXN" + System.currentTimeMillis();
+        String txnId = generateTransactionId("TXN");
         history.setTransactionId(txnId);
         history.setBookingId(bookingId);
         history.setAmount(amount);
@@ -148,7 +158,7 @@ public class PaymentService implements PaymentInterface {
             paymentRecords.remove(bookingId);
             paymentMethods.remove(bookingId);
             System.out.println("[SUCCESS] Refund processed successfully!");
-            System.out.println("Refund Transaction ID: REF" + System.currentTimeMillis());
+            System.out.println("Refund Transaction ID: " + generateTransactionId("REF"));
             System.out.println("[INFO] Refund will be credited to your original payment method within 5-7 business days.");
             return true;
         } else {
@@ -242,7 +252,13 @@ public class PaymentService implements PaymentInterface {
             .collect(java.util.stream.Collectors.toList());
     }
 
-    public void displayGymRevenue(String centerId) {
+    public void displayGymRevenue(String centerId, String ownerId) {
+        // Verify that the owner actually owns this center
+        if (!GymOwnerService.verifyCenterOwnership(centerId, ownerId)) {
+            System.out.println("\n[ERROR] Access denied: Unable to view revenue for this center");
+            return;
+        }
+
         List<com.flipfit.bean.PaymentRecord> gymPayments = globalPaymentHistory.stream()
                 .filter(r -> r.getCenterId() != null && r.getCenterId().equals(centerId))
                 .collect(java.util.stream.Collectors.toList());
