@@ -35,6 +35,16 @@ public class PaymentService implements PaymentInterface {
         System.out.println("Amount: ₹" + amount);
         System.out.println("Payment Method: " + paymentMethod);
         
+        // Create payment record with PROCESSING status
+        com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
+        String txnId = "TXN" + System.currentTimeMillis();
+        history.setTransactionId(txnId);
+        history.setBookingId(bookingId);
+        history.setAmount(amount);
+        history.setMethod(paymentMethod);
+        history.setTimestamp(java.time.LocalDateTime.now());
+        history.setStatus(com.flipfit.bean.PaymentStatus.PROCESSING);
+        
         // Simulate payment gateway processing
         try {
             Thread.sleep(500); // Simulate network delay
@@ -52,14 +62,8 @@ public class PaymentService implements PaymentInterface {
             System.out.println("[SUCCESS] Payment processed successfully!");
             System.out.println("Transaction ID: TXN" + System.currentTimeMillis());
             
-            com.flipfit.bean.PaymentRecord history = new com.flipfit.bean.PaymentRecord();
-            String txnId = "TXN" + System.currentTimeMillis();
-            history.setTransactionId(txnId);
-            history.setBookingId(bookingId);
-            history.setAmount(amount);
-            history.setMethod(paymentMethod);
-            history.setTimestamp(java.time.LocalDateTime.now());
-
+            // Update status to COMPLETED
+            history.setStatus(com.flipfit.bean.PaymentStatus.COMPLETED);
 
             Booking b = CustomerService.getBookingById(bookingId);
             if (b != null) {
@@ -70,6 +74,8 @@ public class PaymentService implements PaymentInterface {
             return true;
         } else {
             System.out.println("[ERROR] Payment failed. Please try again.");
+            history.setStatus(com.flipfit.bean.PaymentStatus.CANCELLED);
+            globalPaymentHistory.add(history);
             return false;
         }
     }
@@ -132,6 +138,11 @@ public class PaymentService implements PaymentInterface {
         boolean refundSuccess = true;
         
         if (refundSuccess) {
+            // Update the payment record status to REFUNDED
+            globalPaymentHistory.stream()
+                .filter(p -> p.getBookingId().equals(bookingId))
+                .forEach(p -> p.setStatus(com.flipfit.bean.PaymentStatus.REFUNDED));
+            
             // Remove payment record (or mark as refunded)
             paymentRecords.remove(bookingId);
             paymentMethods.remove(bookingId);
@@ -243,7 +254,7 @@ public class PaymentService implements PaymentInterface {
         if (gymPayments.isEmpty()) {
             System.out.println("  No transactions found.");
         } else {
-            gymPayments.forEach(p -> System.out.println("  - TXN: " + p.getTransactionId() + " | Amount: ₹" + p.getAmount() + " | Date: " + p.getTimestamp()));
+            gymPayments.forEach(p -> System.out.println("  - TXN: " + p.getTransactionId() + " | Amount: ₹" + p.getAmount() + " | Status: " + p.getStatus() + " | Date: " + p.getTimestamp()));
         }
     }
 }
