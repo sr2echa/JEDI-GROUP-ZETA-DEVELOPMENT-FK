@@ -60,7 +60,7 @@ public class PaymentService implements PaymentInterface {
             paymentRecords.put(bookingId, amount);
             paymentMethods.put(bookingId, paymentMethod);
             System.out.println("[SUCCESS] Payment processed successfully!");
-            System.out.println("Transaction ID: TXN" + System.currentTimeMillis());
+            System.out.println("Transaction ID: " + txnId);
             
             // Update status to COMPLETED
             history.setStatus(com.flipfit.bean.PaymentStatus.COMPLETED);
@@ -141,7 +141,8 @@ public class PaymentService implements PaymentInterface {
             // Update the payment record status to REFUNDED
             globalPaymentHistory.stream()
                 .filter(p -> p.getBookingId().equals(bookingId))
-                .forEach(p -> p.setStatus(com.flipfit.bean.PaymentStatus.REFUNDED));
+                .findFirst()
+                .ifPresent(p -> p.setStatus(com.flipfit.bean.PaymentStatus.REFUNDED));
             
             // Remove payment record (or mark as refunded)
             paymentRecords.remove(bookingId);
