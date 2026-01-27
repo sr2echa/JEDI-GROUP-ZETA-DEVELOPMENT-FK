@@ -10,10 +10,28 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GymOwnerFlipFitMenu.
+ *
+ * @author Zeta
+ * @ClassName  "GymOwnerFlipFitMenu"
+ */
 public class GymOwnerFlipFitMenu {
+    
+    /** The owner service. */
     GymOwnerInterface ownerService = new GymOwnerService();
+    
+    /** The payment service. */
     PaymentService paymentService = new PaymentService();
 
+    /**
+     * Register gym owner.
+     *
+     * @param sc the sc
+     */
     public void registerGymOwner(Scanner sc) {
         System.out.println("\n--- Registration of the GymOwner ---");
         System.out.print("Enter Username: ");
@@ -23,7 +41,6 @@ public class GymOwnerFlipFitMenu {
         System.out.print("Enter PAN Number: ");
         String pan = sc.next();
         
-        // New Additions
         System.out.print("Enter GST Number: ");
         String gst = sc.next();
         System.out.print("Enter Aadhar Number: ");
@@ -31,10 +48,15 @@ public class GymOwnerFlipFitMenu {
         System.out.print("Enter Location: ");
         String location = sc.next();
 
-        // Updated call with new parameters
         ownerService.onboardGymOwner(username, password, pan, gst, aadhar, location);
     }
 
+    /**
+     * Display menu.
+     *
+     * @param sc the sc
+     * @param ownerId the owner id
+     */
     public void displayMenu(Scanner sc, String ownerId) {
         boolean back = false;
         while (!back) {

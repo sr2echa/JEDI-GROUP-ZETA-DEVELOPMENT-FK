@@ -1,5 +1,21 @@
 package com.flipfit.bean;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum BookingStatus.
+ *
+ * @author Zeta
+ * @ClassName  "BookingStatus"
+ */
 public enum BookingStatus {
-    CONFIRMED, WAITLISTED, CANCELLED, PENDING_PAYMENT
+    /** The confirmed. */
+    CONFIRMED, 
+    /** The waitlisted. */
+    WAITLISTED, 
+    /** The cancelled. */
+    CANCELLED, 
+    /** The pending payment. */
+    PENDING_PAYMENT
 }

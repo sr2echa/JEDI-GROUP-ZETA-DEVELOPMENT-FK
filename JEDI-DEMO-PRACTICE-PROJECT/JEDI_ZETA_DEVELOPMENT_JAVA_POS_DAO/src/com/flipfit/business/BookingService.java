@@ -7,9 +7,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BookingService.
+ *
+ * @author Zeta
+ * @ClassName  "BookingService"
+ */
 public class BookingService implements BookingInterface {
+    
+    /** The waitlist map. */
     private static Map<String, List<Booking>> waitlistMap = new HashMap<>();
 
+    /**
+     * Adds the customer to waitlist.
+     *
+     * @param userId the user id
+     * @param scheduleId the schedule id
+     * @return the int
+     */
     @Override
     public int addCustomerToWaitlist(String userId, String scheduleId) {
         Booking waitlistEntry = new Booking();
@@ -24,6 +42,12 @@ public class BookingService implements BookingInterface {
         return waitlist.size();
     }
 
+    /**
+     * Promote user from waitlist.
+     *
+     * @param scheduleId the schedule id
+     * @return the booking
+     */
     @Override
     public Booking promoteUserFromWaitlist(String scheduleId) {
         List<Booking> waitlist = waitlistMap.get(scheduleId);
@@ -31,7 +55,6 @@ public class BookingService implements BookingInterface {
         if (waitlist != null && !waitlist.isEmpty()) {
             Booking promotedBooking = waitlist.remove(0);
             promotedBooking.setBookingId("B_PROM" + System.currentTimeMillis());
-            // Set to PENDING_PAYMENT instead of CONFIRMED - payment required
             promotedBooking.setStatus(BookingStatus.PENDING_PAYMENT);
             promotedBooking.setCreatedAt(java.time.LocalDateTime.now());
 
@@ -42,6 +65,12 @@ public class BookingService implements BookingInterface {
         return null;
     }
 
+    /**
+     * Gets the user waitlist.
+     *
+     * @param userId the user id
+     * @return the user waitlist
+     */
     @Override
     public List<String> getUserWaitlist(String userId) {
         List<String> userWaitlistDetails = new ArrayList<>();

@@ -11,27 +11,62 @@ import com.flipfit.dao.impl.GymOwnerDAOImpl;
 import java.time.LocalTime;
 import java.util.List;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GymOwnerService.
+ *
+ * @author Zeta
+ * @ClassName  "GymOwnerService"
+ */
 public class GymOwnerService implements GymOwnerInterface {
+    
+    /** The owner DAO. */
     private GymOwnerDAO ownerDAO = new GymOwnerDAOImpl();
 
+    /**
+     * Gets the all centers.
+     *
+     * @return the all centers
+     */
     @Override
     public List<GymCenter> getAllCenters() {
-        // This is typically used by customers, but available here too
-        // For simplicity, returning all approved centers
         return new com.flipfit.dao.impl.GymCustomerDAOImpl().viewCenters();
     }
 
+    /**
+     * Manage slots.
+     *
+     * @param centerId the center id
+     */
     @Override
     public void manageSlots(String centerId) {
         System.out.println("[SYSTEM] Managing slots for Center: " + centerId);
     }
 
+    /**
+     * Update slot capacity.
+     *
+     * @param slotId the slot id
+     * @param newCapacity the new capacity
+     */
     @Override
     public void updateSlotCapacity(String slotId, int newCapacity) {
         ownerDAO.updateSlotCapacity(slotId, newCapacity);
         System.out.println("[SYSTEM] Slot " + slotId + " capacity updated to " + newCapacity);
     }
 
+    /**
+     * Onboard gym owner.
+     *
+     * @param username the username
+     * @param password the password
+     * @param pan the pan
+     * @param gst the gst
+     * @param aadhar the aadhar
+     * @param location the location
+     */
     @Override
     public void onboardGymOwner(String username, String password, String pan, String gst, String aadhar,
             String location) {
@@ -47,13 +82,19 @@ public class GymOwnerService implements GymOwnerInterface {
         newOwner.setRole(Role.GYM_OWNER);
         newOwner.setApproved(false);
 
-        // Register using the populated GymOwner instance
         com.flipfit.dao.GymUserDAO userDAO = new com.flipfit.dao.impl.GymUserDAOImpl();
         userDAO.registerUser(newOwner);
         System.out.println(
                 "[SYSTEM] Gym Owner registration successful for " + username + ". Waiting for admin approval.");
     }
 
+    /**
+     * Adds the gym center.
+     *
+     * @param ownerId the owner id
+     * @param centerName the center name
+     * @param location the location
+     */
     @Override
     public void addGymCenter(String ownerId, String centerName, String location) {
         GymCenter center = new GymCenter();
@@ -67,14 +108,28 @@ public class GymOwnerService implements GymOwnerInterface {
         System.out.println("[SYSTEM] Center added successfully. Pending admin approval.");
     }
 
+    /**
+     * View my centers.
+     *
+     * @param ownerId the owner id
+     * @return the list
+     */
     @Override
     public List<GymCenter> viewMyCenters(String ownerId) {
         return ownerDAO.viewMyCenters(ownerId);
     }
 
+    /**
+     * Adds the slot.
+     *
+     * @param centerId the center id
+     * @param startTime the start time
+     * @param endTime the end time
+     * @param capacity the capacity
+     * @return true, if successful
+     */
     @Override
     public boolean addSlot(String centerId, LocalTime startTime, LocalTime endTime, int capacity) {
-        // Simple overlap check can be added here or in DAO
         SlotMaster newSlot = new SlotMaster();
         newSlot.setSlotId("SLOT" + System.currentTimeMillis() % 10000);
         newSlot.setCenterId(centerId);
@@ -88,43 +143,81 @@ public class GymOwnerService implements GymOwnerInterface {
         return ownerDAO.addSlot(newSlot);
     }
 
+    /**
+     * View slots.
+     *
+     * @param centerId the center id
+     * @return the list
+     */
     @Override
     public List<SlotMaster> viewSlots(String centerId) {
         return ownerDAO.viewSlots(centerId);
     }
 
-    // These static methods are used by AdminService
+    /**
+     * Gets the slot.
+     *
+     * @param slotId the slot id
+     * @return the slot
+     */
     public static SlotMaster getSlot(String slotId) {
-        // Use the new getSlotById method from DAO
         return new GymOwnerDAOImpl().getSlotById(slotId);
     }
 
+    /**
+     * Update availability.
+     *
+     * @param slotId the slot id
+     * @param delta the delta
+     */
     public static void updateAvailability(String slotId, int delta) {
-        // Delegate to DAO layer
         GymOwnerDAO ownerDAO = new GymOwnerDAOImpl();
         ownerDAO.updateAvailableSeats(slotId, delta);
     }
 
+    /**
+     * Gets the center by id.
+     *
+     * @param centerId the center id
+     * @return the center
+     */
     public static GymCenter getCenterById(String centerId) {
-        // Use admin DAO to fetch center by ID without relying on customer-approved
-        // filtering
         return new GymAdminDAOImpl().getCenterById(centerId);
     }
 
+    /**
+     * Gets the pending owners.
+     *
+     * @return the list
+     */
     public static List<GymOwner> getPendingOwners() {
         return new GymAdminDAOImpl().viewPendingGymOwners();
     }
 
+    /**
+     * Approve owner.
+     *
+     * @param ownerId the owner id
+     */
     public static void approveOwner(String ownerId) {
         new GymAdminDAOImpl().approveGymOwner(ownerId);
     }
 
+    /**
+     * Approve slot.
+     *
+     * @param slotId the slot id
+     */
     public static void approveSlot(String slotId) {
         new GymAdminDAOImpl().approveSlot(slotId);
     }
 
+    /**
+     * Gets the all slots.
+     *
+     * @return the list
+     */
     public static List<SlotMaster> getAllSlots() {
-        // This is a bit inefficient but for compatibility:
         return new GymAdminDAOImpl().viewPendingSlots();
     }
 }

@@ -12,16 +12,42 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PaymentService.
+ *
+ * @author Zeta
+ * @ClassName  "PaymentService"
+ */
 public class PaymentService implements PaymentInterface {
+    
+    /** The payment DAO. */
     private PaymentDAO paymentDAO = new PaymentDAOImpl();
 
+    /**
+     * Instantiates a new payment service.
+     */
     public PaymentService() {
     }
 
+    /**
+     * Generate transaction id.
+     *
+     * @param prefix the prefix
+     * @return the string
+     */
     private String generateTransactionId(String prefix) {
         return prefix + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
+    /**
+     * Gets the payment method.
+     *
+     * @param bookingId the booking id
+     * @return the payment method
+     */
     public String getPaymentMethod(String bookingId) {
         List<PaymentRecord> payments = paymentDAO.getPaymentsByBookingId(bookingId);
         if (payments.isEmpty())
@@ -29,11 +55,18 @@ public class PaymentService implements PaymentInterface {
         return payments.get(0).getMethod();
     }
 
+    /**
+     * Process payment.
+     *
+     * @param bookingId the booking id
+     * @param amount the amount
+     * @param paymentMethod the payment method
+     * @return true, if successful
+     */
     @Override
     public boolean processPayment(String bookingId, double amount, String paymentMethod) {
         System.out.println("\n--- Processing Payment ---");
 
-        // Fetch booking details to get userId and centerId
         com.flipfit.dao.GymCustomerDAO customerDAO = new com.flipfit.dao.impl.GymCustomerDAOImpl();
         Booking booking = customerDAO.getBookingById(bookingId);
 
@@ -42,7 +75,6 @@ public class PaymentService implements PaymentInterface {
             return false;
         }
 
-        // Get slot details to find centerId
         com.flipfit.dao.GymOwnerDAO ownerDAO = new com.flipfit.dao.impl.GymOwnerDAOImpl();
         SlotMaster slot = ownerDAO.getSlotById(booking.getScheduleId());
 
@@ -60,7 +92,6 @@ public class PaymentService implements PaymentInterface {
         history.setTimestamp(java.time.LocalDateTime.now());
         history.setStatus(com.flipfit.bean.PaymentStatus.COMPLETED);
 
-        // Set actual userId and centerId from booking
         history.setUserId(booking.getUserId());
         history.setCenterId(slot.getCenterId());
 
@@ -69,6 +100,12 @@ public class PaymentService implements PaymentInterface {
         return true;
     }
 
+    /**
+     * Gets the pending amount.
+     *
+     * @param bookingId the booking id
+     * @return the pending amount
+     */
     @Override
     public double getPendingAmount(String bookingId) {
         com.flipfit.dao.GymCustomerDAO customerDAO = new com.flipfit.dao.impl.GymCustomerDAOImpl();
@@ -84,18 +121,37 @@ public class PaymentService implements PaymentInterface {
         return slot.getPrice() - getPaidAmount(bookingId);
     }
 
+    /**
+     * Process refund.
+     *
+     * @param bookingId the booking id
+     * @param amount the amount
+     * @return true, if successful
+     */
     @Override
     public boolean processRefund(String bookingId, double amount) {
         System.out.println("[SUCCESS] Refund of ₹" + amount + " initiated for Booking: " + bookingId);
         return true;
     }
 
+    /**
+     * Checks for payment.
+     *
+     * @param bookingId the booking id
+     * @return true, if successful
+     */
     @Override
     public boolean hasPayment(String bookingId) {
         return paymentDAO.getPaymentsByBookingId(bookingId).stream()
                 .anyMatch(p -> p.getStatus() == com.flipfit.bean.PaymentStatus.COMPLETED);
     }
 
+    /**
+     * Gets the paid amount.
+     *
+     * @param bookingId the booking id
+     * @return the paid amount
+     */
     @Override
     public double getPaidAmount(String bookingId) {
         return paymentDAO.getPaymentsByBookingId(bookingId).stream()
@@ -104,6 +160,14 @@ public class PaymentService implements PaymentInterface {
                 .sum();
     }
 
+    /**
+     * Process payment interactive.
+     *
+     * @param sc the sc
+     * @param bookingId the booking id
+     * @param amount the amount
+     * @return true, if successful
+     */
     public boolean processPaymentInteractive(Scanner sc, String bookingId, double amount) {
         System.out.println("\n--- Interactive Payment ---");
         System.out.println("Booking ID: " + bookingId);
@@ -144,17 +208,35 @@ public class PaymentService implements PaymentInterface {
         return processPayment(bookingId, amount, paymentMethod);
     }
 
+    /**
+     * Gets the customer history.
+     *
+     * @param userId the user id
+     * @return the customer history
+     */
     public List<PaymentRecord> getCustomerHistory(String userId) {
         return paymentDAO.getPaymentHistory(userId);
     }
 
+    /**
+     * Display gym revenue.
+     *
+     * @param centerId the center id
+     * @param ownerId the owner id
+     */
     public void displayGymRevenue(String centerId, String ownerId) {
-        // Compatibility overload
         List<PaymentRecord> list = paymentDAO.getCenterRevenue(centerId);
         double total = list.stream().mapToDouble(PaymentRecord::getAmount).sum();
         System.out.println("Total Revenue for " + centerId + ": ₹" + total);
     }
 
+    /**
+     * Display gym revenue.
+     *
+     * @param centerId the center id
+     * @param ownerId the owner id
+     * @param user the user
+     */
     public void displayGymRevenue(String centerId, String ownerId, User user) {
         if (user == null) {
             System.out.println("[ERROR] Unauthorized: User context missing.");

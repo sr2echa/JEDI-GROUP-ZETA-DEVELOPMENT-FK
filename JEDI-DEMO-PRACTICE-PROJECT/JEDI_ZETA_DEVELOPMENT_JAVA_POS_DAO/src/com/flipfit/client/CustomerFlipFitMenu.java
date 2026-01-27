@@ -7,12 +7,34 @@ import com.flipfit.bean.Booking;
 import java.util.List;
 import java.util.Scanner;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CustomerFlipFitMenu.
+ *
+ * @author Zeta
+ * @ClassName  "CustomerFlipFitMenu"
+ */
 public class CustomerFlipFitMenu {
+    
+    /** The customer service. */
     CustomerInterface customerService = new CustomerService();
+    
+    /** The owner service. */
     GymOwnerInterface ownerService = new GymOwnerService();
+    
+    /** The user service. */
     UserInterface userService = new UserService();
+    
+    /** The payment service. */
     PaymentService paymentService = new PaymentService();
 
+    /**
+     * Register customer.
+     *
+     * @param sc the sc
+     */
     public void registerCustomer(Scanner sc) {
         System.out.println("\n--- Registration ---");
         System.out.print("Username: ");
@@ -22,11 +44,21 @@ public class CustomerFlipFitMenu {
         System.out.print("Password: ");
         String password = sc.next();
 
-        if (userService.register(username, password, email, 2)) {
-            System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
+        try {
+            if (userService.register(username, password, email, 2)) {
+                System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Display menu.
+     *
+     * @param sc the sc
+     * @param userId the user id
+     */
     public void displayMenu(Scanner sc, String userId) {
         boolean back = false;
         while (!back) {
@@ -80,8 +112,13 @@ public class CustomerFlipFitMenu {
         }
     }
 
+    /**
+     * Browse and book.
+     *
+     * @param sc the sc
+     * @param userId the user id
+     */
     private void browseAndBook(Scanner sc, String userId) {
-        // 1. Show all approved centers
         List<GymCenter> centers = ownerService.getAllCenters();
         if (centers.isEmpty()) {
             System.out.println("No gym centers currently available.");
@@ -95,7 +132,6 @@ public class CustomerFlipFitMenu {
         System.out.print("\nEnter Center ID to view slots: ");
         String centerId = sc.next();
 
-        // 2. Show slots for that center
         List<SlotMaster> slots = ownerService.viewSlots(centerId);
         if (slots.isEmpty()) {
             System.out.println("No slots found for this center.");
@@ -111,7 +147,6 @@ public class CustomerFlipFitMenu {
         System.out.print("\nEnter Slot ID to book: ");
         String slotId = sc.next();
 
-        // 3. Get slot details for payment
         SlotMaster selectedSlot = slots.stream()
                 .filter(s -> s.getSlotId().equals(slotId))
                 .findFirst()
@@ -122,18 +157,24 @@ public class CustomerFlipFitMenu {
             return;
         }
 
-        // 4. Create booking and immediately request payment
-        customerService.bookWorkout(userId, slotId);
-        
-        // Get the latest booking that was just created
-        List<Booking> pending = customerService.getPendingPayments(userId);
-        if (!pending.isEmpty()) {
-            Booking latestBooking = pending.get(pending.size() - 1);
-            // Immediately process payment - no option to defer
-            processPaymentForBooking(sc, latestBooking, selectedSlot.getPrice());
+        try {
+            customerService.bookWorkout(userId, slotId);
+            List<Booking> pending = customerService.getPendingPayments(userId);
+            if (!pending.isEmpty()) {
+                Booking latestBooking = pending.get(pending.size() - 1);
+                processPaymentForBooking(sc, latestBooking, selectedSlot.getPrice());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Handle pending payments.
+     *
+     * @param sc the sc
+     * @param userId the user id
+     */
     private void handlePendingPayments(Scanner sc, String userId) {
         List<Booking> pendingBookings = customerService.getPendingPayments(userId);
         
@@ -163,7 +204,6 @@ public class CustomerFlipFitMenu {
             return;
         }
 
-        // Find the booking
         Booking selectedBooking = pendingBookings.stream()
                 .filter(b -> b.getBookingId().equals(input))
                 .findFirst()
@@ -183,22 +223,26 @@ public class CustomerFlipFitMenu {
         processPaymentForBooking(sc, selectedBooking, slot.getPrice());
     }
 
+    /**
+     * Process payment for booking.
+     *
+     * @param sc the sc
+     * @param booking the booking
+     * @param amount the amount
+     */
     private void processPaymentForBooking(Scanner sc, Booking booking, double amount) {
         System.out.println("\n--- Payment Required ---");
         System.out.println("Booking ID: " + booking.getBookingId());
         System.out.println("Amount: ₹" + amount);
         
         if (paymentService.processPaymentInteractive(sc, booking.getBookingId(), amount)) {
-            // Payment successful, now confirm the booking
             String paymentMethod = paymentService.getPaymentMethod(booking.getBookingId());
             if (customerService.processPaymentAndConfirm(booking.getBookingId(), amount, paymentMethod)) {
                 System.out.println("\n[SUCCESS] Your booking has been confirmed!");
             }
         } else {
             System.out.println("\n[ERROR] Payment was not completed. Booking has been cancelled.");
-            // Cancel the booking if payment fails
             customerService.cancelPendingBooking(booking.getBookingId());
-            // If it was from waitlist, we need to free up the slot for next person
             if (booking.getBookingId().startsWith("B_PROM")) {
                 GymOwnerService.updateAvailability(booking.getScheduleId(), 1);
             }

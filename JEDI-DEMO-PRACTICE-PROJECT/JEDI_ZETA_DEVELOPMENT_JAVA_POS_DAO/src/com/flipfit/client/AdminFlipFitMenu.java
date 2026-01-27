@@ -13,15 +13,41 @@ import com.flipfit.bean.User;
 import java.util.List;
 import java.util.Scanner;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AdminFlipFitMenu.
+ *
+ * @author Zeta
+ * @ClassName  "AdminFlipFitMenu"
+ */
 public class AdminFlipFitMenu {
+    
+    /** The admin service. */
     AdminInterface adminService = new AdminService();
+    
+    /** The payment service. */
     PaymentService paymentService = new PaymentService();
+    
+    /** The user service. */
     UserService userService = new UserService();
 
+    /**
+     * Display menu.
+     *
+     * @param sc the sc
+     */
     public void displayMenu(Scanner sc) {
         displayMenu(sc, null);
     }
 
+    /**
+     * Display menu.
+     *
+     * @param sc the sc
+     * @param adminUser the admin user
+     */
     public void displayMenu(Scanner sc, User adminUser) {
         boolean back = false;
         while (!back) {
@@ -80,7 +106,7 @@ public class AdminFlipFitMenu {
                     System.out.print("Enter Center ID to approve: ");
                     adminService.approveGymCenter(sc.next());
                     break;
-                case 5: // View Pending Slots
+                case 5: 
                     List<SlotMaster> pendingSlots = adminService.viewPendingSlots();
                     if (pendingSlots.isEmpty()) {
                         System.out.println("No pending slots.");
@@ -103,14 +129,13 @@ public class AdminFlipFitMenu {
                         });
                     }
                     break;
-                case 6: // Approve Slot
+                case 6: 
                     System.out.print("Enter Slot ID to approve: ");
                     adminService.approveSlot(sc.next());
                     break;
-                case 7: // View Center Revenue
+                case 7: 
                     System.out.print("Enter Center ID to view revenue: ");
                     String centerId = sc.next();
-                    // Admins can view any center's revenue
                     if (adminUser != null) {
                         paymentService.displayGymRevenue(centerId, adminUser.getUserId(), adminUser);
                     } else {

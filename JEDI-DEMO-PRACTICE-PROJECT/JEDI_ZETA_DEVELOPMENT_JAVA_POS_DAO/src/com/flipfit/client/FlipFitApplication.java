@@ -6,9 +6,25 @@ import com.flipfit.bean.User;
 import com.flipfit.bean.Role;
 import java.util.Scanner;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FlipFitApplication.
+ *
+ * @author Zeta
+ * @ClassName  "FlipFitApplication"
+ */
 public class FlipFitApplication {
+    
+    /** The user service. */
     private static UserInterface userService = new UserService();
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean exit = false;
@@ -29,7 +45,7 @@ public class FlipFitApplication {
             int choice = 0;
             if (sc.hasNextInt()) {
                 choice = sc.nextInt();
-                sc.nextLine(); // consume newline
+                sc.nextLine(); 
             } else {
                 sc.nextLine();
                 System.out.println("Invalid input. Please enter a number.");
@@ -60,6 +76,14 @@ public class FlipFitApplication {
         sc.close();
     }
 
+    /**
+     * Handle login.
+     *
+     * @param sc the sc
+     * @param admin the admin
+     * @param customer the customer
+     * @param owner the owner
+     */
     private static void handleLogin(Scanner sc, AdminFlipFitMenu admin, CustomerFlipFitMenu customer,
             GymOwnerFlipFitMenu owner) {
         System.out.println("\n--- Login ---");
@@ -68,24 +92,29 @@ public class FlipFitApplication {
         System.out.print("Password: ");
         String password = sc.nextLine();
 
-        // Roles are auto-detected by the service based on the account type
-        User loggedInUser = userService.login(username, password);
+        try {
+            User loggedInUser = userService.login(username, password);
 
-        if (loggedInUser != null) {
-            Role role = loggedInUser.getRole();
-
-            // Navigate based on auto-detected role
-            if (role == Role.ADMIN) {
-                admin.displayMenu(sc, loggedInUser);
-            } else if (role == Role.CUSTOMER) {
-                customer.displayMenu(sc, username);
-            } else if (role == Role.GYM_OWNER) {
-                owner.displayMenu(sc, username);
+            if (loggedInUser != null) {
+                Role role = loggedInUser.getRole();
+                if (role == Role.ADMIN) {
+                    admin.displayMenu(sc, loggedInUser);
+                } else if (role == Role.CUSTOMER) {
+                    customer.displayMenu(sc, username);
+                } else if (role == Role.GYM_OWNER) {
+                    owner.displayMenu(sc, username);
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        // If loggedInUser is null, UserService.login already printed the error message.
     }
 
+    /**
+     * Handle change password.
+     *
+     * @param sc the sc
+     */
     private static void handleChangePassword(Scanner sc) {
         System.out.println("\n--- Change Password ---");
         System.out.print("Enter Username: ");

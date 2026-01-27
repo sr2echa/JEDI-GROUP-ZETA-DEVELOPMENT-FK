@@ -1,5 +1,14 @@
 package com.flipfit.bean;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GymCenter.
+ *
+ * @author Zeta
+ * @ClassName  "GymCenter"
+ */
 public class GymCenter {
     private String centerId;
     private String name;
@@ -8,51 +17,87 @@ public class GymCenter {
     private String ownerId;
     private boolean isApproved;
 
-    public String getCenterId() {
-        return centerId;
-    }
+    /**
+     * Gets the center id.
+     *
+     * @return the center id
+     */
+    public String getCenterId() { return centerId; }
 
-    public void setCenterId(String centerId) {
-        this.centerId = centerId;
-    }
+    /**
+     * Sets the center id.
+     *
+     * @param centerId the new center id
+     */
+    public void setCenterId(String centerId) { this.centerId = centerId; }
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
+    public String getName() { return name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    /**
+     * Sets the name.
+     *
+     * @param name the new name
+     */
+    public void setName(String name) { this.name = name; }
 
-    public String getCity() {
-        return city;
-    }
+    /**
+     * Gets the city.
+     *
+     * @return the city
+     */
+    public String getCity() { return city; }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+    /**
+     * Sets the city.
+     *
+     * @param city the new city
+     */
+    public void setCity(String city) { this.city = city; }
 
-    public String getAddress() {
-        return address;
-    }
+    /**
+     * Gets the address.
+     *
+     * @return the address
+     */
+    public String getAddress() { return address; }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    /**
+     * Sets the address.
+     *
+     * @param address the new address
+     */
+    public void setAddress(String address) { this.address = address; }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
+    /**
+     * Gets the owner id.
+     *
+     * @return the owner id
+     */
+    public String getOwnerId() { return ownerId; }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
+    /**
+     * Sets the owner id.
+     *
+     * @param ownerId the new owner id
+     */
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
 
-    public boolean isApproved() {
-        return isApproved;
-    }
+    /**
+     * Checks if is approved.
+     *
+     * @return true, if is approved
+     */
+    public boolean isApproved() { return isApproved; }
 
-    public void setApproved(boolean approved) {
-        isApproved = approved;
-    }
+    /**
+     * Sets the approved.
+     *
+     * @param approved the new approved
+     */
+    public void setApproved(boolean approved) { isApproved = approved; }
 }

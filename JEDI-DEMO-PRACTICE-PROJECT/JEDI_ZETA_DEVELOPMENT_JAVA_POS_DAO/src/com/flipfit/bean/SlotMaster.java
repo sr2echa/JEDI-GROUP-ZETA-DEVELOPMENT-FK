@@ -1,80 +1,137 @@
 package com.flipfit.bean;
-
 import java.time.LocalTime;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SlotMaster.
+ *
+ * @author Zeta
+ * @ClassName  "SlotMaster"
+ */
 public class SlotMaster {
     private String slotId;
     private String centerId;
     private LocalTime startTime;
     private LocalTime endTime;
-    private int capacity = 5; // Default capacity for testing
+    private int capacity = 5; 
     private int availableSeats = 5;
     private double price = 500.0;
     private boolean isApproved = false;
     
-    public String getSlotId() {
-        return slotId;
-    }
+    /**
+     * Gets the slot id.
+     *
+     * @return the slot id
+     */
+    public String getSlotId() { return slotId; }
 
-    public void setSlotId(String slotId) {
-        this.slotId = slotId;
-    }
+    /**
+     * Sets the slot id.
+     *
+     * @param slotId the new slot id
+     */
+    public void setSlotId(String slotId) { this.slotId = slotId; }
 
-    public String getCenterId() {
-        return centerId;
-    }
+    /**
+     * Gets the center id.
+     *
+     * @return the center id
+     */
+    public String getCenterId() { return centerId; }
 
-    public void setCenterId(String centerId) {
-        this.centerId = centerId;
-    }
+    /**
+     * Sets the center id.
+     *
+     * @param centerId the new center id
+     */
+    public void setCenterId(String centerId) { this.centerId = centerId; }
 
-    public LocalTime getStartTime() {
-        return startTime;
-    }
+    /**
+     * Gets the start time.
+     *
+     * @return the start time
+     */
+    public LocalTime getStartTime() { return startTime; }
 
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
+    /**
+     * Sets the start time.
+     *
+     * @param startTime the new start time
+     */
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 
-    public LocalTime getEndTime() {
-        return endTime;
-    }
+    /**
+     * Gets the end time.
+     *
+     * @return the end time
+     */
+    public LocalTime getEndTime() { return endTime; }
 
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
+    /**
+     * Sets the end time.
+     *
+     * @param endTime the new end time
+     */
+    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
 
-    public int getCapacity() {
-        return capacity;
-    }
+    /**
+     * Gets the capacity.
+     *
+     * @return the capacity
+     */
+    public int getCapacity() { return capacity; }
 
+    /**
+     * Sets the capacity.
+     *
+     * @param capacity the new capacity
+     */
     public void setCapacity(int capacity) {
         this.capacity = capacity;
         this.availableSeats = capacity;
     }
 
-    public int getAvailableSeats() {
-        return availableSeats;
-    }
+    /**
+     * Gets the available seats.
+     *
+     * @return the available seats
+     */
+    public int getAvailableSeats() { return availableSeats; }
 
-    public void setAvailableSeats(int availableSeats) {
-        this.availableSeats = availableSeats;
-    }
+    /**
+     * Sets the available seats.
+     *
+     * @param availableSeats the new available seats
+     */
+    public void setAvailableSeats(int availableSeats) { this.availableSeats = availableSeats; }
     
-    public double getPrice() {
-    	return price;
-    }
+    /**
+     * Gets the price.
+     *
+     * @return the price
+     */
+    public double getPrice() { return price; }
     
-    public void setPrice(double price)
-    {
-    	this.price = price;
-    }
+    /**
+     * Sets the price.
+     *
+     * @param price the new price
+     */
+    public void setPrice(double price) { this.price = price; }
 
-    public boolean isApproved() {
-        return isApproved;
-    }
+    /**
+     * Checks if is approved.
+     *
+     * @return true, if is approved
+     */
+    public boolean isApproved() { return isApproved; }
 
-    public void setApproved(boolean approved) {
-        isApproved = approved;
-    }
+    /**
+     * Sets the approved.
+     *
+     * @param approved the new approved
+     */
+    public void setApproved(boolean approved) { isApproved = approved; }
 }

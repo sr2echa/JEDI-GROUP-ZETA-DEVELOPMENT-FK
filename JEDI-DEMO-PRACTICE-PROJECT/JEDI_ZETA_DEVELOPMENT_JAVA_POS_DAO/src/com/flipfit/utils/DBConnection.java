@@ -6,9 +6,25 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DBConnection.
+ *
+ * @author Zeta
+ * @ClassName  "DBConnection"
+ */
 public class DBConnection {
+    
+    /** The connection. */
     private static Connection connection = null;
 
+    /**
+     * Gets the connection.
+     *
+     * @return the connection
+     */
     public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
