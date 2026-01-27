@@ -71,7 +71,7 @@ public class CustomerFlipFitMenu {
                         System.out.println("\n[INFO] No payment history found.");
                     } else {
                         System.out.println("\n--- Your Payment History ---");
-                        history.forEach(h -> System.out.println("TXN ID: " + h.getTransactionId() + " | Amount: ₹" + h.getAmount() + " | Date: " + h.getTimestamp()));
+                        history.forEach(h -> System.out.println("TXN ID: " + h.getTransactionId() + " | Amount: ₹" + h.getAmount() + " | Status: " + h.getStatus() + " | Date: " + h.getTimestamp()));
                     }
                     break;
                 default:

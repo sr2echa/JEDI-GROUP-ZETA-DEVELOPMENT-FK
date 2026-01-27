@@ -9,6 +9,7 @@ public class PaymentRecord {
     private double amount;
     private String method;
     private LocalDateTime timestamp;
+    private PaymentStatus status;
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -26,4 +27,6 @@ public class PaymentRecord {
     public String getBookingId() { return bookingId; }
     public void setMethod(String method) { this.method = method; }
     public String getMethod() { return method; }
+    public PaymentStatus getStatus() { return status; }
+    public void setStatus(PaymentStatus status) { this.status = status; }
 }
