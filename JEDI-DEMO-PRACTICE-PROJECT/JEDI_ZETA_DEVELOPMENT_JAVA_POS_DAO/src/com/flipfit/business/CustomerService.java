@@ -39,14 +39,27 @@ public class CustomerService implements CustomerInterface {
 
     @Override
     public boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod) {
-        // Implementation logic
+        // Delegate to payment service and update booking status
+        PaymentService paymentService = new PaymentService();
+        boolean paymentSuccess = paymentService.processPayment(bookingId, amount, paymentMethod);
+        
+        if (!paymentSuccess) {
+            System.err.println("[ERROR] processPaymentAndConfirm: Payment failed for booking " + bookingId);
+            return false;
+        }
+        
+        // Payment succeeded, booking is already confirmed in the DB (status: CONFIRMED)
+        System.out.println("[SUCCESS] Payment and confirmation completed for booking " + bookingId);
         return true;
     }
 
     @Override
     public List<Booking> getPendingPayments(String userId) {
-        // Returning empty list for now, integrate with DAO if needed
-        return java.util.Collections.emptyList();
+        // Get bookings with PENDING_PAYMENT status
+        List<Booking> allBookings = customerDAO.viewMyBookings(userId);
+        return allBookings.stream()
+                .filter(b -> b.getStatus() == BookingStatus.PENDING_PAYMENT)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

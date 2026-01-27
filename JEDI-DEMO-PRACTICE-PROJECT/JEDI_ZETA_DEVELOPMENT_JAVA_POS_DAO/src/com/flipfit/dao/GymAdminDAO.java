@@ -17,4 +17,6 @@ public interface GymAdminDAO {
     public List<GymCenter> viewPendingGymCenters();
 
     public List<SlotMaster> viewPendingSlots();
+    
+    public GymCenter getCenterById(String centerId);
 }

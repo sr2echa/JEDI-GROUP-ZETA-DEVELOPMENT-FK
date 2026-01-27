@@ -21,34 +21,37 @@ public class GymUserDAOImpl implements GymUserDAO {
         String sqlUser = "INSERT INTO User (userId, name, email, password, role) VALUES (?, ?, ?, ?, ?)";
         try {
             conn.setAutoCommit(false);
-            PreparedStatement pstmt = conn.prepareStatement(sqlUser);
-            pstmt.setString(1, user.getUserId());
-            pstmt.setString(2, user.getName());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getPassword());
-            pstmt.setString(5, user.getRole().toString());
-            pstmt.executeUpdate();
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlUser)) {
+                pstmt.setString(1, user.getUserId());
+                pstmt.setString(2, user.getName());
+                pstmt.setString(3, user.getEmail());
+                pstmt.setString(4, user.getPassword());
+                pstmt.setString(5, user.getRole().toString());
+                pstmt.executeUpdate();
 
-            if (user.getRole() == Role.GYM_OWNER) {
-                String sqlOwner = "INSERT INTO GymOwner (userId, panNumber, isApproved, gstNumber, aadharNumber, location) VALUES (?, ?, ?, ?, ?, ?)";
-                GymOwner owner = (GymOwner) user;
-                PreparedStatement pstmtOwner = conn.prepareStatement(sqlOwner);
-                pstmtOwner.setString(1, owner.getUserId());
-                pstmtOwner.setString(2, owner.getPanNumber());
-                pstmtOwner.setBoolean(3, owner.isApproved());
-                pstmtOwner.setString(4, owner.getGstNumber());
-                pstmtOwner.setString(5, owner.getAadharNumber());
-                pstmtOwner.setString(6, owner.getLocation());
-                pstmtOwner.executeUpdate();
-            } else if (user.getRole() == Role.CUSTOMER) {
-                String sqlCustomer = "INSERT INTO Customer (userId) VALUES (?)";
-                PreparedStatement pstmtCustomer = conn.prepareStatement(sqlCustomer);
-                pstmtCustomer.setString(1, user.getUserId());
-                pstmtCustomer.executeUpdate();
+                if (user.getRole() == Role.GYM_OWNER) {
+                    String sqlOwner = "INSERT INTO GymOwner (userId, panNumber, isApproved, gstNumber, aadharNumber, location) VALUES (?, ?, ?, ?, ?, ?)";
+                    GymOwner owner = (GymOwner) user;
+                    try (PreparedStatement pstmtOwner = conn.prepareStatement(sqlOwner)) {
+                        pstmtOwner.setString(1, owner.getUserId());
+                        pstmtOwner.setString(2, owner.getPanNumber());
+                        pstmtOwner.setBoolean(3, owner.isApproved());
+                        pstmtOwner.setString(4, owner.getGstNumber());
+                        pstmtOwner.setString(5, owner.getAadharNumber());
+                        pstmtOwner.setString(6, owner.getLocation());
+                        pstmtOwner.executeUpdate();
+                    }
+                } else if (user.getRole() == Role.CUSTOMER) {
+                    String sqlCustomer = "INSERT INTO Customer (userId) VALUES (?)";
+                    try (PreparedStatement pstmtCustomer = conn.prepareStatement(sqlCustomer)) {
+                        pstmtCustomer.setString(1, user.getUserId());
+                        pstmtCustomer.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+                return true;
             }
-
-            conn.commit();
-            return true;
         } catch (SQLException e) {
             try {
                 conn.rollback();
@@ -56,6 +59,12 @@ public class GymUserDAOImpl implements GymUserDAO {
                 ex.printStackTrace();
             }
             e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -64,30 +73,37 @@ public class GymUserDAOImpl implements GymUserDAO {
     public User loginUser(String username, String password) {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM User WHERE userId = ? AND password = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String roleStr = rs.getString("role");
-                Role role = Role.valueOf(roleStr);
-                User user;
-                if (role == Role.GYM_OWNER) {
-                    user = new GymOwner();
-                    loadGymOwnerDetails((GymOwner) user);
-                } else if (role == Role.CUSTOMER) {
-                    user = new Customer();
-                } else {
-                    // Admin or other
-                    user = new Customer(); // Defaulting to Customer for now as Admin bean is minimal
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String roleStr = rs.getString("role");
+                    Role role = Role.valueOf(roleStr);
+                    User user;
+                    if (role == Role.GYM_OWNER) {
+                        GymOwner owner = new GymOwner();
+                        // Set userId before calling loadGymOwnerDetails
+                        owner.setUserId(rs.getString("userId"));
+                        owner.setName(rs.getString("name"));
+                        owner.setEmail(rs.getString("email"));
+                        owner.setPassword(rs.getString("password"));
+                        owner.setRole(role);
+                        loadGymOwnerDetails(owner);
+                        return owner;
+                    } else if (role == Role.CUSTOMER) {
+                        user = new Customer();
+                    } else {
+                        // Admin or other
+                        user = new Admin();
+                    }
+                    user.setUserId(rs.getString("userId"));
+                    user.setName(rs.getString("name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPassword(rs.getString("password"));
+                    user.setRole(role);
+                    return user;
                 }
-                user.setUserId(rs.getString("userId"));
-                user.setName(rs.getString("name"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-                user.setRole(role);
-                return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,16 +114,16 @@ public class GymUserDAOImpl implements GymUserDAO {
     private void loadGymOwnerDetails(GymOwner owner) {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymOwner WHERE userId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, owner.getUserId());
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                owner.setPanNumber(rs.getString("panNumber"));
-                owner.setApproved(rs.getBoolean("isApproved"));
-                owner.setGstNumber(rs.getString("gstNumber"));
-                owner.setAadharNumber(rs.getString("aadharNumber"));
-                owner.setLocation(rs.getString("location"));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    owner.setPanNumber(rs.getString("panNumber"));
+                    owner.setApproved(rs.getBoolean("isApproved"));
+                    owner.setGstNumber(rs.getString("gstNumber"));
+                    owner.setAadharNumber(rs.getString("aadharNumber"));
+                    owner.setLocation(rs.getString("location"));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,8 +134,7 @@ public class GymUserDAOImpl implements GymUserDAO {
     public boolean changePassword(String username, String oldPassword, String newPassword) {
         Connection conn = DBConnection.getConnection();
         String sql = "UPDATE User SET password = ? WHERE userId = ? AND password = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, newPassword);
             pstmt.setString(2, username);
             pstmt.setString(3, oldPassword);
@@ -135,12 +150,12 @@ public class GymUserDAOImpl implements GymUserDAO {
     public User getUser(String userId) {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM User WHERE userId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return mapUser(rs);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapUser(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -153,9 +168,8 @@ public class GymUserDAOImpl implements GymUserDAO {
         java.util.List<User> users = new java.util.ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM User";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 users.add(mapUser(rs));
             }

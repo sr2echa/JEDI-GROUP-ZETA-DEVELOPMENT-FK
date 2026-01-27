@@ -19,8 +19,7 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
     public void addGymCenter(GymCenter center) {
         Connection conn = DBConnection.getConnection();
         String sql = "INSERT INTO GymCenter (centerId, name, city, address, ownerId, isApproved) VALUES (?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, center.getCenterId());
             pstmt.setString(2, center.getName());
             pstmt.setString(3, center.getCity());
@@ -38,19 +37,19 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         List<GymCenter> centers = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymCenter WHERE ownerId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, ownerId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                GymCenter center = new GymCenter();
-                center.setCenterId(rs.getString("centerId"));
-                center.setName(rs.getString("name"));
-                center.setCity(rs.getString("city"));
-                center.setAddress(rs.getString("address"));
-                center.setOwnerId(rs.getString("ownerId"));
-                center.setApproved(rs.getBoolean("isApproved"));
-                centers.add(center);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    GymCenter center = new GymCenter();
+                    center.setCenterId(rs.getString("centerId"));
+                    center.setName(rs.getString("name"));
+                    center.setCity(rs.getString("city"));
+                    center.setAddress(rs.getString("address"));
+                    center.setOwnerId(rs.getString("ownerId"));
+                    center.setApproved(rs.getBoolean("isApproved"));
+                    centers.add(center);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,8 +61,7 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
     public boolean addSlot(SlotMaster slot) {
         Connection conn = DBConnection.getConnection();
         String sql = "INSERT INTO Slot (slotId, centerId, startTime, endTime, capacity, availableSeats, price, isApproved) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, slot.getSlotId());
             pstmt.setString(2, slot.getCenterId());
             pstmt.setTime(3, Time.valueOf(slot.getStartTime()));
@@ -85,21 +83,21 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         List<SlotMaster> slots = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Slot WHERE centerId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, centerId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                SlotMaster slot = new SlotMaster();
-                slot.setSlotId(rs.getString("slotId"));
-                slot.setCenterId(rs.getString("centerId"));
-                slot.setStartTime(rs.getTime("startTime").toLocalTime());
-                slot.setEndTime(rs.getTime("endTime").toLocalTime());
-                slot.setCapacity(rs.getInt("capacity"));
-                slot.setAvailableSeats(rs.getInt("availableSeats"));
-                slot.setPrice(rs.getDouble("price"));
-                slot.setApproved(rs.getBoolean("isApproved"));
-                slots.add(slot);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    SlotMaster slot = new SlotMaster();
+                    slot.setSlotId(rs.getString("slotId"));
+                    slot.setCenterId(rs.getString("centerId"));
+                    slot.setStartTime(rs.getTime("startTime").toLocalTime());
+                    slot.setEndTime(rs.getTime("endTime").toLocalTime());
+                    slot.setCapacity(rs.getInt("capacity"));
+                    slot.setAvailableSeats(rs.getInt("availableSeats"));
+                    slot.setPrice(rs.getDouble("price"));
+                    slot.setApproved(rs.getBoolean("isApproved"));
+                    slots.add(slot);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,12 +108,53 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
     @Override
     public void updateSlotCapacity(String slotId, int newCapacity) {
         Connection conn = DBConnection.getConnection();
-        String sql = "UPDATE Slot SET capacity = ?, availableSeats = ? WHERE slotId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        // Preserve booking state by adjusting availableSeats proportionally:
+        // If capacity increases by N, availableSeats increases by N
+        // If capacity decreases by N, availableSeats decreases by N (but won't go below currently booked)
+        String sql = "UPDATE Slot SET capacity = ?, availableSeats = availableSeats + (? - capacity) WHERE slotId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, newCapacity);
-            pstmt.setInt(2, newCapacity); // Assuming update resets availability for simplicity or logic check
+            pstmt.setInt(2, newCapacity);
             pstmt.setString(3, slotId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public SlotMaster getSlotById(String slotId) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Slot WHERE slotId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, slotId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    SlotMaster slot = new SlotMaster();
+                    slot.setSlotId(rs.getString("slotId"));
+                    slot.setCenterId(rs.getString("centerId"));
+                    slot.setStartTime(rs.getTime("startTime").toLocalTime());
+                    slot.setEndTime(rs.getTime("endTime").toLocalTime());
+                    slot.setCapacity(rs.getInt("capacity"));
+                    slot.setAvailableSeats(rs.getInt("availableSeats"));
+                    slot.setPrice(rs.getDouble("price"));
+                    slot.setApproved(rs.getBoolean("isApproved"));
+                    return slot;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public void updateAvailableSeats(String slotId, int delta) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "UPDATE Slot SET availableSeats = availableSeats + ? WHERE slotId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, delta);
+            pstmt.setString(2, slotId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
