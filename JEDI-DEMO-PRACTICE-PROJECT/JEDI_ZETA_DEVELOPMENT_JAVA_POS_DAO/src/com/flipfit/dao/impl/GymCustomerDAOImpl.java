@@ -24,9 +24,8 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         List<GymCenter> centers = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymCenter WHERE isApproved = true";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymCenter center = new GymCenter();
                 center.setCenterId(rs.getString("centerId"));
@@ -48,21 +47,21 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         List<SlotMaster> slots = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Slot WHERE centerId = ? AND isApproved = true";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, centerId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                SlotMaster slot = new SlotMaster();
-                slot.setSlotId(rs.getString("slotId"));
-                slot.setCenterId(rs.getString("centerId"));
-                slot.setStartTime(rs.getTime("startTime").toLocalTime());
-                slot.setEndTime(rs.getTime("endTime").toLocalTime());
-                slot.setCapacity(rs.getInt("capacity"));
-                slot.setAvailableSeats(rs.getInt("availableSeats"));
-                slot.setPrice(rs.getDouble("price"));
-                slot.setApproved(true);
-                slots.add(slot);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    SlotMaster slot = new SlotMaster();
+                    slot.setSlotId(rs.getString("slotId"));
+                    slot.setCenterId(rs.getString("centerId"));
+                    slot.setStartTime(rs.getTime("startTime").toLocalTime());
+                    slot.setEndTime(rs.getTime("endTime").toLocalTime());
+                    slot.setCapacity(rs.getInt("capacity"));
+                    slot.setAvailableSeats(rs.getInt("availableSeats"));
+                    slot.setPrice(rs.getDouble("price"));
+                    slot.setApproved(true);
+                    slots.add(slot);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,28 +78,32 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
 
         try {
             conn.setAutoCommit(false);
-            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
-            checkStmt.setString(1, slotId);
-            ResultSet rs = checkStmt.executeQuery();
-            if (rs.next() && rs.getInt("availableSeats") > 0) {
-                // Update seats
-                PreparedStatement updateStmt = conn.prepareStatement(updateSql);
-                updateStmt.setString(1, slotId);
-                int updated = updateStmt.executeUpdate();
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setString(1, slotId);
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt("availableSeats") > 0) {
+                        // Update seats
+                        try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                            updateStmt.setString(1, slotId);
+                            int updated = updateStmt.executeUpdate();
 
-                if (updated > 0) {
-                    // Create booking
-                    PreparedStatement insertStmt = conn.prepareStatement(insertSql);
-                    String bookingId = "BKS" + UUID.randomUUID().toString().substring(0, 8);
-                    insertStmt.setString(1, bookingId);
-                    insertStmt.setString(2, slotId);
-                    insertStmt.setString(3, userId);
-                    insertStmt.setString(4, BookingStatus.CONFIRMED.toString());
-                    insertStmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-                    insertStmt.executeUpdate();
+                            if (updated > 0) {
+                                // Create booking
+                                try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                                    String bookingId = "BKS" + UUID.randomUUID().toString().substring(0, 8);
+                                    insertStmt.setString(1, bookingId);
+                                    insertStmt.setString(2, slotId);
+                                    insertStmt.setString(3, userId);
+                                    insertStmt.setString(4, BookingStatus.CONFIRMED.toString());
+                                    insertStmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+                                    insertStmt.executeUpdate();
 
-                    conn.commit();
-                    return true;
+                                    conn.commit();
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             conn.rollback();
@@ -111,6 +114,12 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
                 ex.printStackTrace();
             }
             e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -120,18 +129,18 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         List<Booking> bookings = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Booking WHERE userId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Booking booking = new Booking();
-                booking.setBookingId(rs.getString("bookingId"));
-                booking.setScheduleId(rs.getString("slotId")); // Mapping slotId to scheduleId as per bean
-                booking.setUserId(rs.getString("userId"));
-                booking.setStatus(BookingStatus.valueOf(rs.getString("status")));
-                booking.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
-                bookings.add(booking);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Booking booking = new Booking();
+                    booking.setBookingId(rs.getString("bookingId"));
+                    booking.setScheduleId(rs.getString("slotId")); // Mapping slotId to scheduleId as per bean
+                    booking.setUserId(rs.getString("userId"));
+                    booking.setStatus(BookingStatus.valueOf(rs.getString("status")));
+                    booking.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
+                    bookings.add(booking);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,30 +151,42 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
     @Override
     public void cancelBooking(String bookingId) {
         Connection conn = DBConnection.getConnection();
-        String getSlotSql = "SELECT slotId FROM Booking WHERE bookingId = ?";
+        String getBookingSql = "SELECT slotId, status FROM Booking WHERE bookingId = ?";
         String updateSlotSql = "UPDATE Slot SET availableSeats = availableSeats + 1 WHERE slotId = ?";
         String updateBookingSql = "UPDATE Booking SET status = ? WHERE bookingId = ?";
 
         try {
             conn.setAutoCommit(false);
-            PreparedStatement getSlotStmt = conn.prepareStatement(getSlotSql);
-            getSlotStmt.setString(1, bookingId);
-            ResultSet rs = getSlotStmt.executeQuery();
-            if (rs.next()) {
-                String slotId = rs.getString("slotId");
+            try (PreparedStatement getBookingStmt = conn.prepareStatement(getBookingSql)) {
+                getBookingStmt.setString(1, bookingId);
+                try (ResultSet rs = getBookingStmt.executeQuery()) {
+                    if (rs.next()) {
+                        String slotId = rs.getString("slotId");
+                        String currentStatus = rs.getString("status");
+                        
+                        // Only cancel if not already cancelled
+                        if (!BookingStatus.CANCELLED.toString().equals(currentStatus)) {
+                            // Update Slot
+                            try (PreparedStatement updateSlotStmt = conn.prepareStatement(updateSlotSql)) {
+                                updateSlotStmt.setString(1, slotId);
+                                updateSlotStmt.executeUpdate();
+                            }
 
-                // Update Slot
-                PreparedStatement updateSlotStmt = conn.prepareStatement(updateSlotSql);
-                updateSlotStmt.setString(1, slotId);
-                updateSlotStmt.executeUpdate();
+                            // Update Booking
+                            try (PreparedStatement updateBookingStmt = conn.prepareStatement(updateBookingSql)) {
+                                updateBookingStmt.setString(1, BookingStatus.CANCELLED.toString());
+                                updateBookingStmt.setString(2, bookingId);
+                                updateBookingStmt.executeUpdate();
+                            }
 
-                // Update Booking
-                PreparedStatement updateBookingStmt = conn.prepareStatement(updateBookingSql);
-                updateBookingStmt.setString(1, BookingStatus.CANCELLED.toString());
-                updateBookingStmt.setString(2, bookingId);
-                updateBookingStmt.executeUpdate();
-
-                conn.commit();
+                            conn.commit();
+                        } else {
+                            conn.rollback();
+                        }
+                    } else {
+                        conn.rollback();
+                    }
+                }
             }
         } catch (SQLException e) {
             try {
@@ -174,6 +195,12 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
                 ex.printStackTrace();
             }
             e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

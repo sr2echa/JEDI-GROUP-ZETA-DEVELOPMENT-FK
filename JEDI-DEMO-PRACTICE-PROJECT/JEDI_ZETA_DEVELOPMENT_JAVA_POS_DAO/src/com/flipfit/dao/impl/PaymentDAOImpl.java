@@ -19,8 +19,7 @@ public class PaymentDAOImpl implements PaymentDAO {
     public void savePayment(PaymentRecord payment) {
         Connection conn = DBConnection.getConnection();
         String sql = "INSERT INTO Payment (transactionId, bookingId, userId, centerId, amount, method, timestamp, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, payment.getTransactionId());
             pstmt.setString(2, payment.getBookingId());
             pstmt.setString(3, payment.getUserId());
@@ -40,21 +39,21 @@ public class PaymentDAOImpl implements PaymentDAO {
         List<PaymentRecord> list = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Payment WHERE userId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                PaymentRecord p = new PaymentRecord();
-                p.setTransactionId(rs.getString("transactionId"));
-                p.setBookingId(rs.getString("bookingId"));
-                p.setUserId(rs.getString("userId"));
-                p.setCenterId(rs.getString("centerId"));
-                p.setAmount(rs.getDouble("amount"));
-                p.setMethod(rs.getString("method"));
-                p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
-                p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
-                list.add(p);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    PaymentRecord p = new PaymentRecord();
+                    p.setTransactionId(rs.getString("transactionId"));
+                    p.setBookingId(rs.getString("bookingId"));
+                    p.setUserId(rs.getString("userId"));
+                    p.setCenterId(rs.getString("centerId"));
+                    p.setAmount(rs.getDouble("amount"));
+                    p.setMethod(rs.getString("method"));
+                    p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
+                    list.add(p);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,21 +66,21 @@ public class PaymentDAOImpl implements PaymentDAO {
         List<PaymentRecord> list = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Payment WHERE centerId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, centerId);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                PaymentRecord p = new PaymentRecord();
-                p.setTransactionId(rs.getString("transactionId"));
-                p.setBookingId(rs.getString("bookingId"));
-                p.setUserId(rs.getString("userId"));
-                p.setCenterId(rs.getString("centerId"));
-                p.setAmount(rs.getDouble("amount"));
-                p.setMethod(rs.getString("method"));
-                p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
-                p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
-                list.add(p);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    PaymentRecord p = new PaymentRecord();
+                    p.setTransactionId(rs.getString("transactionId"));
+                    p.setBookingId(rs.getString("bookingId"));
+                    p.setUserId(rs.getString("userId"));
+                    p.setCenterId(rs.getString("centerId"));
+                    p.setAmount(rs.getDouble("amount"));
+                    p.setMethod(rs.getString("method"));
+                    p.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    p.setStatus(PaymentStatus.valueOf(rs.getString("status")));
+                    list.add(p);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

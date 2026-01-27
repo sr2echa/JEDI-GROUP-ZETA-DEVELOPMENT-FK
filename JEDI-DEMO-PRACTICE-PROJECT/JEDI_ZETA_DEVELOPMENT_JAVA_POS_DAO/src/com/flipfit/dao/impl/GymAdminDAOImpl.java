@@ -19,8 +19,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
     public void approveGymOwner(String ownerId) {
         Connection conn = DBConnection.getConnection();
         String sql = "UPDATE GymOwner SET isApproved = true WHERE userId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, ownerId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -32,8 +31,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
     public void approveGymCenter(String centerId) {
         Connection conn = DBConnection.getConnection();
         String sql = "UPDATE GymCenter SET isApproved = true WHERE centerId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, centerId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -45,8 +43,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
     public void approveSlot(String slotId) {
         Connection conn = DBConnection.getConnection();
         String sql = "UPDATE Slot SET isApproved = true WHERE slotId = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, slotId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -59,9 +56,8 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         List<GymOwner> owners = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM User u JOIN GymOwner g ON u.userId = g.userId WHERE g.isApproved = false";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymOwner owner = new GymOwner();
                 owner.setUserId(rs.getString("userId"));
@@ -82,9 +78,8 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         List<GymCenter> centers = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymCenter WHERE isApproved = false";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymCenter center = new GymCenter();
                 center.setCenterId(rs.getString("centerId"));
@@ -106,9 +101,8 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         List<SlotMaster> slots = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Slot WHERE isApproved = false";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 SlotMaster slot = new SlotMaster();
                 slot.setSlotId(rs.getString("slotId"));
