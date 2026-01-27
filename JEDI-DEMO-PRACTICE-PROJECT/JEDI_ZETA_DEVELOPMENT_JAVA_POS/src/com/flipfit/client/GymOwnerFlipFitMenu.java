@@ -111,7 +111,7 @@ public class GymOwnerFlipFitMenu {
                 case 6:
                     System.out.print("Enter Center ID to view revenue: ");
                     String centerId = sc.next();
-                    paymentService.displayGymRevenue(centerId);
+                    paymentService.displayGymRevenue(centerId, ownerId);
                     break;
                 default:
                     System.out.println("Invalid Selection.");

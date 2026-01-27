@@ -120,7 +120,7 @@ public class GymOwnerService implements GymOwnerInterface {
     @Override
     public List<SlotMaster> viewSlots(String centerId) {
         return allSlots.stream()
-                .filter(s -> s.getCenterId().equals(centerId) && s.isApproved()) // Added isApproved check
+                .filter(s -> s.getCenterId().equals(centerId))
                 .collect(Collectors.toList());
     }
 
@@ -154,7 +154,10 @@ public class GymOwnerService implements GymOwnerInterface {
     public static void approveSlot(String slotId) {
         SlotMaster slot = getSlot(slotId);
         if (slot != null) {
-            slot.setApproved(true); 
+            slot.setApproved(true);
+            System.out.println("Slot with ID " + slotId + " has been approved.");
+        } else {
+            System.out.println("Unable to approve slot: no slot found with ID " + slotId + ".");
         }
     }
 
@@ -167,5 +170,17 @@ public class GymOwnerService implements GymOwnerInterface {
                 .filter(c -> c.getCenterId().equals(centerId))
                 .findFirst()
                 .orElse(null);
+    /**
+     * Verify if a gym center belongs to the specified owner
+     * @param centerId The ID of the gym center
+     * @param ownerId The ID of the owner to verify
+     * @return true if the owner owns the center, false otherwise
+     */
+    public static boolean verifyCenterOwnership(String centerId, String ownerId) {
+        if (centerId == null || ownerId == null) {
+            return false;
+        }
+        return centers.stream()
+                .anyMatch(c -> c.getCenterId().equals(centerId) && c.getOwnerId().equals(ownerId));
     }
 }
