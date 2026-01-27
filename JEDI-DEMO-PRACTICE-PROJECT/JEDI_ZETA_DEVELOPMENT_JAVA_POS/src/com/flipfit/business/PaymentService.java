@@ -4,16 +4,16 @@ import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.SlotMaster;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PaymentService implements PaymentInterface {
     private static Map<String, Double> paymentRecords = new HashMap<>();
     private static Map<String, String> paymentMethods = new HashMap<>();
-    private static List<com.flipfit.bean.PaymentRecord> globalPaymentHistory = new ArrayList<>();
+    private static List<com.flipfit.bean.PaymentRecord> globalPaymentHistory = new CopyOnWriteArrayList<>();
 
     public PaymentService() {
         // We'll need to access CustomerService to update booking status
