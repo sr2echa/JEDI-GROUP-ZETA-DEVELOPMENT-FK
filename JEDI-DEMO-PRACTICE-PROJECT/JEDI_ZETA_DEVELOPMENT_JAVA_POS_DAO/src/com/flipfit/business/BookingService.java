@@ -2,6 +2,7 @@ package com.flipfit.business;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
+import com.flipfit.bean.NotificationType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,17 +15,20 @@ import java.util.HashMap;
  * The Class BookingService.
  *
  * @author Zeta
- * @ClassName  "BookingService"
+ * @ClassName "BookingService"
  */
 public class BookingService implements BookingInterface {
-    
+
     /** The waitlist map. */
     private static Map<String, List<Booking>> waitlistMap = new HashMap<>();
+
+    /** The notification service. */
+    private NotificationService notificationService = new NotificationService();
 
     /**
      * Adds the customer to waitlist.
      *
-     * @param userId the user id
+     * @param userId     the user id
      * @param scheduleId the schedule id
      * @return the int
      */
@@ -60,6 +64,11 @@ public class BookingService implements BookingInterface {
 
             System.out.println("[SYSTEM] Waitlist Progress for " + scheduleId + ": User " + promotedBooking.getUserId()
                     + " has been promoted from waitlist. Payment required to confirm booking.");
+
+            notificationService.sendNotification(promotedBooking.getUserId(),
+                    "You have been promoted from waitlist for slot " + scheduleId + "! Please complete payment.",
+                    NotificationType.WAITLIST_PROMOTION);
+
             return promotedBooking;
         }
         return null;

@@ -3,6 +3,7 @@ package com.flipfit.client;
 import com.flipfit.business.GymOwnerInterface;
 import com.flipfit.business.GymOwnerService;
 import com.flipfit.business.PaymentService;
+import com.flipfit.business.NotificationService;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
 import com.flipfit.utils.InputValidator;
@@ -19,15 +20,18 @@ import java.util.List;
  * The Class GymOwnerFlipFitMenu.
  *
  * @author Zeta
- * @ClassName  "GymOwnerFlipFitMenu"
+ * @ClassName "GymOwnerFlipFitMenu"
  */
 public class GymOwnerFlipFitMenu {
-    
+
     /** The owner service. */
     GymOwnerInterface ownerService = new GymOwnerService();
-    
+
     /** The payment service. */
     PaymentService paymentService = new PaymentService();
+
+    /** The notification service. */
+    NotificationService notificationService = new NotificationService();
 
     /**
      * Register gym owner.
@@ -36,7 +40,7 @@ public class GymOwnerFlipFitMenu {
      */
     public void registerGymOwner(Scanner sc) {
         System.out.println("\n--- Registration of the GymOwner ---");
-        
+
         // Username validation
         System.out.print("Enter Username: ");
         String username = sc.next();
@@ -45,7 +49,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
             return;
         }
-        
+
         // Password validation
         System.out.print("Enter Password: ");
         String password = sc.next();
@@ -53,7 +57,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("Password", "PASSWORD"));
             return;
         }
-        
+
         // PAN validation
         System.out.print("Enter PAN Number: ");
         String pan = sc.next();
@@ -62,7 +66,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("PAN Number", "PAN"));
             return;
         }
-        
+
         // GST validation
         System.out.print("Enter GST Number: ");
         String gst = sc.next();
@@ -71,7 +75,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("GST Number", "GST"));
             return;
         }
-        
+
         // Aadhar validation
         System.out.print("Enter Aadhar Number: ");
         String aadhar = sc.next();
@@ -80,7 +84,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("Aadhar Number", "AADHAR"));
             return;
         }
-        
+
         // Location validation
         System.out.print("Enter Location: ");
         String location = sc.next();
@@ -96,7 +100,7 @@ public class GymOwnerFlipFitMenu {
     /**
      * Display menu.
      *
-     * @param sc the sc
+     * @param sc      the sc
      * @param ownerId the owner id
      */
     public void displayMenu(Scanner sc, String ownerId) {
@@ -109,6 +113,7 @@ public class GymOwnerFlipFitMenu {
             System.out.println("4. View Slots in Center");
             System.out.println("5. Back to Main Menu");
             System.out.println("6. View Center Revenue & History");
+            System.out.println("7. View My Notifications");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -200,6 +205,15 @@ public class GymOwnerFlipFitMenu {
                     System.out.print("Enter Center ID to view revenue: ");
                     String centerId = sc.next();
                     paymentService.displayGymRevenue(centerId, ownerId);
+                    break;
+                case 7:
+                    List<com.flipfit.bean.Notification> notifications = notificationService.getNotifications(ownerId);
+                    if (notifications.isEmpty()) {
+                        System.out.println("\n[INFO] No notifications found.");
+                    } else {
+                        System.out.println("\n--- Your Notifications ---");
+                        notifications.forEach(n -> System.out.println("[" + n.getTimestamp() + "] " + n.getMessage()));
+                    }
                     break;
                 default:
                     System.out.println("Invalid Selection.");

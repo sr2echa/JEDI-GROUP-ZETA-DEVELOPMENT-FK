@@ -2,6 +2,7 @@ package com.flipfit.business;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
+import com.flipfit.bean.NotificationType;
 import com.flipfit.dao.GymCustomerDAO;
 import com.flipfit.dao.impl.GymCustomerDAOImpl;
 import com.flipfit.exception.BookingFailedException;
@@ -11,12 +12,15 @@ import java.util.List;
  * The Class CustomerService.
  *
  * @author Zeta
- * @ClassName  "CustomerService"
+ * @ClassName "CustomerService"
  */
 public class CustomerService implements CustomerInterface {
-    
+
     /** The customer DAO. */
     private GymCustomerDAO customerDAO = new GymCustomerDAOImpl();
+
+    /** The notification service. */
+    private NotificationService notificationService = new NotificationService();
 
     /**
      * Book workout.
@@ -27,7 +31,7 @@ public class CustomerService implements CustomerInterface {
      */
     @Override
     public void bookWorkout(String userId, String slotId) throws BookingFailedException {
-        String bookingDate = java.time.LocalDate.now().plusDays(1).toString(); 
+        String bookingDate = java.time.LocalDate.now().plusDays(1).toString();
         System.out.println("[INFO] Booking slot " + slotId + " for User: " + userId + " on " + bookingDate);
 
         boolean success = customerDAO.bookSlot(userId, slotId, bookingDate);
@@ -45,8 +49,15 @@ public class CustomerService implements CustomerInterface {
      */
     @Override
     public void cancelWorkout(String bookingId) {
+        Booking booking = customerDAO.getBookingById(bookingId);
         customerDAO.cancelBooking(bookingId);
         System.out.println("[SUCCESS] Booking " + bookingId + " cancelled.");
+
+        if (booking != null) {
+            notificationService.sendNotification(booking.getUserId(),
+                    "Your booking " + bookingId + " has been cancelled.",
+                    NotificationType.CANCELLATION);
+        }
     }
 
     /**
@@ -68,20 +79,24 @@ public class CustomerService implements CustomerInterface {
 
     /**
      * Confirm booking.
-     * This method only confirms the booking after payment has been successfully processed.
+     * This method only confirms the booking after payment has been successfully
+     * processed.
      *
-     * @param bookingId the booking id
-     * @param amount the amount
+     * @param bookingId     the booking id
+     * @param amount        the amount
      * @param paymentMethod the payment method
      * @return true, if successful
      */
     @Override
     public boolean confirmBooking(String bookingId, double amount, String paymentMethod) {
-        // REMOVED: paymentService.processPayment() call here to fix duplicate payment bug
-        // Payment is already processed in CustomerFlipFitMenu.processPaymentForBooking()
-        // via paymentService.processPaymentInteractive()
-        
+
         customerDAO.updateBookingStatus(bookingId, BookingStatus.CONFIRMED.toString());
+        Booking booking = customerDAO.getBookingById(bookingId);
+        if (booking != null) {
+            notificationService.sendNotification(booking.getUserId(),
+                    "Your booking " + bookingId + " is confirmed!",
+                    NotificationType.BOOKING_CONFIRMATION);
+        }
         System.out.println("[SUCCESS] Booking confirmed for booking " + bookingId);
         return true;
     }

@@ -2,6 +2,7 @@ package com.flipfit.business;
 
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
+import com.flipfit.bean.NotificationType;
 import com.flipfit.bean.SlotMaster;
 import com.flipfit.dao.GymAdminDAO;
 import com.flipfit.dao.impl.GymAdminDAOImpl;
@@ -20,6 +21,9 @@ public class AdminService implements AdminInterface {
     /** The admin DAO. */
     private GymAdminDAO adminDAO = new GymAdminDAOImpl();
 
+    /** The notification service. */
+    private NotificationService notificationService = new NotificationService();
+
     /**
      * Approve gym owner.
      *
@@ -28,6 +32,9 @@ public class AdminService implements AdminInterface {
     @Override
     public void approveGymOwner(String ownerId) {
         adminDAO.approveGymOwner(ownerId);
+        notificationService.sendNotification(ownerId,
+                "Your Gym Owner account has been approved by the Admin.",
+                NotificationType.OWNER_APPROVAL);
         System.out.println("[ADMIN] Gym Owner " + ownerId + " has been approved.");
     }
 
@@ -49,6 +56,12 @@ public class AdminService implements AdminInterface {
     @Override
     public void approveGymCenter(String centerId) {
         adminDAO.approveGymCenter(centerId);
+        GymCenter center = GymOwnerService.getCenterById(centerId);
+        if (center != null && center.getOwnerId() != null) {
+            notificationService.sendNotification(center.getOwnerId(),
+                    "Your Gym Center '" + center.getName() + "' has been approved by the Admin.",
+                    NotificationType.OWNER_APPROVAL);
+        }
         System.out.println("[ADMIN] Gym Center " + centerId + " has been approved.");
     }
 

@@ -18,7 +18,7 @@ import java.util.List;
  * Implementation of PaymentDAO interface for payment data operations.
  *
  * @author Zeta
- * @ClassName  "PaymentDAOImpl"
+ * @ClassName "PaymentDAOImpl"
  */
 public class PaymentDAOImpl implements PaymentDAO {
 
@@ -83,7 +83,9 @@ public class PaymentDAOImpl implements PaymentDAO {
     public List<PaymentRecord> getCenterRevenue(String centerId) {
         List<PaymentRecord> list = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT * FROM Payment WHERE centerId = ?";
+        String sql = "SELECT p.* FROM Payment p " +
+                "JOIN Booking b ON p.bookingId = b.bookingId " +
+                "WHERE p.centerId = ? AND b.status = 'CONFIRMED' AND p.status = 'COMPLETED'";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, centerId);
             try (ResultSet rs = pstmt.executeQuery()) {

@@ -5,6 +5,7 @@ import com.flipfit.business.AdminService;
 import com.flipfit.business.PaymentService;
 import com.flipfit.business.GymOwnerService;
 import com.flipfit.business.UserService;
+import com.flipfit.business.NotificationService;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.SlotMaster;
@@ -29,6 +30,9 @@ public class AdminFlipFitMenu {
 
     /** The user service. */
     UserService userService = new UserService();
+
+    /** The notification service. */
+    NotificationService notificationService = new NotificationService();
 
     /**
      * Display menu.
@@ -58,7 +62,8 @@ public class AdminFlipFitMenu {
             System.out.println("7. View Center Revenue & History");
             System.out.println("8. View Gym Owners (Filtered by Status)");
             System.out.println("9. View Gym Centers (Filtered by Status)");
-            System.out.println("10. Back to Main Menu");
+            System.out.println("10. View My Notifications");
+            System.out.println("11. Back to Main Menu");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -158,6 +163,21 @@ public class AdminFlipFitMenu {
                             " - ID: " + c.getCenterId() + ", Name: " + c.getName() + ", Approved: " + c.isApproved()));
                     break;
                 case 10:
+                    if (adminUser != null) {
+                        List<com.flipfit.bean.Notification> notifications = notificationService
+                                .getNotifications(adminUser.getUserId());
+                        if (notifications.isEmpty()) {
+                            System.out.println("\n[INFO] No notifications found.");
+                        } else {
+                            System.out.println("\n--- Your Notifications ---");
+                            notifications
+                                    .forEach(n -> System.out.println("[" + n.getTimestamp() + "] " + n.getMessage()));
+                        }
+                    } else {
+                        System.out.println("[ERROR] Admin user information not available.");
+                    }
+                    break;
+                case 11:
                     back = true;
                     break;
                 default:

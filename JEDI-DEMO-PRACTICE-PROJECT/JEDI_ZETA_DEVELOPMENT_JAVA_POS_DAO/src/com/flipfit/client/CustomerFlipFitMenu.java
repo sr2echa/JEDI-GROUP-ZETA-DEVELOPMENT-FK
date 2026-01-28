@@ -18,21 +18,24 @@ import java.util.Scanner;
  * The Class CustomerFlipFitMenu.
  *
  * @author Zeta
- * @ClassName  "CustomerFlipFitMenu"
+ * @ClassName "CustomerFlipFitMenu"
  */
 public class CustomerFlipFitMenu {
-    
+
     /** The customer service. */
     CustomerInterface customerService = new CustomerService();
-    
+
     /** The owner service. */
     GymOwnerInterface ownerService = new GymOwnerService();
-    
+
     /** The user service. */
     UserInterface userService = new UserService();
-    
+
     /** The payment service. */
     PaymentService paymentService = new PaymentService();
+
+    /** The notification service. */
+    NotificationService notificationService = new NotificationService();
 
     /**
      * Register customer.
@@ -41,7 +44,7 @@ public class CustomerFlipFitMenu {
      */
     public void registerCustomer(Scanner sc) {
         System.out.println("\n--- Registration ---");
-        
+
         // Username validation
         System.out.print("Username: ");
         String username = sc.next();
@@ -50,7 +53,7 @@ public class CustomerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
             return;
         }
-        
+
         // Email validation
         System.out.print("Email: ");
         String email = sc.next();
@@ -59,7 +62,7 @@ public class CustomerFlipFitMenu {
             System.out.println(InputValidator.getValidationErrorMessage("Email", "EMAIL"));
             return;
         }
-        
+
         // Password validation
         System.out.print("Password: ");
         String password = sc.next();
@@ -80,7 +83,7 @@ public class CustomerFlipFitMenu {
     /**
      * Display menu.
      *
-     * @param sc the sc
+     * @param sc     the sc
      * @param userId the user id
      */
     public void displayMenu(Scanner sc, String userId) {
@@ -93,6 +96,7 @@ public class CustomerFlipFitMenu {
             System.out.println("4. Cancel Booking");
             System.out.println("5. Back to Main Menu");
             System.out.println("6. View My Payment History");
+            System.out.println("7. View My Notifications");
             System.out.print("Choice: ");
 
             int choice = 0;
@@ -127,7 +131,17 @@ public class CustomerFlipFitMenu {
                         System.out.println("\n[INFO] No payment history found.");
                     } else {
                         System.out.println("\n--- Your Payment History ---");
-                        history.forEach(h -> System.out.println("TXN ID: " + h.getTransactionId() + " | Amount: ₹" + h.getAmount() + " | Status: " + h.getStatus() + " | Date: " + h.getTimestamp()));
+                        history.forEach(h -> System.out.println("TXN ID: " + h.getTransactionId() + " | Amount: ₹"
+                                + h.getAmount() + " | Status: " + h.getStatus() + " | Date: " + h.getTimestamp()));
+                    }
+                    break;
+                case 7:
+                    List<com.flipfit.bean.Notification> notifications = notificationService.getNotifications(userId);
+                    if (notifications.isEmpty()) {
+                        System.out.println("\n[INFO] No notifications found.");
+                    } else {
+                        System.out.println("\n--- Your Notifications ---");
+                        notifications.forEach(n -> System.out.println("[" + n.getTimestamp() + "] " + n.getMessage()));
                     }
                     break;
                 default:
@@ -139,7 +153,7 @@ public class CustomerFlipFitMenu {
     /**
      * Browse and book.
      *
-     * @param sc the sc
+     * @param sc     the sc
      * @param userId the user id
      */
     private void browseAndBook(Scanner sc, String userId) {
@@ -175,7 +189,7 @@ public class CustomerFlipFitMenu {
                 .filter(s -> s.getSlotId().equals(slotId))
                 .findFirst()
                 .orElse(null);
-        
+
         if (selectedSlot == null) {
             System.out.println("[ERROR] Slot ID not found.");
             return;
@@ -196,12 +210,12 @@ public class CustomerFlipFitMenu {
     /**
      * Handle pending payments.
      *
-     * @param sc the sc
+     * @param sc     the sc
      * @param userId the user id
      */
     private void handlePendingPayments(Scanner sc, String userId) {
         List<Booking> pendingBookings = customerService.getPendingPayments(userId);
-        
+
         if (pendingBookings.isEmpty()) {
             System.out.println("\n[INFO] No pending payments.");
             return;
@@ -214,16 +228,16 @@ public class CustomerFlipFitMenu {
             String time = (slot != null) ? slot.getStartTime() + " - " + slot.getEndTime() : "N/A";
             double amount = (slot != null) ? slot.getPrice() : 0.0;
             String source = booking.getBookingId().startsWith("B_PROM") ? " [From Waitlist]" : "";
-            
-            System.out.println((i + 1) + ". Booking ID: " + booking.getBookingId() + source + 
-                    " | Slot: " + booking.getScheduleId() + 
-                    " | Time: " + time + 
+
+            System.out.println((i + 1) + ". Booking ID: " + booking.getBookingId() + source +
+                    " | Slot: " + booking.getScheduleId() +
+                    " | Time: " + time +
                     " | Amount: ₹" + amount);
         }
 
         System.out.print("\nEnter Booking ID to pay (or 'back' to go back): ");
         String input = sc.next();
-        
+
         if (input.equalsIgnoreCase("back")) {
             return;
         }
@@ -250,15 +264,15 @@ public class CustomerFlipFitMenu {
     /**
      * Process payment for booking.
      *
-     * @param sc the sc
+     * @param sc      the sc
      * @param booking the booking
-     * @param amount the amount
+     * @param amount  the amount
      */
     private void processPaymentForBooking(Scanner sc, Booking booking, double amount) {
         System.out.println("\n--- Payment Required ---");
         System.out.println("Booking ID: " + booking.getBookingId());
         System.out.println("Amount: ₹" + amount);
-        
+
         if (paymentService.processPaymentInteractive(sc, booking.getBookingId(), amount)) {
             String paymentMethod = paymentService.getPaymentMethod(booking.getBookingId());
             if (customerService.confirmBooking(booking.getBookingId(), amount, paymentMethod)) {
