@@ -48,7 +48,7 @@ public class CustomerFlipFitMenu {
             if (userService.register(username, password, email, 2)) {
                 System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
             }
-        } catch (Exception e) {
+        } catch (com.flipfit.exception.RegistrationFailedException e) {
             System.out.println(e.getMessage());
         }
     }
