@@ -105,7 +105,7 @@ public class FlipFitApplication {
                     owner.displayMenu(sc, username);
                 }
             }
-        } catch (Exception e) {
+        } catch (com.flipfit.exception.UserNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
