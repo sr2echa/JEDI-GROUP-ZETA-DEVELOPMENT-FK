@@ -5,10 +5,8 @@ import com.flipfit.dao.GymUserDAO;
 import com.flipfit.dao.impl.GymUserDAOImpl;
 import com.flipfit.exception.RegistrationFailedException;
 import com.flipfit.exception.UserNotFoundException;
+import com.flipfit.utils.PasswordHashUtil;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class UserService.
  *
@@ -30,7 +28,9 @@ public class UserService implements UserInterface {
      */
     @Override
     public User login(String username, String password) throws UserNotFoundException {
-        User user = userDAO.loginUser(username, password);
+        // Hash the password with username as salt before checking
+        String hashedPassword = PasswordHashUtil.hashPassword(password, username);
+        User user = userDAO.loginUser(username, hashedPassword);
 
         if (user != null) {
             if (user.getRole() == Role.GYM_OWNER) {
@@ -71,7 +71,8 @@ public class UserService implements UserInterface {
 
         newUser.setUserId(username);
         newUser.setName(username);
-        newUser.setPassword(password);
+        // Hash the password with username as salt before storing
+        newUser.setPassword(PasswordHashUtil.hashPassword(password, username));
         newUser.setEmail(email);
         newUser.setRole(role);
 
@@ -92,7 +93,10 @@ public class UserService implements UserInterface {
      */
     @Override
     public boolean changePassword(String username, String oldPassword, String newPassword) {
-        return userDAO.changePassword(username, oldPassword, newPassword);
+        // Hash both passwords with username as salt
+        String hashedOldPassword = PasswordHashUtil.hashPassword(oldPassword, username);
+        String hashedNewPassword = PasswordHashUtil.hashPassword(newPassword, username);
+        return userDAO.changePassword(username, hashedOldPassword, hashedNewPassword);
     }
 
     /**

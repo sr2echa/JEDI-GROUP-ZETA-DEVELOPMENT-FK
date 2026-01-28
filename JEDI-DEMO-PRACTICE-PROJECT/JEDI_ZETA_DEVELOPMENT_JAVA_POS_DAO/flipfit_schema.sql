@@ -8,8 +8,9 @@ CREATE TABLE IF NOT EXISTS User (
     userId VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
-    password VARCHAR(100) NOT NULL,
-    role VARCHAR(20) NOT NULL -- ADMIN, GYM_OWNER, CUSTOMER
+    password VARCHAR(64) NOT NULL, -- Stores SHA-256 hash (64 hex characters)
+    role VARCHAR(20) NOT NULL, -- ADMIN, GYM_OWNER, CUSTOMER
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table for Customers
@@ -93,5 +94,7 @@ CREATE TABLE IF NOT EXISTS Notification (
 );
 
 -- Insert Default Admin
+-- Password is hashed using SHA-256 with username as salt
+-- Original password: admin123, Username/Salt: admin
 INSERT IGNORE INTO User (userId, name, email, password, role) 
-VALUES ('admin', 'Admin User', 'admin@flipfit.com', 'admin123', 'ADMIN');
+VALUES ('admin', 'Admin User', 'admin@flipfit.com', '057d6ab44a20179a4bb213682beff1ddb9e60f4413e03f0e0df4d84b7b057459', 'ADMIN');
