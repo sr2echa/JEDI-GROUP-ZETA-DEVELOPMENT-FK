@@ -7,6 +7,7 @@ import com.flipfit.bean.SlotMaster;
 import com.flipfit.dao.GymOwnerDAO;
 import com.flipfit.dao.impl.GymAdminDAOImpl;
 import com.flipfit.dao.impl.GymOwnerDAOImpl;
+import com.flipfit.utils.PasswordHashUtil;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -18,10 +19,10 @@ import java.util.List;
  * The Class GymOwnerService.
  *
  * @author Zeta
- * @ClassName  "GymOwnerService"
+ * @ClassName "GymOwnerService"
  */
 public class GymOwnerService implements GymOwnerInterface {
-    
+
     /** The owner DAO. */
     private GymOwnerDAO ownerDAO = new GymOwnerDAOImpl();
 
@@ -48,7 +49,7 @@ public class GymOwnerService implements GymOwnerInterface {
     /**
      * Update slot capacity.
      *
-     * @param slotId the slot id
+     * @param slotId      the slot id
      * @param newCapacity the new capacity
      */
     @Override
@@ -62,9 +63,9 @@ public class GymOwnerService implements GymOwnerInterface {
      *
      * @param username the username
      * @param password the password
-     * @param pan the pan
-     * @param gst the gst
-     * @param aadhar the aadhar
+     * @param pan      the pan
+     * @param gst      the gst
+     * @param aadhar   the aadhar
      * @param location the location
      */
     @Override
@@ -74,7 +75,7 @@ public class GymOwnerService implements GymOwnerInterface {
         newOwner.setUserId(username);
         newOwner.setName(username);
         newOwner.setEmail(username + "@flipfit.com");
-        newOwner.setPassword(password);
+        newOwner.setPassword(PasswordHashUtil.hashPassword(password, username));
         newOwner.setPanNumber(pan);
         newOwner.setGstNumber(gst);
         newOwner.setAadharNumber(aadhar);
@@ -91,9 +92,9 @@ public class GymOwnerService implements GymOwnerInterface {
     /**
      * Adds the gym center.
      *
-     * @param ownerId the owner id
+     * @param ownerId    the owner id
      * @param centerName the center name
-     * @param location the location
+     * @param location   the location
      */
     @Override
     public void addGymCenter(String ownerId, String centerName, String location) {
@@ -122,10 +123,10 @@ public class GymOwnerService implements GymOwnerInterface {
     /**
      * Adds the slot.
      *
-     * @param centerId the center id
+     * @param centerId  the center id
      * @param startTime the start time
-     * @param endTime the end time
-     * @param capacity the capacity
+     * @param endTime   the end time
+     * @param capacity  the capacity
      * @return true, if successful
      */
     @Override
@@ -168,7 +169,7 @@ public class GymOwnerService implements GymOwnerInterface {
      * Update availability.
      *
      * @param slotId the slot id
-     * @param delta the delta
+     * @param delta  the delta
      */
     public static void updateAvailability(String slotId, int delta) {
         GymOwnerDAO ownerDAO = new GymOwnerDAOImpl();
