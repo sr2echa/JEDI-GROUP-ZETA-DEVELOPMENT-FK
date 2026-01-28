@@ -4,9 +4,14 @@ import com.flipfit.bean.User;
 import com.flipfit.exception.RegistrationFailedException;
 import com.flipfit.exception.UserNotFoundException;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
 /**
  * The Interface UserInterface.
- * * @author Zeta
+ * Defines business operations for user management.
+ *
+ * @author Zeta
  * @ClassName "UserInterface"
  */
 public interface UserInterface {
@@ -32,9 +37,31 @@ public interface UserInterface {
 	 */
 	boolean register(String username, String password, String email, int roleChoice) throws RegistrationFailedException;
 
+    /**
+     * Change password.
+     * Updates user's password after validating the old password.
+     *
+     * @param username the username
+     * @param oldPassword the old password
+     * @param newPassword the new password
+     * @return true, if successful
+     */
     boolean changePassword(String username, String oldPassword, String newPassword);
 
+    /**
+     * Gets the user.
+     * Retrieves user details by user ID.
+     *
+     * @param userId the user id
+     * @return the user object
+     */
     User getUser(String userId);
 
+    /**
+     * Gets all users.
+     * Retrieves all registered users.
+     *
+     * @return the list of all users
+     */
     java.util.List<User> getAllUsers();
 }

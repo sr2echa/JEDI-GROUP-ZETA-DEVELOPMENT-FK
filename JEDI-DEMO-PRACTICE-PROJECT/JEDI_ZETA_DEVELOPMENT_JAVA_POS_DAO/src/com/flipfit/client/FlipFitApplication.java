@@ -4,6 +4,7 @@ import com.flipfit.business.UserInterface;
 import com.flipfit.business.UserService;
 import com.flipfit.bean.User;
 import com.flipfit.bean.Role;
+import com.flipfit.exception.UserNotFoundException;
 import java.util.Scanner;
 
 /// Class level Commenting
@@ -105,7 +106,7 @@ public class FlipFitApplication {
                     owner.displayMenu(sc, username);
                 }
             }
-        } catch (com.flipfit.exception.UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }

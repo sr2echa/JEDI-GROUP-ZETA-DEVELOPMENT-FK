@@ -17,8 +17,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/// Class level Commenting
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GymCustomerDAOImpl.
+ * Implementation of GymCustomerDAO interface for customer-related data operations.
+ *
+ * @author Zeta
+ * @ClassName  "GymCustomerDAOImpl"
+ */
 public class GymCustomerDAOImpl implements GymCustomerDAO {
 
+    /**
+     * View centers.
+     * Retrieves all approved gym centers.
+     *
+     * @return the list of approved gym centers
+     */
     @Override
     public List<GymCenter> viewCenters() {
         List<GymCenter> centers = new ArrayList<>();
@@ -42,6 +58,13 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         return centers;
     }
 
+    /**
+     * View slots.
+     * Retrieves all approved slots for a specific gym center.
+     *
+     * @param centerId the center id
+     * @return the list of approved slots for the center
+     */
     @Override
     public List<SlotMaster> viewSlots(String centerId) {
         List<SlotMaster> slots = new ArrayList<>();
@@ -69,6 +92,15 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         return slots;
     }
 
+    /**
+     * Book slot.
+     * Books a slot for a customer and decrements available seats.
+     *
+     * @param userId the user id
+     * @param slotId the slot id
+     * @param date the booking date
+     * @return true, if booking is successful
+     */
     @Override
     public boolean bookSlot(String userId, String slotId, String date) {
         Connection conn = DBConnection.getConnection();
@@ -125,6 +157,13 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         return false;
     }
 
+    /**
+     * View my bookings.
+     * Retrieves all bookings for a specific user.
+     *
+     * @param userId the user id
+     * @return the list of bookings for the user
+     */
     @Override
     public List<Booking> viewMyBookings(String userId) {
         List<Booking> bookings = new ArrayList<>();
@@ -149,6 +188,12 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         return bookings;
     }
 
+    /**
+     * Cancel booking.
+     * Cancels a booking and updates slot availability.
+     *
+     * @param bookingId the booking id
+     */
     @Override
     public void cancelBooking(String bookingId) {
         Connection conn = DBConnection.getConnection();
@@ -207,6 +252,13 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         }
     }
 
+    /**
+     * Gets the booking by id.
+     * Retrieves booking details by booking ID.
+     *
+     * @param bookingId the booking id
+     * @return the booking object, or null if not found
+     */
     @Override
     public Booking getBookingById(String bookingId) {
         Connection conn = DBConnection.getConnection();
@@ -230,6 +282,13 @@ public class GymCustomerDAOImpl implements GymCustomerDAO {
         return null;
     }
 
+    /**
+     * Update booking status.
+     * Updates the status of a booking.
+     *
+     * @param bookingId the booking id
+     * @param status the new status
+     */
     @Override
     public void updateBookingStatus(String bookingId, String status) {
         Connection conn = DBConnection.getConnection();

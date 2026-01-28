@@ -4,6 +4,8 @@ import com.flipfit.business.*;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
 import com.flipfit.bean.Booking;
+import com.flipfit.exception.RegistrationFailedException;
+import com.flipfit.exception.BookingFailedException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -48,7 +50,7 @@ public class CustomerFlipFitMenu {
             if (userService.register(username, password, email, 2)) {
                 System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
             }
-        } catch (com.flipfit.exception.RegistrationFailedException e) {
+        } catch (RegistrationFailedException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -164,7 +166,7 @@ public class CustomerFlipFitMenu {
                 Booking latestBooking = pending.get(pending.size() - 1);
                 processPaymentForBooking(sc, latestBooking, selectedSlot.getPrice());
             }
-        } catch (com.flipfit.exception.BookingFailedException e) {
+        } catch (BookingFailedException e) {
             System.out.println(e.getMessage());
         }
     }
