@@ -67,8 +67,7 @@ public class CustomerService implements CustomerInterface {
     }
 
     /**
-     * Process payment and confirm.
-     * Note: Payment processing is already done by processPaymentInteractive() in CustomerFlipFitMenu.
+     * Confirm booking.
      * This method only confirms the booking after payment has been successfully processed.
      *
      * @param bookingId the booking id
@@ -77,7 +76,7 @@ public class CustomerService implements CustomerInterface {
      * @return true, if successful
      */
     @Override
-    public boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod) {
+    public boolean confirmBooking(String bookingId, double amount, String paymentMethod) {
         // REMOVED: paymentService.processPayment() call here to fix duplicate payment bug
         // Payment is already processed in CustomerFlipFitMenu.processPaymentForBooking()
         // via paymentService.processPaymentInteractive()

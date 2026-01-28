@@ -239,7 +239,7 @@ public class CustomerFlipFitMenu {
         
         if (paymentService.processPaymentInteractive(sc, booking.getBookingId(), amount)) {
             String paymentMethod = paymentService.getPaymentMethod(booking.getBookingId());
-            if (customerService.processPaymentAndConfirm(booking.getBookingId(), amount, paymentMethod)) {
+            if (customerService.confirmBooking(booking.getBookingId(), amount, paymentMethod)) {
                 System.out.println("\n[SUCCESS] Your booking has been confirmed!");
             }
         } else {
