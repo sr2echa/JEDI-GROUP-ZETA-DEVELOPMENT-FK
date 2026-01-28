@@ -164,7 +164,7 @@ public class CustomerFlipFitMenu {
                 Booking latestBooking = pending.get(pending.size() - 1);
                 processPaymentForBooking(sc, latestBooking, selectedSlot.getPrice());
             }
-        } catch (Exception e) {
+        } catch (com.flipfit.exception.BookingFailedException e) {
             System.out.println(e.getMessage());
         }
     }
