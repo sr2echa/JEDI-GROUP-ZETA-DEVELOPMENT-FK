@@ -16,4 +16,6 @@ public interface CustomerInterface {
     List<Booking> getPendingPayments(String userId);
     
     boolean cancelPendingBooking(String bookingId);
+    
+    boolean confirmBooking(String bookingId);
 }

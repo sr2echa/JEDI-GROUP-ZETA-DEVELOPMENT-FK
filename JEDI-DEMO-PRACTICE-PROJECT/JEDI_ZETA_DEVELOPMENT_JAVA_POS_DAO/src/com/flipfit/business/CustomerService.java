@@ -57,6 +57,14 @@ public class CustomerService implements CustomerInterface {
     }
 
     @Override
+    public boolean confirmBooking(String bookingId) {
+        // Just update status to CONFIRMED without processing payment again
+        customerDAO.updateBookingStatus(bookingId, BookingStatus.CONFIRMED.toString());
+        System.out.println("[SUCCESS] Booking " + bookingId + " has been confirmed.");
+        return true;
+    }
+
+    @Override
     public List<Booking> getPendingPayments(String userId) {
         // Get bookings with PENDING_PAYMENT status
         List<Booking> allBookings = customerDAO.viewMyBookings(userId);
