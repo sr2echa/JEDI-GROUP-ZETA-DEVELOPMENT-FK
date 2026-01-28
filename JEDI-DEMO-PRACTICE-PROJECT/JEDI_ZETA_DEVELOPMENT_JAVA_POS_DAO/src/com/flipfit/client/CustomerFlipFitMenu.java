@@ -6,6 +6,8 @@ import com.flipfit.bean.SlotMaster;
 import com.flipfit.bean.Booking;
 import com.flipfit.exception.RegistrationFailedException;
 import com.flipfit.exception.BookingFailedException;
+import com.flipfit.utils.InputValidator;
+import com.flipfit.utils.InputSanitizer;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,12 +41,32 @@ public class CustomerFlipFitMenu {
      */
     public void registerCustomer(Scanner sc) {
         System.out.println("\n--- Registration ---");
+        
+        // Username validation
         System.out.print("Username: ");
         String username = sc.next();
+        username = InputSanitizer.sanitizeUsername(username);
+        if (!InputValidator.isValidUsername(username)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
+            return;
+        }
+        
+        // Email validation
         System.out.print("Email: ");
         String email = sc.next();
+        email = InputSanitizer.sanitizeEmail(email);
+        if (!InputValidator.isValidEmail(email)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Email", "EMAIL"));
+            return;
+        }
+        
+        // Password validation
         System.out.print("Password: ");
         String password = sc.next();
+        if (!InputValidator.isValidPassword(password)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Password", "PASSWORD"));
+            return;
+        }
 
         try {
             if (userService.register(username, password, email, 2)) {
