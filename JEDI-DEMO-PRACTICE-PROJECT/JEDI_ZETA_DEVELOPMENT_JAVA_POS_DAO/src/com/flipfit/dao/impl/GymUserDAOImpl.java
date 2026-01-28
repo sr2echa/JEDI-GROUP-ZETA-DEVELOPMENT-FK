@@ -13,9 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class GymUserDAOImpl.
  * Implementation of GymUserDAO interface for managing user data operations.

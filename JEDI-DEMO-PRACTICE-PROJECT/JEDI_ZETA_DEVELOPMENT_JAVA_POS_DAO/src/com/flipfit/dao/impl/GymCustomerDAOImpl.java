@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class GymCustomerDAOImpl.
  * Implementation of GymCustomerDAO interface for customer-related data operations.

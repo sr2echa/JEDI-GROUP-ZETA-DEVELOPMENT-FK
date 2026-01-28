@@ -13,9 +13,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class PaymentDAOImpl.
  * Implementation of PaymentDAO interface for payment data operations.

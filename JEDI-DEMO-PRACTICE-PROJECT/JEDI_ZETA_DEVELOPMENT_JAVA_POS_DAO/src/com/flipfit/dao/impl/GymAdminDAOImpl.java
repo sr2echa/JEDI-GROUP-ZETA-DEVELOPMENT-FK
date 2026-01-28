@@ -13,9 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class GymAdminDAOImpl.
  * Implementation of GymAdminDAO interface for administrative data operations.

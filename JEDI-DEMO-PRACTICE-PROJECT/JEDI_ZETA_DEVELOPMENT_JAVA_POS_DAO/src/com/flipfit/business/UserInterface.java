@@ -4,9 +4,6 @@ import com.flipfit.bean.User;
 import com.flipfit.exception.RegistrationFailedException;
 import com.flipfit.exception.UserNotFoundException;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Interface UserInterface.
  * Defines business operations for user management.

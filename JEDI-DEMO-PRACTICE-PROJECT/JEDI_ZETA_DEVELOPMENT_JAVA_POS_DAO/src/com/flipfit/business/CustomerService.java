@@ -7,9 +7,6 @@ import com.flipfit.dao.impl.GymCustomerDAOImpl;
 import com.flipfit.exception.BookingFailedException;
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class CustomerService.
  *

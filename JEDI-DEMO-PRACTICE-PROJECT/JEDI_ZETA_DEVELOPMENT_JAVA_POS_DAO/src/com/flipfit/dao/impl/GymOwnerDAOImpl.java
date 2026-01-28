@@ -13,9 +13,6 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class GymOwnerDAOImpl.
  * Implementation of GymOwnerDAO interface for gym owner data operations.
