@@ -40,14 +40,15 @@ public interface CustomerInterface {
     List<Booking> getCustomerPlan(String userId);
     
     /**
-     * Process payment and confirm.
+     * Confirm booking.
+     * Confirms a booking after payment has been processed.
      *
      * @param bookingId the booking id
      * @param amount the amount
      * @param paymentMethod the payment method
      * @return true, if successful
      */
-    boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod);
+    boolean confirmBooking(String bookingId, double amount, String paymentMethod);
     
     /**
      * Gets the pending payments.

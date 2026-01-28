@@ -4,6 +4,10 @@ import com.flipfit.business.*;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.SlotMaster;
 import com.flipfit.bean.Booking;
+import com.flipfit.exception.RegistrationFailedException;
+import com.flipfit.exception.BookingFailedException;
+import com.flipfit.utils.InputValidator;
+import com.flipfit.utils.InputSanitizer;
 import java.util.List;
 import java.util.Scanner;
 
@@ -37,18 +41,38 @@ public class CustomerFlipFitMenu {
      */
     public void registerCustomer(Scanner sc) {
         System.out.println("\n--- Registration ---");
+        
+        // Username validation
         System.out.print("Username: ");
         String username = sc.next();
+        username = InputSanitizer.sanitizeUsername(username);
+        if (!InputValidator.isValidUsername(username)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
+            return;
+        }
+        
+        // Email validation
         System.out.print("Email: ");
         String email = sc.next();
+        email = InputSanitizer.sanitizeEmail(email);
+        if (!InputValidator.isValidEmail(email)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Email", "EMAIL"));
+            return;
+        }
+        
+        // Password validation
         System.out.print("Password: ");
         String password = sc.next();
+        if (!InputValidator.isValidPassword(password)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Password", "PASSWORD"));
+            return;
+        }
 
         try {
             if (userService.register(username, password, email, 2)) {
                 System.out.println("[SYSTEM] Customer " + username + " Registration Successful!");
             }
-        } catch (com.flipfit.exception.RegistrationFailedException e) {
+        } catch (RegistrationFailedException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -164,7 +188,7 @@ public class CustomerFlipFitMenu {
                 Booking latestBooking = pending.get(pending.size() - 1);
                 processPaymentForBooking(sc, latestBooking, selectedSlot.getPrice());
             }
-        } catch (com.flipfit.exception.BookingFailedException e) {
+        } catch (BookingFailedException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -237,7 +261,7 @@ public class CustomerFlipFitMenu {
         
         if (paymentService.processPaymentInteractive(sc, booking.getBookingId(), amount)) {
             String paymentMethod = paymentService.getPaymentMethod(booking.getBookingId());
-            if (customerService.processPaymentAndConfirm(booking.getBookingId(), amount, paymentMethod)) {
+            if (customerService.confirmBooking(booking.getBookingId(), amount, paymentMethod)) {
                 System.out.println("\n[SUCCESS] Your booking has been confirmed!");
             }
         } else {

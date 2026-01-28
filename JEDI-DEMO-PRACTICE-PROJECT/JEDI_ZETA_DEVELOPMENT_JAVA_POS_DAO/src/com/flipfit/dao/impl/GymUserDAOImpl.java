@@ -13,8 +13,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The Class GymUserDAOImpl.
+ * Implementation of GymUserDAO interface for managing user data operations.
+ *
+ * @author Zeta
+ * @ClassName  "GymUserDAOImpl"
+ */
 public class GymUserDAOImpl implements GymUserDAO {
 
+    /**
+     * Register user.
+     * Inserts a new user into the database along with role-specific details.
+     *
+     * @param user the user to register
+     * @return true, if successful
+     */
     @Override
     public boolean registerUser(User user) {
         Connection conn = DBConnection.getConnection();
@@ -69,6 +83,14 @@ public class GymUserDAOImpl implements GymUserDAO {
         return false;
     }
 
+    /**
+     * Login user.
+     * Authenticates a user and retrieves their profile from the database.
+     *
+     * @param username the username
+     * @param password the password
+     * @return the user object if credentials are valid, null otherwise
+     */
     @Override
     public User loginUser(String username, String password) {
         Connection conn = DBConnection.getConnection();
@@ -111,6 +133,12 @@ public class GymUserDAOImpl implements GymUserDAO {
         return null;
     }
 
+    /**
+     * Load gym owner details.
+     * Fetches additional gym owner specific information from the database.
+     *
+     * @param owner the gym owner object to populate with details
+     */
     private void loadGymOwnerDetails(GymOwner owner) {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymOwner WHERE userId = ?";
@@ -130,6 +158,15 @@ public class GymUserDAOImpl implements GymUserDAO {
         }
     }
 
+    /**
+     * Change password.
+     * Updates the user's password after verifying the old password.
+     *
+     * @param username the username
+     * @param oldPassword the old password
+     * @param newPassword the new password
+     * @return true, if successful
+     */
     @Override
     public boolean changePassword(String username, String oldPassword, String newPassword) {
         Connection conn = DBConnection.getConnection();
@@ -146,6 +183,13 @@ public class GymUserDAOImpl implements GymUserDAO {
         return false;
     }
 
+    /**
+     * Gets the user.
+     * Retrieves a user by their user ID.
+     *
+     * @param userId the user id
+     * @return the user object, or null if not found
+     */
     @Override
     public User getUser(String userId) {
         Connection conn = DBConnection.getConnection();
@@ -163,6 +207,12 @@ public class GymUserDAOImpl implements GymUserDAO {
         return null;
     }
 
+    /**
+     * Gets all users.
+     * Retrieves all users from the database.
+     *
+     * @return the list of all users
+     */
     @Override
     public java.util.List<User> getAllUsers() {
         java.util.List<User> users = new java.util.ArrayList<>();
@@ -179,6 +229,14 @@ public class GymUserDAOImpl implements GymUserDAO {
         return users;
     }
 
+    /**
+     * Map user.
+     * Maps a ResultSet row to a User object with the appropriate role type.
+     *
+     * @param rs the result set
+     * @return the user object
+     * @throws SQLException the SQL exception
+     */
     private User mapUser(ResultSet rs) throws SQLException {
         String roleStr = rs.getString("role");
         Role role = Role.valueOf(roleStr);

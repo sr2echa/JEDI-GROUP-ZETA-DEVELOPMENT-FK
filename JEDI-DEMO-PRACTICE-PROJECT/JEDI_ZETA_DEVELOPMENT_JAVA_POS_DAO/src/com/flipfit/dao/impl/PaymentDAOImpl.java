@@ -13,8 +13,21 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Class PaymentDAOImpl.
+ * Implementation of PaymentDAO interface for payment data operations.
+ *
+ * @author Zeta
+ * @ClassName  "PaymentDAOImpl"
+ */
 public class PaymentDAOImpl implements PaymentDAO {
 
+    /**
+     * Save payment.
+     * Inserts a new payment record into the database.
+     *
+     * @param payment the payment record to save
+     */
     @Override
     public void savePayment(PaymentRecord payment) {
         Connection conn = DBConnection.getConnection();
@@ -34,6 +47,13 @@ public class PaymentDAOImpl implements PaymentDAO {
         }
     }
 
+    /**
+     * Gets the payment history.
+     * Retrieves all payment records for a specific user.
+     *
+     * @param userId the user id
+     * @return the list of payment records for the user
+     */
     @Override
     public List<PaymentRecord> getPaymentHistory(String userId) {
         List<PaymentRecord> list = new ArrayList<>();
@@ -52,6 +72,13 @@ public class PaymentDAOImpl implements PaymentDAO {
         return list;
     }
 
+    /**
+     * Gets the center revenue.
+     * Retrieves all payment records for a specific gym center.
+     *
+     * @param centerId the center id
+     * @return the list of payment records for the center
+     */
     @Override
     public List<PaymentRecord> getCenterRevenue(String centerId) {
         List<PaymentRecord> list = new ArrayList<>();
@@ -70,6 +97,13 @@ public class PaymentDAOImpl implements PaymentDAO {
         return list;
     }
 
+    /**
+     * Gets the payments by booking id.
+     * Retrieves all payment records for a specific booking.
+     *
+     * @param bookingId the booking id
+     * @return the list of payment records for the booking
+     */
     @Override
     public List<PaymentRecord> getPaymentsByBookingId(String bookingId) {
         List<PaymentRecord> list = new ArrayList<>();
@@ -88,6 +122,14 @@ public class PaymentDAOImpl implements PaymentDAO {
         return list;
     }
 
+    /**
+     * Map payment.
+     * Maps a ResultSet row to a PaymentRecord object.
+     *
+     * @param rs the result set
+     * @return the payment record object
+     * @throws SQLException the SQL exception
+     */
     private PaymentRecord mapPayment(ResultSet rs) throws SQLException {
         PaymentRecord p = new PaymentRecord();
         p.setTransactionId(rs.getString("transactionId"));

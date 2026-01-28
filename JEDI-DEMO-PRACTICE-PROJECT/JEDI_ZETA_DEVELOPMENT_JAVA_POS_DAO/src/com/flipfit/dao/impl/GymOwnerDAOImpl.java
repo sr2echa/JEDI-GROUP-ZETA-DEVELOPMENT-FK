@@ -13,8 +13,21 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Class GymOwnerDAOImpl.
+ * Implementation of GymOwnerDAO interface for gym owner data operations.
+ *
+ * @author Zeta
+ * @ClassName  "GymOwnerDAOImpl"
+ */
 public class GymOwnerDAOImpl implements GymOwnerDAO {
 
+    /**
+     * Adds the gym center.
+     * Inserts a new gym center into the database.
+     *
+     * @param center the gym center to add
+     */
     @Override
     public void addGymCenter(GymCenter center) {
         Connection conn = DBConnection.getConnection();
@@ -32,6 +45,13 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         }
     }
 
+    /**
+     * View my centers.
+     * Retrieves all gym centers owned by a specific gym owner.
+     *
+     * @param ownerId the owner id
+     * @return the list of gym centers owned by the owner
+     */
     @Override
     public List<GymCenter> viewMyCenters(String ownerId) {
         List<GymCenter> centers = new ArrayList<>();
@@ -57,6 +77,13 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         return centers;
     }
 
+    /**
+     * Adds the slot.
+     * Inserts a new slot into the database for a gym center.
+     *
+     * @param slot the slot to add
+     * @return true, if successful
+     */
     @Override
     public boolean addSlot(SlotMaster slot) {
         Connection conn = DBConnection.getConnection();
@@ -78,6 +105,13 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         return false;
     }
 
+    /**
+     * View slots.
+     * Retrieves all slots for a specific gym center.
+     *
+     * @param centerId the center id
+     * @return the list of slots for the center
+     */
     @Override
     public List<SlotMaster> viewSlots(String centerId) {
         List<SlotMaster> slots = new ArrayList<>();
@@ -105,6 +139,13 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         return slots;
     }
 
+    /**
+     * Update slot capacity.
+     * Updates the capacity of a slot and adjusts available seats accordingly.
+     *
+     * @param slotId the slot id
+     * @param newCapacity the new capacity
+     */
     @Override
     public void updateSlotCapacity(String slotId, int newCapacity) {
         Connection conn = DBConnection.getConnection();
@@ -120,6 +161,13 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         }
     }
 
+    /**
+     * Gets the slot by id.
+     * Retrieves slot details by slot ID.
+     *
+     * @param slotId the slot id
+     * @return the slot object, or null if not found
+     */
     @Override
     public SlotMaster getSlotById(String slotId) {
         Connection conn = DBConnection.getConnection();
@@ -146,6 +194,13 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
         return null;
     }
 
+    /**
+     * Update available seats.
+     * Increments or decrements the available seats for a slot.
+     *
+     * @param slotId the slot id
+     * @param delta the change in available seats (positive to add, negative to subtract)
+     */
     @Override
     public void updateAvailableSeats(String slotId, int delta) {
         Connection conn = DBConnection.getConnection();

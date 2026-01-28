@@ -7,9 +7,6 @@ import com.flipfit.dao.impl.GymCustomerDAOImpl;
 import com.flipfit.exception.BookingFailedException;
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class CustomerService.
  *
@@ -70,7 +67,8 @@ public class CustomerService implements CustomerInterface {
     }
 
     /**
-     * Process payment and confirm.
+     * Confirm booking.
+     * This method only confirms the booking after payment has been successfully processed.
      *
      * @param bookingId the booking id
      * @param amount the amount
@@ -78,17 +76,13 @@ public class CustomerService implements CustomerInterface {
      * @return true, if successful
      */
     @Override
-    public boolean processPaymentAndConfirm(String bookingId, double amount, String paymentMethod) {
-        PaymentService paymentService = new PaymentService();
-        boolean paymentSuccess = paymentService.processPayment(bookingId, amount, paymentMethod);
-
-        if (!paymentSuccess) {
-            System.err.println("[ERROR] processPaymentAndConfirm: Payment failed for booking " + bookingId);
-            return false;
-        }
-
+    public boolean confirmBooking(String bookingId, double amount, String paymentMethod) {
+        // REMOVED: paymentService.processPayment() call here to fix duplicate payment bug
+        // Payment is already processed in CustomerFlipFitMenu.processPaymentForBooking()
+        // via paymentService.processPaymentInteractive()
+        
         customerDAO.updateBookingStatus(bookingId, BookingStatus.CONFIRMED.toString());
-        System.out.println("[SUCCESS] Payment and confirmation completed for booking " + bookingId);
+        System.out.println("[SUCCESS] Booking confirmed for booking " + bookingId);
         return true;
     }
 

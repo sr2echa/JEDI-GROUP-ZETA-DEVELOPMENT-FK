@@ -13,8 +13,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Class GymAdminDAOImpl.
+ * Implementation of GymAdminDAO interface for administrative data operations.
+ *
+ * @author Zeta
+ * @ClassName  "GymAdminDAOImpl"
+ */
 public class GymAdminDAOImpl implements GymAdminDAO {
 
+    /**
+     * Approve gym owner.
+     * Approves a pending gym owner registration.
+     *
+     * @param ownerId the owner id to approve
+     */
     @Override
     public void approveGymOwner(String ownerId) {
         Connection conn = DBConnection.getConnection();
@@ -27,6 +40,12 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         }
     }
 
+    /**
+     * Approve gym center.
+     * Approves a pending gym center registration.
+     *
+     * @param centerId the center id to approve
+     */
     @Override
     public void approveGymCenter(String centerId) {
         Connection conn = DBConnection.getConnection();
@@ -39,6 +58,12 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         }
     }
 
+    /**
+     * Approve slot.
+     * Approves a pending slot registration.
+     *
+     * @param slotId the slot id to approve
+     */
     @Override
     public void approveSlot(String slotId) {
         Connection conn = DBConnection.getConnection();
@@ -51,6 +76,12 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         }
     }
 
+    /**
+     * View pending gym owners.
+     * Retrieves all gym owners awaiting admin approval.
+     *
+     * @return the list of pending gym owners
+     */
     @Override
     public List<GymOwner> viewPendingGymOwners() {
         List<GymOwner> owners = new ArrayList<>();
@@ -73,6 +104,12 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         return owners;
     }
 
+    /**
+     * View pending gym centers.
+     * Retrieves all gym centers awaiting admin approval.
+     *
+     * @return the list of pending gym centers
+     */
     @Override
     public List<GymCenter> viewPendingGymCenters() {
         List<GymCenter> centers = new ArrayList<>();
@@ -96,6 +133,12 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         return centers;
     }
 
+    /**
+     * View pending slots.
+     * Retrieves all slots awaiting admin approval.
+     *
+     * @return the list of pending slots
+     */
     @Override
     public List<SlotMaster> viewPendingSlots() {
         List<SlotMaster> slots = new ArrayList<>();
@@ -121,6 +164,13 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         return slots;
     }
     
+    /**
+     * Gets the center by id.
+     * Retrieves gym center details by center ID.
+     *
+     * @param centerId the center id
+     * @return the gym center object, or null if not found
+     */
     @Override
     public GymCenter getCenterById(String centerId) {
         Connection conn = DBConnection.getConnection();
