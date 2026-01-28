@@ -18,7 +18,7 @@ import java.util.List;
  * Implementation of GymAdminDAO interface for administrative data operations.
  *
  * @author Zeta
- * @ClassName  "GymAdminDAOImpl"
+ * @ClassName "GymAdminDAOImpl"
  */
 public class GymAdminDAOImpl implements GymAdminDAO {
 
@@ -88,7 +88,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM User u JOIN GymOwner g ON u.userId = g.userId WHERE g.isApproved = false";
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymOwner owner = new GymOwner();
                 owner.setUserId(rs.getString("userId"));
@@ -116,7 +116,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymCenter WHERE isApproved = false";
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymCenter center = new GymCenter();
                 center.setCenterId(rs.getString("centerId"));
@@ -145,7 +145,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Slot WHERE isApproved = false";
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 SlotMaster slot = new SlotMaster();
                 slot.setSlotId(rs.getString("slotId"));
@@ -163,7 +163,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         }
         return slots;
     }
-    
+
     /**
      * Gets the center by id.
      * Retrieves gym center details by center ID.
@@ -193,5 +193,59 @@ public class GymAdminDAOImpl implements GymAdminDAO {
             e.printStackTrace();
         }
         return null;
+    }
+    /**
+     * View all gym owners.
+     *
+     * @return the list
+     */
+    @Override
+    public List<GymOwner> getAllGymOwners() {
+        List<GymOwner> owners = new ArrayList<>();
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM User u JOIN GymOwner g ON u.userId = g.userId";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                GymOwner owner = new GymOwner();
+                owner.setUserId(rs.getString("userId"));
+                owner.setName(rs.getString("name"));
+                owner.setEmail(rs.getString("email"));
+                owner.setApproved(rs.getBoolean("isApproved"));
+                owner.setPanNumber(rs.getString("panNumber"));
+                owners.add(owner);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return owners;
+    }
+
+    /**
+     * View all gym centers.
+     *
+     * @return the list
+     */
+    @Override
+    public List<GymCenter> getAllGymCenters() {
+        List<GymCenter> centers = new ArrayList<>();
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM GymCenter";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                GymCenter center = new GymCenter();
+                center.setCenterId(rs.getString("centerId"));
+                center.setName(rs.getString("name"));
+                center.setCity(rs.getString("city"));
+                center.setAddress(rs.getString("address"));
+                center.setOwnerId(rs.getString("ownerId"));
+                center.setApproved(rs.getBoolean("isApproved"));
+                centers.add(center);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return centers;
     }
 }

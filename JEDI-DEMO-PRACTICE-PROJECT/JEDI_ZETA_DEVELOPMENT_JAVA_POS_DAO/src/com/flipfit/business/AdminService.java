@@ -7,18 +7,16 @@ import com.flipfit.dao.GymAdminDAO;
 import com.flipfit.dao.impl.GymAdminDAOImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class AdminService.
  *
  * @author Zeta
- * @ClassName  "AdminService"
+ * @ClassName "AdminService"
  */
 public class AdminService implements AdminInterface {
-    
+
     /** The admin DAO. */
     private GymAdminDAO adminDAO = new GymAdminDAOImpl();
 
@@ -42,7 +40,7 @@ public class AdminService implements AdminInterface {
     public void onboardCenter(GymCenter center) {
         System.out.println("[ADMIN] Gym Center " + center.getName() + " onboarded successfully.");
     }
-    
+
     /**
      * Approve gym center.
      *
@@ -93,5 +91,31 @@ public class AdminService implements AdminInterface {
     @Override
     public List<SlotMaster> viewPendingSlots() {
         return adminDAO.viewPendingSlots();
+    }
+
+    /**
+     * View gym owners by status.
+     *
+     * @param isApproved the is approved
+     * @return the list
+     */
+    @Override
+    public List<GymOwner> viewGymOwnersByStatus(boolean isApproved) {
+        return adminDAO.getAllGymOwners().stream()
+                .filter(owner -> owner.isApproved() == isApproved)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * View gym centers by status.
+     *
+     * @param isApproved the is approved
+     * @return the list
+     */
+    @Override
+    public List<GymCenter> viewGymCentersByStatus(boolean isApproved) {
+        return adminDAO.getAllGymCenters().stream()
+                .filter(center -> center.isApproved() == isApproved)
+                .collect(Collectors.toList());
     }
 }

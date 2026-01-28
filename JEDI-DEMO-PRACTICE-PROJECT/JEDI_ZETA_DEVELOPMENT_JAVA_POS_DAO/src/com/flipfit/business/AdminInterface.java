@@ -6,17 +6,14 @@ import com.flipfit.bean.SlotMaster;
 
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Interface AdminInterface.
  *
  * @author Zeta
- * @ClassName  "AdminInterface"
+ * @ClassName "AdminInterface"
  */
 public interface AdminInterface {
-    
+
     /**
      * Approve gym owner.
      *
@@ -30,7 +27,7 @@ public interface AdminInterface {
      * @param center the center
      */
     void onboardCenter(GymCenter center);
-    
+
     /**
      * Approve gym center.
      *
@@ -44,20 +41,36 @@ public interface AdminInterface {
      * @param slotId the slot id
      */
     void approveSlot(String slotId);
-    
+
     /**
      * View pending slots.
      *
      * @return the list
      */
     List<SlotMaster> viewPendingSlots();
-    
+
     /**
      * View pending gym owners.
      *
      * @return the list
      */
     List<GymOwner> viewPendingGymOwners();
+
+    /**
+     * View gym owners by status.
+     *
+     * @param isApproved the is approved
+     * @return the list
+     */
+    List<GymOwner> viewGymOwnersByStatus(boolean isApproved);
+
+    /**
+     * View gym centers by status.
+     *
+     * @param isApproved the is approved
+     * @return the list
+     */
+    List<GymCenter> viewGymCentersByStatus(boolean isApproved);
 
     /**
      * View pending gym centers.

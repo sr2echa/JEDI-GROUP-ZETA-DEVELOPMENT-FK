@@ -9,17 +9,14 @@ import com.flipfit.utils.InputValidator;
 import com.flipfit.utils.InputSanitizer;
 import java.util.Scanner;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class FlipFitApplication.
  *
  * @author Zeta
- * @ClassName  "FlipFitApplication"
+ * @ClassName "FlipFitApplication"
  */
 public class FlipFitApplication {
-    
+
     /** The user service. */
     private static UserInterface userService = new UserService();
 
@@ -37,10 +34,10 @@ public class FlipFitApplication {
         GymOwnerFlipFitMenu ownerMenu = new GymOwnerFlipFitMenu();
 
         while (!exit) {
-            System.out.println("\n--- Welcome to the Flipfit Application for GYM ---");
-            System.out.println("1. Login");
-            System.out.println("2. Registration of the GymCustomer");
-            System.out.println("3. Registration of the GymOwner");
+            System.out.println("\n--- Welcome to the Flipfit App ---");
+            System.out.println("\n1. Login");
+            System.out.println("2. Register as Gymcustomer");
+            System.out.println("3. Register as GymOwner");
             System.out.println("4. Change Password");
             System.out.println("5. Exit");
             System.out.print("Press choice: -> ");
@@ -48,7 +45,7 @@ public class FlipFitApplication {
             int choice = 0;
             if (sc.hasNextInt()) {
                 choice = sc.nextInt();
-                sc.nextLine(); 
+                sc.nextLine();
             } else {
                 sc.nextLine();
                 System.out.println("Invalid input. Please enter a number.");
@@ -82,10 +79,10 @@ public class FlipFitApplication {
     /**
      * Handle login.
      *
-     * @param sc the sc
-     * @param admin the admin
+     * @param sc       the sc
+     * @param admin    the admin
      * @param customer the customer
-     * @param owner the owner
+     * @param owner    the owner
      */
     private static void handleLogin(Scanner sc, AdminFlipFitMenu admin, CustomerFlipFitMenu customer,
             GymOwnerFlipFitMenu owner) {
@@ -93,15 +90,15 @@ public class FlipFitApplication {
         System.out.print("Username: ");
         String username = sc.nextLine();
         username = InputSanitizer.sanitizeUsername(username);
-        
+
         if (!InputValidator.isValidUsername(username)) {
             System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
             return;
         }
-        
+
         System.out.print("Password: ");
         String password = sc.nextLine();
-        
+
         if (!InputValidator.isValidPassword(password)) {
             System.out.println(InputValidator.getValidationErrorMessage("Password", "PASSWORD"));
             return;
@@ -111,6 +108,16 @@ public class FlipFitApplication {
             User loggedInUser = userService.login(username, password);
 
             if (loggedInUser != null) {
+                // Display welcome message with date and time
+                java.time.LocalDateTime now = java.time.LocalDateTime.now();
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                        .ofPattern("yyyy-MM-dd HH:mm:ss");
+                String formattedDateTime = now.format(formatter);
+
+                System.out.println("\n" + "=".repeat(60));
+                System.out.printf("Welcome %-30s %20s\n", loggedInUser.getName(), formattedDateTime);
+                System.out.println("=".repeat(60));
+
                 Role role = loggedInUser.getRole();
                 if (role == Role.ADMIN) {
                     admin.displayMenu(sc, loggedInUser);
@@ -135,23 +142,23 @@ public class FlipFitApplication {
         System.out.print("Enter Username: ");
         String username = sc.nextLine();
         username = InputSanitizer.sanitizeUsername(username);
-        
+
         if (!InputValidator.isValidUsername(username)) {
             System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
             return;
         }
-        
+
         System.out.print("Enter Old Password: ");
         String oldPwd = sc.nextLine();
-        
+
         if (!InputValidator.isValidPassword(oldPwd)) {
             System.out.println(InputValidator.getValidationErrorMessage("Old Password", "PASSWORD"));
             return;
         }
-        
+
         System.out.print("Enter New Password: ");
         String newPwd = sc.nextLine();
-        
+
         if (!InputValidator.isValidPassword(newPwd)) {
             System.out.println(InputValidator.getValidationErrorMessage("New Password", "PASSWORD"));
             return;

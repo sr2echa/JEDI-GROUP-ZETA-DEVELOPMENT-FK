@@ -5,17 +5,14 @@ import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.SlotMaster;
 import java.util.List;
 
-/// Class level Commenting
-
-// TODO: Auto-generated Javadoc
 /**
  * The Interface GymAdminDAO.
  *
  * @author Zeta
- * @ClassName  "GymAdminDAO"
+ * @ClassName "GymAdminDAO"
  */
 public interface GymAdminDAO {
-    
+
     /**
      * Approve gym owner.
      *
@@ -57,7 +54,21 @@ public interface GymAdminDAO {
      * @return the list
      */
     public List<SlotMaster> viewPendingSlots();
-    
+
+    /**
+     * View all gym owners.
+     *
+     * @return the list
+     */
+    public List<GymOwner> getAllGymOwners();
+
+    /**
+     * View all gym centers.
+     *
+     * @return the list
+     */
+    public List<GymCenter> getAllGymCenters();
+
     /**
      * Gets the center by id.
      *
