@@ -1,7 +1,6 @@
 package com.flipfit.utils;
 
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * Utility class for validating various input fields.
@@ -14,7 +13,7 @@ public class InputValidator {
     // Regular expression patterns
     private static final Pattern AADHAR_PATTERN = Pattern.compile("^[0-9]{12}$");
     private static final Pattern PAN_PATTERN = Pattern.compile("^[A-Z]{5}[0-9]{4}[A-Z]{1}$");
-    private static final Pattern GST_PATTERN = Pattern.compile("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$");
+    private static final Pattern GST_PATTERN = Pattern.compile("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z0-9A-Z]{1}[0-9A-Z]{1}$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9_]{3,20}$");
@@ -50,7 +49,7 @@ public class InputValidator {
     
     /**
      * Validates GST number.
-     * Format: 15 characters (2 digits state code + 10 char PAN + 1 digit entity number + Z + 1 alphanumeric)
+     * Format: 15 characters (2 digits state code + 10 char PAN + 1 digit entity number + 1 char + 1 alphanumeric checksum)
      *
      * @param gst the GST number to validate
      * @return true if valid, false otherwise

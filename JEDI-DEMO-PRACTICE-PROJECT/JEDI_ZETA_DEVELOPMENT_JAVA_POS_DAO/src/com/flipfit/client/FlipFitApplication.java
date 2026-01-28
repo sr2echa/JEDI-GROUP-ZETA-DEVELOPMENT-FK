@@ -5,6 +5,8 @@ import com.flipfit.business.UserService;
 import com.flipfit.bean.User;
 import com.flipfit.bean.Role;
 import com.flipfit.exception.UserNotFoundException;
+import com.flipfit.utils.InputValidator;
+import com.flipfit.utils.InputSanitizer;
 import java.util.Scanner;
 
 /// Class level Commenting
@@ -90,8 +92,20 @@ public class FlipFitApplication {
         System.out.println("\n--- Login ---");
         System.out.print("Username: ");
         String username = sc.nextLine();
+        username = InputSanitizer.sanitizeUsername(username);
+        
+        if (!InputValidator.isValidUsername(username)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
+            return;
+        }
+        
         System.out.print("Password: ");
         String password = sc.nextLine();
+        
+        if (!InputValidator.isValidPassword(password)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Password", "PASSWORD"));
+            return;
+        }
 
         try {
             User loggedInUser = userService.login(username, password);
@@ -120,10 +134,28 @@ public class FlipFitApplication {
         System.out.println("\n--- Change Password ---");
         System.out.print("Enter Username: ");
         String username = sc.nextLine();
+        username = InputSanitizer.sanitizeUsername(username);
+        
+        if (!InputValidator.isValidUsername(username)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Username", "USERNAME"));
+            return;
+        }
+        
         System.out.print("Enter Old Password: ");
         String oldPwd = sc.nextLine();
+        
+        if (!InputValidator.isValidPassword(oldPwd)) {
+            System.out.println(InputValidator.getValidationErrorMessage("Old Password", "PASSWORD"));
+            return;
+        }
+        
         System.out.print("Enter New Password: ");
         String newPwd = sc.nextLine();
+        
+        if (!InputValidator.isValidPassword(newPwd)) {
+            System.out.println(InputValidator.getValidationErrorMessage("New Password", "PASSWORD"));
+            return;
+        }
 
         if (userService.changePassword(username, oldPwd, newPwd)) {
             System.out.println("[SYSTEM] Password updated successfully!");
