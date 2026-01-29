@@ -33,8 +33,11 @@ public class DBConnection {
                 // Try multiple locations for .env file
                 String[] envPaths = {
                         ".env",
+                        "JEDI-DEMO-PRACTICE-PROJECT/DROPWIZARD/DemoDropWizardProject/.env",
                         "JEDI-DEMO-PRACTICE-PROJECT/JEDI_ZETA_DEVELOPMENT_JAVA_POS_DAO/.env",
                         System.getProperty("user.dir") + "/.env",
+                        System.getProperty("user.dir")
+                                + "/JEDI-DEMO-PRACTICE-PROJECT/DROPWIZARD/DemoDropWizardProject/.env",
                         System.getProperty("user.dir")
                                 + "/JEDI-DEMO-PRACTICE-PROJECT/JEDI_ZETA_DEVELOPMENT_JAVA_POS_DAO/.env"
                 };
