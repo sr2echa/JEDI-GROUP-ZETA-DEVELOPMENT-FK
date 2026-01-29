@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>com.flipkart.jedi</groupId>
+    <groupId>com.flipfit.jedi</groupId>
     <artifactId>flipfit_d</artifactId>
     <version>1.0-SNAPSHOT</version>
     
@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>2.0.33</dropwizard.version>
-        <mainClass>com.dropwizard.App</mainClass>
+        <mainClass>com.flipfit.FlipFitApplication</mainClass>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -43,6 +43,20 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Jackson for JSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.4</version>
+        </dependency>
+
+        <!-- HTTP Client for CLI -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.10.0</version>
         </dependency>
         
     </dependencies>
