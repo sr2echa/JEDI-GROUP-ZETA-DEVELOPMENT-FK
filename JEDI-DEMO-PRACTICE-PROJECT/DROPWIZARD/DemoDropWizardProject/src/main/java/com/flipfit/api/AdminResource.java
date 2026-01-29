@@ -16,10 +16,12 @@ public class AdminResource {
     
     private final AdminService adminService;
     private final NotificationService notificationService;
+    private final PaymentService paymentService;
     
     public AdminResource() {
         this.adminService = new AdminService();
         this.notificationService = new NotificationService();
+        this.paymentService = new PaymentService();
     }
     
     @GET
@@ -37,16 +39,10 @@ public class AdminResource {
     
     @PUT
     @Path("/approve-owner/{ownerId}")
-    public Response approveGymOwner(@PathParam("ownerId") int ownerId) {
+    public Response approveGymOwner(@PathParam("ownerId") String ownerId) {
         try {
-            boolean success = adminService.approveGymOwner(ownerId);
-            if (success) {
-                return Response.ok(new ApiResponse(true, "Gym Owner approved successfully")).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Failed to approve gym owner"))
-                    .build();
-            }
+            adminService.approveGymOwner(ownerId);
+            return Response.ok(new ApiResponse(true, "Gym Owner approved successfully")).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Approval failed: " + e.getMessage()))
@@ -69,16 +65,10 @@ public class AdminResource {
     
     @PUT
     @Path("/approve-center/{centerId}")
-    public Response approveGymCenter(@PathParam("centerId") int centerId) {
+    public Response approveGymCenter(@PathParam("centerId") String centerId) {
         try {
-            boolean success = adminService.approveGymCenter(centerId);
-            if (success) {
-                return Response.ok(new ApiResponse(true, "Gym Center approved successfully")).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Failed to approve gym center"))
-                    .build();
-            }
+            adminService.approveGymCenter(centerId);
+            return Response.ok(new ApiResponse(true, "Gym Center approved successfully")).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Approval failed: " + e.getMessage()))
@@ -101,16 +91,10 @@ public class AdminResource {
     
     @PUT
     @Path("/approve-slot/{slotId}")
-    public Response approveSlot(@PathParam("slotId") int slotId) {
+    public Response approveSlot(@PathParam("slotId") String slotId) {
         try {
-            boolean success = adminService.approveSlot(slotId);
-            if (success) {
-                return Response.ok(new ApiResponse(true, "Slot approved successfully")).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Failed to approve slot"))
-                    .build();
-            }
+            adminService.approveSlot(slotId);
+            return Response.ok(new ApiResponse(true, "Slot approved successfully")).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Approval failed: " + e.getMessage()))
@@ -120,16 +104,11 @@ public class AdminResource {
     
     @GET
     @Path("/center-revenue/{centerId}")
-    public Response getCenterRevenue(@PathParam("centerId") int centerId) {
+    public Response getCenterRevenue(@PathParam("centerId") String centerId, @QueryParam("ownerId") String ownerId) {
         try {
-            double revenue = adminService.viewCenterRevenue(centerId);
-            List<PaymentRecord> history = adminService.viewCenterPaymentHistory(centerId);
-            ApiResponse response = new ApiResponse(true, "Revenue retrieved");
-            response.setData(new Object() {
-                public double revenue = revenue;
-                public List<PaymentRecord> paymentHistory = history;
-            });
-            return Response.ok(response).build();
+            // Use PaymentService for revenue display
+            paymentService.displayGymRevenue(centerId, ownerId);
+            return Response.ok(new ApiResponse(true, "Revenue displayed")).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Failed to retrieve revenue: " + e.getMessage()))
@@ -143,9 +122,9 @@ public class AdminResource {
         try {
             List<GymOwner> owners;
             if ("approved".equalsIgnoreCase(status)) {
-                owners = adminService.viewApprovedGymOwners();
+                owners = adminService.viewGymOwnersByStatus(true);
             } else if ("pending".equalsIgnoreCase(status)) {
-                owners = adminService.viewPendingGymOwners();
+                owners = adminService.viewGymOwnersByStatus(false);
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Invalid status. Use 'approved' or 'pending'"))
@@ -165,9 +144,9 @@ public class AdminResource {
         try {
             List<GymCenter> centers;
             if ("approved".equalsIgnoreCase(status)) {
-                centers = adminService.viewApprovedGymCenters();
+                centers = adminService.viewGymCentersByStatus(true);
             } else if ("pending".equalsIgnoreCase(status)) {
-                centers = adminService.viewPendingGymCenters();
+                centers = adminService.viewGymCentersByStatus(false);
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Invalid status. Use 'approved' or 'pending'"))
@@ -183,9 +162,9 @@ public class AdminResource {
     
     @GET
     @Path("/notifications/{userId}")
-    public Response getNotifications(@PathParam("userId") int userId) {
+    public Response getNotifications(@PathParam("userId") String userId) {
         try {
-            List<Notification> notifications = notificationService.getNotificationsByUser(userId);
+            List<Notification> notifications = notificationService.getNotifications(userId);
             return Response.ok(new ApiResponse(true, "Notifications retrieved", notifications)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

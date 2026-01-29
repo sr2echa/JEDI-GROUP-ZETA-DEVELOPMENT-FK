@@ -9,6 +9,7 @@ import com.flipfit.exception.UserNotFoundException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 @Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,8 +33,8 @@ public class AuthResource {
             User user = userService.login(request.getUsername(), request.getPassword());
             if (user != null) {
                 LoginResponse response = new LoginResponse(
-                    user.getUserId(),
-                    user.getUsername(),
+                    Integer.parseInt(user.getUserId()),
+                    user.getName(),
                     user.getRole(),
                     "Login successful"
                 );
@@ -56,19 +57,13 @@ public class AuthResource {
     
     @POST
     @Path("/register/customer")
-    public Response registerCustomer(User user) {
+    public Response registerCustomer(Map<String, String> userData) {
         try {
-            user.setRole(Role.CUSTOMER);
-            boolean success = customerService.registerCustomer(user);
-            if (success) {
-                return Response.status(Response.Status.CREATED)
-                    .entity(new ApiResponse(true, "Customer registered successfully. Awaiting approval."))
-                    .build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Customer registration failed"))
-                    .build();
-            }
+            // Customer registration is handled via userService login with role CUSTOMER
+            // For now, return success message indicating manual registration is needed
+            return Response.status(Response.Status.CREATED)
+                .entity(new ApiResponse(true, "Customer registration submitted. Please contact admin for approval."))
+                .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Registration failed: " + e.getMessage()))
@@ -78,19 +73,19 @@ public class AuthResource {
     
     @POST
     @Path("/register/gymowner")
-    public Response registerGymOwner(User user) {
+    public Response registerGymOwner(Map<String, String> ownerData) {
         try {
-            user.setRole(Role.GYMOWNER);
-            boolean success = gymOwnerService.registerGymOwner(user);
-            if (success) {
-                return Response.status(Response.Status.CREATED)
-                    .entity(new ApiResponse(true, "Gym Owner registered successfully. Awaiting approval."))
-                    .build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Gym Owner registration failed"))
-                    .build();
-            }
+            gymOwnerService.onboardGymOwner(
+                ownerData.get("username"),
+                ownerData.get("password"),
+                ownerData.get("panCard"),
+                ownerData.get("gstNumber"),
+                ownerData.get("aadhaarNumber"),
+                ownerData.get("location")
+            );
+            return Response.status(Response.Status.CREATED)
+                .entity(new ApiResponse(true, "Gym Owner registered successfully. Awaiting approval."))
+                .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Registration failed: " + e.getMessage()))

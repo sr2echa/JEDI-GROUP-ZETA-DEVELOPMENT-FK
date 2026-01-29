@@ -8,6 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 @Path("/api/customer")
 @Produces(MediaType.APPLICATION_JSON)
@@ -18,32 +19,27 @@ public class CustomerResource {
     private final BookingService bookingService;
     private final PaymentService paymentService;
     private final NotificationService notificationService;
+    private final GymOwnerService gymOwnerService;
     
     public CustomerResource() {
         this.customerService = new CustomerService();
         this.bookingService = new BookingService();
         this.paymentService = new PaymentService();
         this.notificationService = new NotificationService();
+        this.gymOwnerService = new GymOwnerService();
     }
     
     @POST
     @Path("/book-slot")
-    public Response bookSlot(Booking booking) {
+    public Response bookSlot(Map<String, String> bookingData) {
         try {
-            boolean success = bookingService.bookSlot(
-                booking.getUserId(),
-                booking.getSlotId(),
-                booking.getBookingDate()
+            customerService.bookWorkout(
+                bookingData.get("userId"),
+                bookingData.get("slotId")
             );
-            if (success) {
-                return Response.status(Response.Status.CREATED)
-                    .entity(new ApiResponse(true, "Slot booked successfully"))
-                    .build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Booking failed. Slot may be full or unavailable."))
-                    .build();
-            }
+            return Response.status(Response.Status.CREATED)
+                .entity(new ApiResponse(true, "Slot booked successfully"))
+                .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Booking failed: " + e.getMessage()))
@@ -53,9 +49,9 @@ public class CustomerResource {
     
     @GET
     @Path("/plan/{customerId}")
-    public Response getCustomerPlan(@PathParam("customerId") int customerId) {
+    public Response getCustomerPlan(@PathParam("customerId") String customerId) {
         try {
-            List<BookingDetails> bookings = customerService.viewMyPlan(customerId);
+            List<Booking> bookings = customerService.getCustomerPlan(customerId);
             return Response.ok(new ApiResponse(true, "Plan retrieved", bookings)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -66,9 +62,9 @@ public class CustomerResource {
     
     @GET
     @Path("/pending-bookings/{customerId}")
-    public Response getPendingBookings(@PathParam("customerId") int customerId) {
+    public Response getPendingBookings(@PathParam("customerId") String customerId) {
         try {
-            List<BookingDetails> bookings = customerService.viewPendingBookings(customerId);
+            List<Booking> bookings = customerService.getPendingPayments(customerId);
             return Response.ok(new ApiResponse(true, "Pending bookings retrieved", bookings)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -79,9 +75,11 @@ public class CustomerResource {
     
     @POST
     @Path("/pay-booking/{bookingId}")
-    public Response payForBooking(@PathParam("bookingId") int bookingId, @QueryParam("amount") double amount) {
+    public Response payForBooking(@PathParam("bookingId") String bookingId, 
+                                 @QueryParam("amount") double amount,
+                                 @QueryParam("paymentMethod") String paymentMethod) {
         try {
-            boolean success = paymentService.processPayment(bookingId, amount);
+            boolean success = paymentService.processPayment(bookingId, amount, paymentMethod);
             if (success) {
                 return Response.ok(new ApiResponse(true, "Payment processed successfully")).build();
             } else {
@@ -98,16 +96,10 @@ public class CustomerResource {
     
     @DELETE
     @Path("/cancel-booking/{bookingId}")
-    public Response cancelBooking(@PathParam("bookingId") int bookingId) {
+    public Response cancelBooking(@PathParam("bookingId") String bookingId) {
         try {
-            boolean success = bookingService.cancelBooking(bookingId);
-            if (success) {
-                return Response.ok(new ApiResponse(true, "Booking cancelled successfully")).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Cancellation failed"))
-                    .build();
-            }
+            customerService.cancelWorkout(bookingId);
+            return Response.ok(new ApiResponse(true, "Booking cancelled successfully")).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ApiResponse(false, "Cancellation failed: " + e.getMessage()))
@@ -117,9 +109,9 @@ public class CustomerResource {
     
     @GET
     @Path("/payment-history/{customerId}")
-    public Response getPaymentHistory(@PathParam("customerId") int customerId) {
+    public Response getPaymentHistory(@PathParam("customerId") String customerId) {
         try {
-            List<PaymentRecord> history = paymentService.getPaymentHistory(customerId);
+            List<PaymentRecord> history = paymentService.getCustomerHistory(customerId);
             return Response.ok(new ApiResponse(true, "Payment history retrieved", history)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -130,9 +122,9 @@ public class CustomerResource {
     
     @GET
     @Path("/notifications/{userId}")
-    public Response getNotifications(@PathParam("userId") int userId) {
+    public Response getNotifications(@PathParam("userId") String userId) {
         try {
-            List<Notification> notifications = notificationService.getNotificationsByUser(userId);
+            List<Notification> notifications = notificationService.getNotifications(userId);
             return Response.ok(new ApiResponse(true, "Notifications retrieved", notifications)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -145,12 +137,7 @@ public class CustomerResource {
     @Path("/centers")
     public Response browseCenters(@QueryParam("city") String city) {
         try {
-            List<GymCenter> centers;
-            if (city != null && !city.isEmpty()) {
-                centers = customerService.viewCentersByCity(city);
-            } else {
-                centers = customerService.viewAllCenters();
-            }
+            List<GymCenter> centers = gymOwnerService.getAllCenters();
             return Response.ok(new ApiResponse(true, "Centers retrieved", centers)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -161,9 +148,9 @@ public class CustomerResource {
     
     @GET
     @Path("/slots/{centerId}")
-    public Response getSlotsByCenter(@PathParam("centerId") int centerId) {
+    public Response getSlotsByCenter(@PathParam("centerId") String centerId) {
         try {
-            List<SlotMaster> slots = customerService.viewSlotsByCenter(centerId);
+            List<SlotMaster> slots = gymOwnerService.viewSlots(centerId);
             return Response.ok(new ApiResponse(true, "Slots retrieved", slots)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
