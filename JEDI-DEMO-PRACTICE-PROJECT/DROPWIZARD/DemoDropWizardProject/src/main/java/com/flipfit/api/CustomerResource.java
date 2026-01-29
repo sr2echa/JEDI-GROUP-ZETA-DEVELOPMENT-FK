@@ -1,6 +1,6 @@
 package com.flipfit.api;
 
-import com.flipfit.api.dto.ApiResponse;
+import com.flipfit.api.dto.*;
 import com.flipfit.bean.*;
 import com.flipfit.business.*;
 
@@ -74,12 +74,14 @@ public class CustomerResource {
     }
     
     @POST
-    @Path("/pay-booking/{bookingId}")
-    public Response payForBooking(@PathParam("bookingId") String bookingId, 
-                                 @QueryParam("amount") double amount,
-                                 @QueryParam("paymentMethod") String paymentMethod) {
+    @Path("/pay-booking")
+    public Response payForBooking(PaymentRequest paymentRequest) {
         try {
-            boolean success = paymentService.processPayment(bookingId, amount, paymentMethod);
+            boolean success = paymentService.processPayment(
+                paymentRequest.getBookingId(), 
+                paymentRequest.getAmount(), 
+                paymentRequest.getPaymentMethod()
+            );
             if (success) {
                 return Response.ok(new ApiResponse(true, "Payment processed successfully")).build();
             } else {

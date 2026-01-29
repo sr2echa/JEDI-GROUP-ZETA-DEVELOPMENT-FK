@@ -33,9 +33,9 @@ public class AuthResource {
             User user = userService.login(request.getUsername(), request.getPassword());
             if (user != null) {
                 LoginResponse response = new LoginResponse(
-                    Integer.parseInt(user.getUserId()),
+                    user.getUserId(),
                     user.getName(),
-                    user.getRole(),
+                    user.getRole().toString(),
                     "Login successful"
                 );
                 return Response.ok(response).build();

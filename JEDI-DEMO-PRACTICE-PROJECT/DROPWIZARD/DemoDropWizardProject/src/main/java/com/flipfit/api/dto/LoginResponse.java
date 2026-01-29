@@ -1,27 +1,25 @@
 package com.flipfit.api.dto;
 
-import com.flipfit.bean.Role;
-
 public class LoginResponse {
-    private int userId;
+    private String userId;
     private String username;
-    private Role role;
+    private String role;
     private String message;
     
     public LoginResponse() {}
     
-    public LoginResponse(int userId, String username, Role role, String message) {
+    public LoginResponse(String userId, String username, String role, String message) {
         this.userId = userId;
         this.username = username;
         this.role = role;
         this.message = message;
     }
     
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
     
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
     
@@ -33,11 +31,11 @@ public class LoginResponse {
         this.username = username;
     }
     
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
     
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
     

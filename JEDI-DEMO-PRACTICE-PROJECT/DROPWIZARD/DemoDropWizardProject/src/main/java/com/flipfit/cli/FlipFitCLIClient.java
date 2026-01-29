@@ -12,7 +12,7 @@ public class FlipFitCLIClient {
     
     private static Scanner scanner = new Scanner(System.in);
     private static ObjectMapper objectMapper = new ObjectMapper();
-    private static int currentUserId = -1;
+    private static String currentUserId = "";
     private static String currentUsername = "";
     private static Role currentRole = null;
     
@@ -82,7 +82,7 @@ public class FlipFitCLIClient {
             JsonNode jsonNode = objectMapper.readTree(response);
             
             if (jsonNode.has("userId")) {
-                currentUserId = jsonNode.get("userId").asInt();
+                currentUserId = jsonNode.get("userId").asText();
                 currentUsername = jsonNode.get("username").asText();
                 String roleStr = jsonNode.get("role").asText();
                 currentRole = Role.valueOf(roleStr);
@@ -245,7 +245,7 @@ public class FlipFitCLIClient {
                         break;
                     case 11:
                         inAdminMenu = false;
-                        currentUserId = -1;
+                        currentUserId = "";
                         currentUsername = "";
                         currentRole = null;
                         break;
@@ -505,7 +505,7 @@ public class FlipFitCLIClient {
                         break;
                     case 7:
                         inCustomerMenu = false;
-                        currentUserId = -1;
+                        currentUserId = "";
                         currentUsername = "";
                         currentRole = null;
                         break;
@@ -625,8 +625,15 @@ public class FlipFitCLIClient {
                     int bookingId = Integer.parseInt(scanner.nextLine());
                     System.out.print("Enter amount: ");
                     double amount = Double.parseDouble(scanner.nextLine());
+                    System.out.print("Enter payment method (Credit Card/Debit Card/UPI): ");
+                    String paymentMethod = scanner.nextLine();
                     
-                    response = HttpClientUtil.post("/api/customer/pay-booking/" + bookingId + "?amount=" + amount, null);
+                    Map<String, Object> paymentData = new HashMap<>();
+                    paymentData.put("bookingId", String.valueOf(bookingId));
+                    paymentData.put("amount", amount);
+                    paymentData.put("paymentMethod", paymentMethod);
+                    
+                    response = HttpClientUtil.post("/api/customer/pay-booking", paymentData);
                     jsonNode = objectMapper.readTree(response);
                     System.out.println("\n" + jsonNode.get("message").asText());
                 } else {
@@ -738,7 +745,7 @@ public class FlipFitCLIClient {
                         break;
                     case 8:
                         inOwnerMenu = false;
-                        currentUserId = -1;
+                        currentUserId = "";
                         currentUsername = "";
                         currentRole = null;
                         break;
