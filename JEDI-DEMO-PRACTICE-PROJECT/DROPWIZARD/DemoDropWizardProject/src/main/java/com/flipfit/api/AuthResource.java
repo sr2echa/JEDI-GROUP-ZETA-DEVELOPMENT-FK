@@ -26,10 +26,26 @@ public class AuthResource {
         this.gymOwnerService = new GymOwnerService();
     }
     
+    /**
+     * User login endpoint.
+     * 
+     * **IMPORTANT**: Accepts plain text password in the request.
+     * Password hashing is handled server-side by UserService.
+     * 
+     * @param request LoginRequest containing username and plain text password
+     * @return LoginResponse with user details or error message
+     * 
+     * Example JSON request:
+     * {
+     *   "username": "admin",
+     *   "password": "admin123"  // Plain text, NOT hashed
+     * }
+     */
     @POST
     @Path("/login")
     public Response login(LoginRequest request) {
         try {
+            // Password is received as plain text and will be hashed by UserService
             User user = userService.login(request.getUsername(), request.getPassword());
             if (user != null) {
                 LoginResponse response = new LoginResponse(
@@ -71,10 +87,30 @@ public class AuthResource {
         }
     }
     
+    /**
+     * Gym Owner registration endpoint.
+     * 
+     * **IMPORTANT**: Accepts plain text password in the request.
+     * Password hashing is handled server-side by GymOwnerService.
+     * 
+     * @param ownerData Map containing registration details including plain text password
+     * @return Success or error response
+     * 
+     * Example JSON request:
+     * {
+     *   "username": "john_doe",
+     *   "password": "mypassword123",  // Plain text, NOT hashed
+     *   "panCard": "ABCDE1234F",
+     *   "gstNumber": "22ABCDE1234F1Z5",
+     *   "aadhaarNumber": "123456789012",
+     *   "location": "Mumbai"
+     * }
+     */
     @POST
     @Path("/register/gymowner")
     public Response registerGymOwner(Map<String, String> ownerData) {
         try {
+            // Password is received as plain text and will be hashed by GymOwnerService
             gymOwnerService.onboardGymOwner(
                 ownerData.get("username"),
                 ownerData.get("password"),
@@ -93,10 +129,27 @@ public class AuthResource {
         }
     }
     
+    /**
+     * Change password endpoint.
+     * 
+     * **IMPORTANT**: Accepts plain text passwords (both old and new) in the request.
+     * Password hashing is handled server-side by UserService.
+     * 
+     * @param request ChangePasswordRequest containing username, old password, and new password (all plain text)
+     * @return Success or error response
+     * 
+     * Example JSON request:
+     * {
+     *   "username": "admin",
+     *   "oldPassword": "admin123",      // Plain text, NOT hashed
+     *   "newPassword": "newpassword456"  // Plain text, NOT hashed
+     * }
+     */
     @PUT
     @Path("/change-password")
     public Response changePassword(ChangePasswordRequest request) {
         try {
+            // Both passwords are received as plain text and will be hashed by UserService
             boolean success = userService.changePassword(
                 request.getUsername(),
                 request.getOldPassword(),

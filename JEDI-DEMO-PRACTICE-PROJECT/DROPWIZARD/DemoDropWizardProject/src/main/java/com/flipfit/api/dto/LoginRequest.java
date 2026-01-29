@@ -1,8 +1,21 @@
 package com.flipfit.api.dto;
 
+/**
+ * Login request DTO.
+ * 
+ * IMPORTANT: The password field should contain PLAIN TEXT password,
+ * NOT a hashed value. Server-side password hashing is handled by
+ * the UserService layer.
+ * 
+ * Example JSON:
+ * {
+ *   "username": "admin",
+ *   "password": "admin123"
+ * }
+ */
 public class LoginRequest {
     private String username;
-    private String password;
+    private String password;  // PLAIN TEXT password
     
     public LoginRequest() {}
     
@@ -19,10 +32,20 @@ public class LoginRequest {
         this.username = username;
     }
     
+    /**
+     * Gets the password.
+     * 
+     * @return the plain text password (NOT hashed)
+     */
     public String getPassword() {
         return password;
     }
     
+    /**
+     * Sets the password.
+     * 
+     * @param password the plain text password (NOT hashed)
+     */
     public void setPassword(String password) {
         this.password = password;
     }

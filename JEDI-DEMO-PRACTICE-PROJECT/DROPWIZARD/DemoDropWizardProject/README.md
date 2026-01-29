@@ -3,6 +3,20 @@
 ## Overview
 This project is a complete port of the FlipFit gym booking application from a CLI-based architecture to a **Dropwizard REST API** with a separate CLI client that communicates via HTTP requests.
 
+## 📚 Documentation
+
+- **[Postman Testing Guide](POSTMAN_TESTING_GUIDE.md)** - Comprehensive guide for testing API endpoints with Postman
+- **[Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Detailed technical implementation documentation
+
+## ⚠️ Important: Password Handling
+
+**All API endpoints accept plain text passwords.** Password hashing is handled server-side using SHA-256 with username as salt.
+
+- ✅ Send passwords as plain text in API requests (e.g., `"admin123"`)
+- ✅ Server automatically hashes passwords before database operations
+- ❌ Do NOT pre-hash passwords before sending to API
+- See [POSTMAN_TESTING_GUIDE.md](POSTMAN_TESTING_GUIDE.md) for detailed examples
+
 ## Architecture
 
 ### 1. Dropwizard REST API Server
@@ -182,14 +196,55 @@ You can test the API using:
 - **cURL** commands
 - **Postman** or similar API testing tools
 
-Example cURL:
+#### Important: Password Handling
+
+**All passwords are sent as plain text in API requests and hashed on the server side.**
+- ✅ Send passwords in plain text (e.g., `"admin123"`, `"mypassword"`)
+- ✅ Server handles SHA-256 hashing with username as salt
+- ❌ Do NOT pre-hash passwords before sending to API
+- ❌ Do NOT send hashed values in requests
+
+This design makes testing with Postman/cURL straightforward and follows security best practices.
+
+#### Example API Requests
+
+**Login (POST /api/auth/login)**
 ```bash
-# Login
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}'
+```
+**Note**: Send `"admin123"` as plain text, not hashed.
 
-# View pending gym owners (Admin)
+**Register Gym Owner (POST /api/auth/register/gymowner)**
+```bash
+curl -X POST http://localhost:8080/api/auth/register/gymowner \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username":"john_doe",
+    "password":"mypassword123",
+    "panCard":"ABCDE1234F",
+    "gstNumber":"22ABCDE1234F1Z5",
+    "aadhaarNumber":"123456789012",
+    "location":"Mumbai"
+  }'
+```
+**Note**: Send `"mypassword123"` as plain text.
+
+**Change Password (PUT /api/auth/change-password)**
+```bash
+curl -X PUT http://localhost:8080/api/auth/change-password \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username":"admin",
+    "oldPassword":"admin123",
+    "newPassword":"newpassword456"
+  }'
+```
+**Note**: Both old and new passwords should be plain text.
+
+**View pending gym owners (Admin)**
+```bash
 curl -X GET http://localhost:8080/api/admin/pending-owners
 ```
 

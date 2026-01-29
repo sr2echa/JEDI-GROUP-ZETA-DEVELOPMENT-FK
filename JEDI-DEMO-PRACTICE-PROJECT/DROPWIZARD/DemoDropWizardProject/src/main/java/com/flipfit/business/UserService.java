@@ -20,15 +20,20 @@ public class UserService implements UserInterface {
 
     /**
      * Login.
+     * 
+     * **SERVER-SIDE PASSWORD HASHING**:
+     * This method receives a plain text password from the API endpoint,
+     * hashes it using SHA-256 with username as salt, and then checks
+     * against the database where passwords are stored hashed.
      *
      * @param username the username
-     * @param password the password
+     * @param password the password (PLAIN TEXT from API request)
      * @return the user
      * @throws UserNotFoundException the user not found exception
      */
     @Override
     public User login(String username, String password) throws UserNotFoundException {
-        // Hash the password with username as salt before checking
+        // Hash the plain text password with username as salt before checking database
         String hashedPassword = PasswordHashUtil.hashPassword(password, username);
         User user = userDAO.loginUser(username, hashedPassword);
 
@@ -49,9 +54,14 @@ public class UserService implements UserInterface {
 
     /**
      * Register.
+     * 
+     * **SERVER-SIDE PASSWORD HASHING**:
+     * This method receives a plain text password from the API endpoint,
+     * hashes it using SHA-256 with username as salt before storing
+     * in the database.
      *
      * @param username the username
-     * @param password the password
+     * @param password the password (PLAIN TEXT from API request)
      * @param email the email
      * @param roleChoice the role choice
      * @return true, if successful
@@ -71,7 +81,7 @@ public class UserService implements UserInterface {
 
         newUser.setUserId(username);
         newUser.setName(username);
-        // Hash the password with username as salt before storing
+        // Hash the plain text password with username as salt before storing
         newUser.setPassword(PasswordHashUtil.hashPassword(password, username));
         newUser.setEmail(email);
         newUser.setRole(role);
@@ -85,15 +95,19 @@ public class UserService implements UserInterface {
 
     /**
      * Change password.
+     * 
+     * **SERVER-SIDE PASSWORD HASHING**:
+     * This method receives plain text passwords (old and new) from the API endpoint,
+     * hashes them using SHA-256 with username as salt before database operations.
      *
      * @param username the username
-     * @param oldPassword the old password
-     * @param newPassword the new password
+     * @param oldPassword the old password (PLAIN TEXT from API request)
+     * @param newPassword the new password (PLAIN TEXT from API request)
      * @return true, if successful
      */
     @Override
     public boolean changePassword(String username, String oldPassword, String newPassword) {
-        // Hash both passwords with username as salt
+        // Hash both plain text passwords with username as salt
         String hashedOldPassword = PasswordHashUtil.hashPassword(oldPassword, username);
         String hashedNewPassword = PasswordHashUtil.hashPassword(newPassword, username);
         return userDAO.changePassword(username, hashedOldPassword, hashedNewPassword);

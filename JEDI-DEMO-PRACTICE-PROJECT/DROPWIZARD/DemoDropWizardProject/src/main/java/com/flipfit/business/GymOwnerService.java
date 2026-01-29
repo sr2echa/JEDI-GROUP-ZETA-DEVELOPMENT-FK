@@ -60,9 +60,14 @@ public class GymOwnerService implements GymOwnerInterface {
 
     /**
      * Onboard gym owner.
+     * 
+     * **SERVER-SIDE PASSWORD HASHING**:
+     * This method receives a plain text password from the API endpoint,
+     * hashes it using SHA-256 with username as salt before storing
+     * in the database.
      *
      * @param username the username
-     * @param password the password
+     * @param password the password (PLAIN TEXT from API request)
      * @param pan      the pan
      * @param gst      the gst
      * @param aadhar   the aadhar
@@ -75,6 +80,7 @@ public class GymOwnerService implements GymOwnerInterface {
         newOwner.setUserId(username);
         newOwner.setName(username);
         newOwner.setEmail(username + "@flipfit.com");
+        // Hash the plain text password with username as salt before storing
         newOwner.setPassword(PasswordHashUtil.hashPassword(password, username));
         newOwner.setPanNumber(pan);
         newOwner.setGstNumber(gst);
