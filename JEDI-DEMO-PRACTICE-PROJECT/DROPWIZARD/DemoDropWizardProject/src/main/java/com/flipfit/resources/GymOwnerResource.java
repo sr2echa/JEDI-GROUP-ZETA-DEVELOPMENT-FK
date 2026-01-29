@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * GymOwnerResource - REST endpoints for gym owner operations
  */
-@Path("/api/owners")
+@Path("/owners")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GymOwnerResource {

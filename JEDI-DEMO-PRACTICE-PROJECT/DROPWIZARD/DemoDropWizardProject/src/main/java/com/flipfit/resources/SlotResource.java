@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * SlotResource - REST endpoints for slot operations
  */
-@Path("/api/slots")
+@Path("/slots")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SlotResource {

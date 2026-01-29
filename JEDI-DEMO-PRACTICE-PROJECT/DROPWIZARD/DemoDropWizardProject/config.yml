@@ -2,6 +2,7 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
+  rootPath: /api/*
   adminConnectors:
     - type: http
       port: 8081

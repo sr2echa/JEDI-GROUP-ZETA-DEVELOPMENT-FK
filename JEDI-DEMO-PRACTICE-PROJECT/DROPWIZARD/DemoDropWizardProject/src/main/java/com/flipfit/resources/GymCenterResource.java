@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * GymCenterResource - REST endpoints for gym center operations
  */
-@Path("/api/centers")
+@Path("/centers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GymCenterResource {

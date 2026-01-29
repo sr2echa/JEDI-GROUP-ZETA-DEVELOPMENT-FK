@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * AdminResource - REST endpoints for admin operations
  */
-@Path("/api/admin")
+@Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AdminResource {

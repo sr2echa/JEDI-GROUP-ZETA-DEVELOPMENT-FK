@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * PaymentResource - REST endpoints for payment operations
  */
-@Path("/api/payments")
+@Path("/payments")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PaymentResource {

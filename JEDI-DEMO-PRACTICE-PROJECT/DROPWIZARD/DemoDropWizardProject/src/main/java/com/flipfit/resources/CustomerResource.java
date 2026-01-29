@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * CustomerResource - REST endpoints for customer operations
  */
-@Path("/api/customers")
+@Path("/customers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CustomerResource {

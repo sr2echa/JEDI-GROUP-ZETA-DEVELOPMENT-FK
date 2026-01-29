@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * NotificationResource - REST endpoints for notification operations
  */
-@Path("/api/notifications")
+@Path("/notifications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class NotificationResource {

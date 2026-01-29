@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * BookingResource - REST endpoints for booking operations
  */
-@Path("/api/bookings")
+@Path("/bookings")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class BookingResource {
