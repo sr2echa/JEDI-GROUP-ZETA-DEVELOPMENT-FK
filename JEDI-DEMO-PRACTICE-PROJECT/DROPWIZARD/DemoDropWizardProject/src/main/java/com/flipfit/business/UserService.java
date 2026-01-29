@@ -3,6 +3,7 @@ package com.flipfit.business;
 import com.flipfit.bean.*;
 import com.flipfit.dao.GymUserDAO;
 import com.flipfit.dao.impl.GymUserDAOImpl;
+import com.flipfit.exception.InvalidApprovalException;
 import com.flipfit.exception.RegistrationFailedException;
 import com.flipfit.exception.UserNotFoundException;
 import com.flipfit.utils.PasswordHashUtil;
@@ -30,9 +31,10 @@ public class UserService implements UserInterface {
      * @param password the password (PLAIN TEXT from API request)
      * @return the user
      * @throws UserNotFoundException the user not found exception
+     * @throws InvalidApprovalException the invalid approval exception when gym owner is not approved
      */
     @Override
-    public User login(String username, String password) throws UserNotFoundException {
+    public User login(String username, String password) throws UserNotFoundException, InvalidApprovalException {
         // Hash the plain text password with username as salt before checking database
         String hashedPassword = PasswordHashUtil.hashPassword(password, username);
         User user = userDAO.loginUser(username, hashedPassword);
@@ -42,7 +44,7 @@ public class UserService implements UserInterface {
                 GymOwner owner = (GymOwner) user;
                 if (!owner.isApproved()) {
                     System.out.println("[ERROR] Gym Owner account '" + username + "' is pending Admin approval.");
-                    return null;
+                    throw new InvalidApprovalException("Gym Owner account is pending Admin approval.");
                 }
             }
             System.out.println("[SUCCESS] Welcome back, " + user.getName() + "!");

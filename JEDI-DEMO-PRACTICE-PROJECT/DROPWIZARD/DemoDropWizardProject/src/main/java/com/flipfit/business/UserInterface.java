@@ -1,6 +1,7 @@
 package com.flipfit.business;
 
 import com.flipfit.bean.User;
+import com.flipfit.exception.InvalidApprovalException;
 import com.flipfit.exception.RegistrationFailedException;
 import com.flipfit.exception.UserNotFoundException;
 
@@ -19,8 +20,9 @@ public interface UserInterface {
 	 * @param password the password
 	 * @return the user
 	 * @throws UserNotFoundException the user not found exception
+	 * @throws InvalidApprovalException the invalid approval exception
 	 */
-	User login(String username, String password) throws UserNotFoundException;
+	User login(String username, String password) throws UserNotFoundException, InvalidApprovalException;
 
 	/**
 	 * Register.

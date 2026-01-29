@@ -4,6 +4,7 @@ import com.flipfit.api.dto.*;
 import com.flipfit.bean.Role;
 import com.flipfit.bean.User;
 import com.flipfit.business.*;
+import com.flipfit.exception.InvalidApprovalException;
 import com.flipfit.exception.UserNotFoundException;
 
 import javax.ws.rs.*;
@@ -60,6 +61,10 @@ public class AuthResource {
                     .entity(new ApiResponse(false, "Invalid username or password"))
                     .build();
             }
+        } catch (InvalidApprovalException e) {
+            return Response.status(Response.Status.FORBIDDEN)
+                .entity(new ApiResponse(false, e.getMessage()))
+                .build();
         } catch (UserNotFoundException e) {
             return Response.status(Response.Status.UNAUTHORIZED)
                 .entity(new ApiResponse(false, e.getMessage()))
