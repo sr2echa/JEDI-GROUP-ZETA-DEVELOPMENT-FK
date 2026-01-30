@@ -1,5 +1,8 @@
 package com.flipfit.client;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 
 /**
@@ -7,6 +10,18 @@ import java.util.*;
  * Makes HTTP requests to the DropWizard REST API running on localhost:8080
  */
 public class FlipFitCLIClient {
+
+    // Colors
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RED = "\u001B[31m";
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -17,13 +32,16 @@ public class FlipFitCLIClient {
         System.out.println("=".repeat(60));
 
         while (!exit) {
-            System.out.println("\n--- Welcome to FlipFit ---");
+            clearScreen();
+            System.out.println(ANSI_CYAN + "\n" + "=".repeat(60) + ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "      FlipFit Application - Main Menu" + ANSI_RESET);
+            System.out.println(ANSI_CYAN + "=".repeat(60) + ANSI_RESET);
             System.out.println("1. Login");
             System.out.println("2. Register as Customer");
             System.out.println("3. Register as Gym Owner");
             System.out.println("4. Change Password");
             System.out.println("5. Exit");
-            System.out.print("Choice: ");
+            System.out.print(ANSI_GREEN + "Choice: " + ANSI_RESET);
 
             int choice = getIntInput(sc);
 
@@ -66,7 +84,17 @@ public class FlipFitCLIClient {
             Map<String, Object> response = HttpClientUtil.post("/users/login", credentials);
 
             if (response.get("success") != null && (Boolean) response.get("success")) {
-                System.out.println("\n✓ " + response.get("message"));
+                // Set Auth Token
+                HttpClientUtil.setAuthToken(username + "+admin");
+
+                clearScreen();
+                System.out.println(ANSI_CYAN + "\n" + "=".repeat(60) + ANSI_RESET);
+                String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                System.out.printf(ANSI_YELLOW + "Welcome %s" + ANSI_RESET + "%" + (52 - username.length()) + "s%n",
+                        username, time);
+                System.out.println(ANSI_CYAN + "=".repeat(60) + ANSI_RESET);
+
+                System.out.println("\n" + ANSI_GREEN + "✓ " + response.get("message") + ANSI_RESET);
                 String role = (String) response.get("role");
                 String userId = (String) response.get("userId");
 
@@ -82,7 +110,9 @@ public class FlipFitCLIClient {
                         break;
                 }
             } else {
-                System.out.println("\n✗ Login failed: " + response.get("error"));
+                System.out.println(ANSI_RED + "\n✗ Login failed: " + response.get("error") + ANSI_RESET);
+                System.out.println("Press Enter to continue...");
+                sc.nextLine();
             }
         } catch (Exception e) {
             System.out.println("\n✗ Error: " + e.getMessage());

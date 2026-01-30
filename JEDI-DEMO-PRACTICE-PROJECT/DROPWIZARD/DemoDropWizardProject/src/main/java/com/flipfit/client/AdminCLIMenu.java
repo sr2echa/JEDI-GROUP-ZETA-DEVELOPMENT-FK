@@ -11,7 +11,10 @@ public class AdminCLIMenu {
         boolean back = false;
 
         while (!back) {
-            System.out.println("\n--- Admin Dashboard ---");
+            FlipFitCLIClient.clearScreen();
+            System.out.println(FlipFitCLIClient.ANSI_CYAN + "\n" + "=".repeat(60) + FlipFitCLIClient.ANSI_RESET);
+            System.out.println(FlipFitCLIClient.ANSI_YELLOW + "      Admin Dashboard" + FlipFitCLIClient.ANSI_RESET);
+            System.out.println(FlipFitCLIClient.ANSI_CYAN + "=".repeat(60) + FlipFitCLIClient.ANSI_RESET);
             System.out.println("1. View Pending Gym Owners");
             System.out.println("2. Approve Gym Owner");
             System.out.println("3. View Pending Centers");
@@ -22,7 +25,7 @@ public class AdminCLIMenu {
             System.out.println("8. View All Centers (by status)");
             System.out.println("9. View Notifications");
             System.out.println("10. Back to Main Menu");
-            System.out.print("Choice: ");
+            System.out.print(FlipFitCLIClient.ANSI_GREEN + "Choice: " + FlipFitCLIClient.ANSI_RESET);
 
             int choice = getIntInput(sc);
 
@@ -63,6 +66,11 @@ public class AdminCLIMenu {
                 }
             } catch (Exception e) {
                 System.out.println("\n✗ Error: " + e.getMessage());
+            }
+
+            if (!back) {
+                System.out.println("Press Enter to continue...");
+                sc.nextLine();
             }
         }
     }

@@ -1,6 +1,0 @@
-.env
-*.class
-bin/
-.settings/
-.classpath
-.project

@@ -76,6 +76,15 @@ DemoDropWizardProject/
 #### Notifications
 - `GET /api/notifications/{userId}` - Get user notifications
 
+### Security & Authorization
+- **Bearer Token Auth**: Uses `username+admin` strategy for authentication.
+- **Role-Based Access Control**: `@RolesAllowed` annotations (e.g., ADMIN only) are used to secure sensitive endpoints.
+- **CORS Support**: Configured to handle Authorization headers.
+
+### CLI Enhancements
+- **Interactive UI**: Clear screen refreshes and colorful output.
+- **Session Info**: Welcome message with username and current timestamp.
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -258,6 +267,7 @@ See `pom.xml` for complete list. Key dependencies:
 - MySQL Connector
 - Jackson Databind
 - OkHttp
+- DropWizard Auth
 
 ## License
 

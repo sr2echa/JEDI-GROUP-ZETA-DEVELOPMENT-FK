@@ -5,6 +5,13 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import com.flipfit.auth.AppAuthenticator;
+import com.flipfit.auth.AppAuthorizer;
+import com.flipfit.auth.AppUser;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -35,6 +42,16 @@ public class FlipFitApplication extends Application<FlipFitConfiguration> {
         // Enable CORS
         configureCors(environment);
 
+        // Register Auth
+        environment.jersey().register(new AuthDynamicFeature(
+                new OAuthCredentialAuthFilter.Builder<AppUser>()
+                        .setAuthenticator(new AppAuthenticator())
+                        .setAuthorizer(new AppAuthorizer())
+                        .setPrefix("Bearer")
+                        .buildAuthFilter()));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(AppUser.class));
+
         // Register resources (REST endpoints)
         environment.jersey().register(new UserResource());
         environment.jersey().register(new CustomerResource());
@@ -57,7 +74,8 @@ public class FlipFitApplication extends Application<FlipFitConfiguration> {
 
         // Configure CORS parameters
         cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
-        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
+                "X-Requested-With,Content-Type,Accept,Origin,Authorization");
         cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "OPTIONS,GET,PUT,POST,DELETE,HEAD");
 
         // Add URL mapping

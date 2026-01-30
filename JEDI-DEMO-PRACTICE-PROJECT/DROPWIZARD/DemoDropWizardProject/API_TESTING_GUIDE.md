@@ -188,23 +188,4 @@ curl -X POST http://localhost:8080/api/owners/owner123/centers \
 ### Notification Endpoints
 - `GET /api/notifications/{userId}` - Get user notifications
 
-## Testing Workflow
 
-1. **Start Server**: `java -jar target/flipfit_d-1.0-SNAPSHOT.jar server config.yml`
-2. **Register Customer**: POST to `/api/users/register`
-3. **Login**: POST to `/api/users/login`
-4. **Browse Centers**: GET to `/api/centers`
-5. **Book Slot**: POST to `/api/customers/{userId}/bookings`
-6. **Confirm Payment**: POST to `/api/customers/bookings/{bookingId}/confirm`
-
-## Database Setup
-
-Make sure your database has the schema created and `.env` file is properly configured:
-
-```env
-DB_URL=jdbc:mysql://localhost:3306/Flipfit_schema
-DB_USER=root
-DB_PASSWORD=your_password
-ADMIN_USER=admin
-ADMIN_PASSWORD=admin123
-```

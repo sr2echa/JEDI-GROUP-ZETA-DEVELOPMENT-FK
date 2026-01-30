@@ -6,6 +6,7 @@ import com.flipfit.bean.SlotMaster;
 import com.flipfit.business.AdminInterface;
 import com.flipfit.business.AdminService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,6 +18,7 @@ import java.util.Map;
  * AdminResource - REST endpoints for admin operations
  */
 @Path("/admin")
+@RolesAllowed("ADMIN")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AdminResource {

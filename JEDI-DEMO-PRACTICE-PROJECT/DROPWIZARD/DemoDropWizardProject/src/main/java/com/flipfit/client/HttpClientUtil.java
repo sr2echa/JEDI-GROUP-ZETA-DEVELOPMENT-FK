@@ -15,6 +15,11 @@ public class HttpClientUtil {
     private static final OkHttpClient client = new OkHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    private static String authToken = null;
+
+    public static void setAuthToken(String token) {
+        authToken = token;
+    }
 
     /**
      * Make a POST request to the REST API.
@@ -28,10 +33,15 @@ public class HttpClientUtil {
         String json = mapper.writeValueAsString(data);
         RequestBody body = RequestBody.create(json, JSON);
 
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(BASE_URL + endpoint)
-                .post(body)
-                .build();
+                .post(body);
+
+        if (authToken != null) {
+            builder.addHeader("Authorization", "Bearer " + authToken);
+        }
+
+        Request request = builder.build();
 
         try (Response response = client.newCall(request).execute()) {
             String responseBody = response.body().string();
@@ -47,10 +57,15 @@ public class HttpClientUtil {
      * @throws IOException if the HTTP request fails or response cannot be parsed
      */
     public static Map<String, Object> get(String endpoint) throws IOException {
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(BASE_URL + endpoint)
-                .get()
-                .build();
+                .get();
+
+        if (authToken != null) {
+            builder.addHeader("Authorization", "Bearer " + authToken);
+        }
+
+        Request request = builder.build();
 
         try (Response response = client.newCall(request).execute()) {
             String responseBody = response.body().string();
@@ -70,10 +85,15 @@ public class HttpClientUtil {
         String json = mapper.writeValueAsString(data);
         RequestBody body = RequestBody.create(json, JSON);
 
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(BASE_URL + endpoint)
-                .put(body)
-                .build();
+                .put(body);
+
+        if (authToken != null) {
+            builder.addHeader("Authorization", "Bearer " + authToken);
+        }
+
+        Request request = builder.build();
 
         try (Response response = client.newCall(request).execute()) {
             String responseBody = response.body().string();
@@ -89,10 +109,15 @@ public class HttpClientUtil {
      * @throws IOException if the HTTP request fails or response cannot be parsed
      */
     public static Map<String, Object> delete(String endpoint) throws IOException {
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(BASE_URL + endpoint)
-                .delete()
-                .build();
+                .delete();
+
+        if (authToken != null) {
+            builder.addHeader("Authorization", "Bearer " + authToken);
+        }
+
+        Request request = builder.build();
 
         try (Response response = client.newCall(request).execute()) {
             String responseBody = response.body().string();
