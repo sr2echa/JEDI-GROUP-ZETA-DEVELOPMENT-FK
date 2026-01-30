@@ -57,13 +57,12 @@ public class FlipFitApplication extends Application<FlipFitConfiguration> {
         // Register resources (REST endpoints)
         environment.jersey().register(new UserResource());
         environment.jersey().register(new CustomerResource());
-        environment.jersey().register(new AdminResource());
         environment.jersey().register(new GymOwnerResource());
-        environment.jersey().register(new GymCenterResource());
-        environment.jersey().register(new SlotResource());
+        environment.jersey().register(new AdminResource());
         environment.jersey().register(new BookingResource());
-        environment.jersey().register(new PaymentResource());
+        environment.jersey().register(new SlotResource());
         environment.jersey().register(new NotificationResource());
+        environment.jersey().register(new PaymentResource());
 
         System.out.println("=".repeat(60));
         System.out.println("FlipFit REST API Server Started");

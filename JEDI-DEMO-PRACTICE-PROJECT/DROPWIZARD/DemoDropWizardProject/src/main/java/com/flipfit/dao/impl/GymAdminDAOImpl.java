@@ -194,6 +194,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         }
         return null;
     }
+
     /**
      * View all gym owners.
      *
@@ -205,7 +206,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM User u JOIN GymOwner g ON u.userId = g.userId";
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymOwner owner = new GymOwner();
                 owner.setUserId(rs.getString("userId"));
@@ -232,7 +233,7 @@ public class GymAdminDAOImpl implements GymAdminDAO {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM GymCenter";
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GymCenter center = new GymCenter();
                 center.setCenterId(rs.getString("centerId"));
@@ -247,5 +248,33 @@ public class GymAdminDAOImpl implements GymAdminDAO {
             e.printStackTrace();
         }
         return centers;
+    }
+
+    /**
+     * Gets the owner by id.
+     *
+     * @param ownerId the owner id
+     * @return the gym owner
+     */
+    public GymOwner getOwnerById(String ownerId) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM User u JOIN GymOwner g ON u.userId = g.userId WHERE u.userId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, ownerId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    GymOwner owner = new GymOwner();
+                    owner.setUserId(rs.getString("userId"));
+                    owner.setName(rs.getString("name"));
+                    owner.setEmail(rs.getString("email"));
+                    owner.setPanNumber(rs.getString("panNumber"));
+                    owner.setApproved(rs.getBoolean("isApproved"));
+                    return owner;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

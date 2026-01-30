@@ -187,15 +187,20 @@ public class AdminCLIMenu {
         List<Map<String, Object>> owners = (List<Map<String, Object>>) response.get("owners");
 
         if (owners == null || owners.isEmpty()) {
-            System.out.println("\n[INFO] No owners found.");
+            CLIUtils.printError("No " + (approved ? "approved" : "pending") + " owners found.");
             return;
         }
 
-        System.out.println("\n--- " + (approved ? "Approved" : "Pending") + " Gym Owners ---");
+        CLIUtils.printHeader((approved ? "Approved" : "Pending") + " Gym Owners");
+        List<String> headers = Arrays.asList("Owner ID", "Name", "Status");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> owner : owners) {
-            System.out.println(" • ID: " + owner.get("userId") +
-                    " | Name: " + owner.get("name"));
+            rows.add(Arrays.asList(
+                    String.valueOf(owner.get("userId")),
+                    String.valueOf(owner.get("name")),
+                    (Boolean) owner.get("approved") ? "APPROVED" : "PENDING"));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void viewCentersByStatus(Scanner sc) throws Exception {
@@ -209,15 +214,20 @@ public class AdminCLIMenu {
         List<Map<String, Object>> centers = (List<Map<String, Object>>) response.get("centers");
 
         if (centers == null || centers.isEmpty()) {
-            System.out.println("\n[INFO] No centers found.");
+            CLIUtils.printError("No " + (approved ? "approved" : "pending") + " centers found.");
             return;
         }
 
-        System.out.println("\n--- " + (approved ? "Approved" : "Pending") + " Gym Centers ---");
+        CLIUtils.printHeader((approved ? "Approved" : "Pending") + " Gym Centers");
+        List<String> headers = Arrays.asList("Center ID", "Name", "Status");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> center : centers) {
-            System.out.println(" • ID: " + center.get("centerId") +
-                    " | Name: " + center.get("name"));
+            rows.add(Arrays.asList(
+                    String.valueOf(center.get("centerId")),
+                    String.valueOf(center.get("name")),
+                    (Boolean) center.get("approved") ? "APPROVED" : "PENDING"));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void viewNotifications(Scanner sc, String userId) throws Exception {

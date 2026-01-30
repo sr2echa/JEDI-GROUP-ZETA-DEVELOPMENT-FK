@@ -1,10 +1,9 @@
 package com.flipfit.resources;
 
 import com.flipfit.bean.PaymentRecord;
-import com.flipfit.bean.User;
-import com.flipfit.business.PaymentInterface;
-import com.flipfit.business.PaymentService;
-import com.flipfit.business.UserService;
+import com.flipfit.business.GymOwnerService;
+import com.flipfit.dao.PaymentDAO;
+import com.flipfit.dao.impl.PaymentDAOImpl;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,105 +20,45 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_JSON)
 public class PaymentResource {
 
-    private final PaymentService paymentService = new PaymentService();
-    private final UserService userService = new UserService();
+    private final PaymentDAO paymentDAO = new PaymentDAOImpl();
+    private final GymOwnerService ownerService = new GymOwnerService();
 
     /**
-     * Process payment
-     * POST /api/payments/process
-     */
-    @POST
-    @Path("/process")
-    public Response processPayment(Map<String, Object> paymentData) {
-        try {
-            String bookingId = (String) paymentData.get("bookingId");
-            Double amount = ((Number) paymentData.get("amount")).doubleValue();
-            String paymentMethod = (String) paymentData.get("paymentMethod");
-
-            boolean success = paymentService.processPayment(bookingId, amount, paymentMethod);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", success);
-            response.put("message", success ? "Payment processed successfully" : "Payment failed");
-
-            return Response.ok(response).build();
-
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(createErrorResponse("Payment processing failed: " + e.getMessage()))
-                    .build();
-        }
-    }
-
-    /**
-     * Get customer payment history
+     * Get payment history for a user
      * GET /api/payments/history/{userId}
      */
     @GET
     @Path("/history/{userId}")
-    public Response getCustomerHistory(@PathParam("userId") String userId) {
+    public Response getPaymentHistory(@PathParam("userId") String userId) {
         try {
-            List<PaymentRecord> history = paymentService.getCustomerHistory(userId);
-
+            List<PaymentRecord> history = paymentDAO.getPaymentHistory(userId);
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("history", history);
-
             return Response.ok(response).build();
-
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(createErrorResponse("Failed to get payment history: " + e.getMessage()))
+                    .entity(createErrorResponse("Failed to fetch history: " + e.getMessage()))
                     .build();
         }
     }
 
     /**
-     * Get revenue for a gym center
-     * GET /api/payments/revenue/{centerId}?userId={userId}
+     * Get revenue for a gym owner
+     * GET /api/payments/revenue/{ownerId}
      */
     @GET
-    @Path("/revenue/{centerId}")
-    public Response getGymRevenue(@PathParam("centerId") String centerId,
-            @QueryParam("userId") String userId) {
+    @Path("/revenue/{ownerId}")
+    public Response getOwnerRevenue(@PathParam("ownerId") String ownerId) {
         try {
-            User user = userService.getUser(userId);
-            // displayGymRevenue prints to console, so we'll call it
-            // For REST API, we just return success confirmation
-            paymentService.displayGymRevenue(centerId, userId, user);
-
+            double revenue = ownerService.getOwnerRevenue(ownerId);
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Revenue displayed in server logs");
-
+            response.put("revenue", revenue);
             return Response.ok(response).build();
-
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(createErrorResponse("Failed to get revenue: " + e.getMessage()))
-                    .build();
-        }
-    }
-
-    /**
-     * Get payment method for a booking
-     * GET /api/payments/method/{bookingId}
-     */
-    @GET
-    @Path("/method/{bookingId}")
-    public Response getPaymentMethod(@PathParam("bookingId") String bookingId) {
-        try {
-            String method = paymentService.getPaymentMethod(bookingId);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("paymentMethod", method);
-
-            return Response.ok(response).build();
-
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(createErrorResponse("Failed to get payment method: " + e.getMessage()))
+                    .entity(createErrorResponse("Failed to fetch revenue: " + e.getMessage()))
                     .build();
         }
     }

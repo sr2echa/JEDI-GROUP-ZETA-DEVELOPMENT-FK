@@ -11,15 +11,16 @@ public class GymOwnerCLIMenu {
         boolean back = false;
 
         while (!back) {
-            System.out.println("\n--- Gym Owner Dashboard (" + ownerId + ") ---");
-            System.out.println("1. Add Gym Center");
-            System.out.println("2. View My Centers");
-            System.out.println("3. Add Slot to Center");
-            System.out.println("4. View Slots in Center");
-            System.out.println("5. View Center Revenue");
-            System.out.println("6. View Notifications");
-            System.out.println("7. Back to Main Menu");
-            System.out.print("Choice: ");
+            CLIUtils.clear();
+            CLIUtils.printBox("GYM OWNER PORTAL", Arrays.asList(
+                    "1. Add New Gym Center",
+                    "2. View My Centers",
+                    "3. Add Slot to Center",
+                    "4. View Slots in Center",
+                    "5. View Total Revenue",
+                    "6. View Notifications",
+                    "7. Return to Main Menu"));
+            System.out.print(CLIUtils.GREEN + "Select an option: " + CLIUtils.RESET);
 
             int choice = getIntInput(sc);
 
@@ -81,17 +82,22 @@ public class GymOwnerCLIMenu {
         List<Map<String, Object>> centers = (List<Map<String, Object>>) response.get("centers");
 
         if (centers == null || centers.isEmpty()) {
-            System.out.println("\n[INFO] No centers found.");
+            CLIUtils.printError("No centers found for your account.");
             return;
         }
 
-        System.out.println("\n--- My Gym Centers ---");
+        CLIUtils.printHeader("My Gym Centers");
+        List<String> headers = Arrays.asList("Center ID", "Name", "Location", "Status");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> center : centers) {
             String status = (Boolean) center.get("approved") ? "ACTIVE" : "PENDING";
-            System.out.println(" • ID: " + center.get("centerId") +
-                    " | Name: " + center.get("name") +
-                    " | Status: [" + status + "]");
+            rows.add(Arrays.asList(
+                    String.valueOf(center.get("centerId")),
+                    String.valueOf(center.get("name")),
+                    String.valueOf(center.get("city")),
+                    status));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void addSlot(Scanner sc) throws Exception {
@@ -132,29 +138,37 @@ public class GymOwnerCLIMenu {
         List<Map<String, Object>> slots = (List<Map<String, Object>>) response.get("slots");
 
         if (slots == null || slots.isEmpty()) {
-            System.out.println("\n[INFO] No slots found for this center.");
+            CLIUtils.printError("No slots found for this center.");
             return;
         }
 
-        System.out.println("\n--- Slots for Center " + centerId + " ---");
+        CLIUtils.printHeader("Slots for Center: " + centerId);
+        List<String> headers = Arrays.asList("Slot ID", "Time Range", "Capacity", "Price");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> slot : slots) {
-            System.out.println(" • Slot ID: " + slot.get("slotId") +
-                    " | Time: " + slot.get("startTime") + " - " + slot.get("endTime") +
-                    " | Capacity: " + slot.get("capacity") +
-                    " | Price: ₹" + slot.get("price"));
+            rows.add(Arrays.asList(
+                    String.valueOf(slot.get("slotId")),
+                    slot.get("startTime") + " - " + slot.get("endTime"),
+                    String.valueOf(slot.get("capacity")),
+                    "₹" + slot.get("price")));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void viewRevenue(Scanner sc, String ownerId) throws Exception {
-        System.out.print("\nEnter Center ID to view revenue: ");
-        String centerId = sc.nextLine();
-
-        Map<String, Object> response = HttpClientUtil.get("/payments/revenue/" + centerId + "?userId=" + ownerId);
+        Map<String, Object> response = HttpClientUtil.get("/payments/revenue/" + ownerId);
 
         if (response.get("success") != null && (Boolean) response.get("success")) {
-            System.out.println("\n✓ " + response.get("message"));
+            CLIUtils.clear();
+            CLIUtils.printBox("FINANCIAL REPORT", Arrays.asList(
+                    "Owner ID: " + ownerId,
+                    " ",
+                    "TOTAL REVENUE GENERATED:",
+                    "₹ " + response.get("revenue"),
+                    " ",
+                    "Report generated on: " + new java.util.Date()));
         } else {
-            System.out.println("\n✗ Failed: " + response.get("error"));
+            CLIUtils.printError("Failed to fetch revenue: " + response.get("error"));
         }
     }
 

@@ -11,12 +11,7 @@ let state = {
 
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
-    if (state.token) {
-        showDashboard();
-    } else {
-        showLogin();
-    }
-
+    if (state.token) { showDashboard(); } else { showLogin(); }
     if (state.token) setInterval(fetchNotifications, 10000);
 });
 
@@ -27,6 +22,7 @@ const navConfig = {
         { label: 'My Fitness Plan', id: 'bookings', view: renderCustomerBookings },
         { label: 'Browse Gyms', id: 'gyms', view: renderBrowseGyms },
         { label: 'My Waitlist', id: 'waitlist', view: renderCustomerWaitlist },
+        { label: 'Payment History', id: 'payments', view: renderPaymentHistory },
         { label: 'My Profile', id: 'profile', view: renderCustomerProfile }
     ],
     'GYM_OWNER': [
@@ -37,8 +33,9 @@ const navConfig = {
     ],
     'ADMIN': [
         { label: 'Pending Owners', id: 'pending-owners', view: renderPendingOwners },
+        { label: 'Approved Owners', id: 'approved-owners', view: renderApprovedOwners },
         { label: 'Pending Centers', id: 'pending-centers', view: renderPendingCenters },
-        { label: 'System Logs', id: 'logs', view: renderAdminLogs },
+        { label: 'Approved Centers', id: 'approved-centers', view: renderApprovedCenters },
         { label: 'My Profile', id: 'profile', view: renderCustomerProfile }
     ]
 };
@@ -76,20 +73,16 @@ function loadView(viewConfig) {
     const descEl = document.getElementById('page-desc');
     const bodyEl = document.getElementById('content-body');
     titleEl.innerText = viewConfig.label;
-    descEl.innerText = `Manage your ${viewConfig.label.toLowerCase()}`;
+    descEl.innerText = `FlipFit > ${viewConfig.label}`;
     bodyEl.innerHTML = '<div class="empty-state">Loading...</div>';
     viewConfig.view(bodyEl);
 }
 
-// --- AUTH UI FLOWS ---
-
+// --- AUTH ACTIONS SAME AS BEFORE BUT ENSURE CORRECT ROLE CHOICE ---
 function showLogin() {
     state.regData = {};
     state.selectedRole = null;
     hideAllStages();
-    document.title = "FlipFit | Login";
-    document.getElementById('auth-title').innerText = "FlipFit";
-    document.getElementById('auth-subtitle').innerText = "Enter your credentials to access the portal";
     document.getElementById('login-stage').classList.add('active');
     document.getElementById('register-progress').classList.add('hidden');
     document.getElementById('auth-error').classList.add('hidden');
@@ -97,9 +90,6 @@ function showLogin() {
 
 function showRegister() {
     hideAllStages();
-    document.title = "FlipFit | Register";
-    document.getElementById('auth-title').innerText = "Register";
-    document.getElementById('auth-subtitle').innerText = "Join the FlipFit community in 3 simple steps";
     document.getElementById('reg-stage-1').classList.add('active');
     document.getElementById('register-progress').classList.remove('hidden');
     updateProgress(33);
@@ -107,15 +97,11 @@ function showRegister() {
 
 function showForgotPassword() {
     hideAllStages();
-    document.getElementById('auth-title').innerText = "Reset Access";
-    document.getElementById('auth-subtitle').innerText = "Update your password to regain access";
     document.getElementById('forgot-password-stage').classList.add('active');
-    document.getElementById('register-progress').classList.add('hidden');
 }
 
 function hideAllStages() {
     document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
-    document.getElementById('auth-error').classList.add('hidden');
 }
 
 function updateProgress(percent) {
@@ -137,29 +123,16 @@ function selectRole(role) {
 
 function validateBasicAndNext() {
     const form = document.getElementById('reg-basic-form');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-    const data = Object.fromEntries(new FormData(form));
-    state.regData = { ...state.regData, ...data };
-
-    if (state.selectedRole === 'GYM_OWNER') {
-        nextStage(3);
-    } else {
-        submitRegister();
-    }
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    state.regData = { ...state.regData, ...Object.fromEntries(new FormData(form)) };
+    if (state.selectedRole === 'GYM_OWNER') nextStage(3); else submitRegister();
 }
-
-// --- AUTH ACTIONS ---
 
 document.getElementById('login-form').onsubmit = async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const data = Object.fromEntries(new FormData(e.target));
     btn.disabled = true;
-    btn.innerText = 'Authenticating...';
-
     try {
         const res = await fetch(`${API_BASE}/users/login`, {
             method: 'POST',
@@ -169,167 +142,100 @@ document.getElementById('login-form').onsubmit = async (e) => {
         const json = await res.json();
         if (json.success) {
             state.token = `${data.username}+admin`;
-            state.user = { username: data.username, userId: json.userId, role: json.role };
+            state.user = { userId: json.userId, username: json.name || data.username, role: json.role };
             localStorage.setItem('auth_token', state.token);
             localStorage.setItem('user_info', JSON.stringify(state.user));
             showDashboard();
-        } else {
-            throw new Error(json.error || 'Login failed');
-        }
-    } catch (err) {
-        showAuthError(err.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerText = 'Login';
-    }
+        } else { throw new Error(json.error || 'Login failed'); }
+    } catch (err) { showAuthError(err.message); } finally { btn.disabled = false; }
 };
 
 async function submitRegister() {
-    const extraForm = document.getElementById('reg-extra-form');
-    const extraData = Object.fromEntries(new FormData(extraForm));
+    const extraData = Object.fromEntries(new FormData(document.getElementById('reg-extra-form')));
     const finalData = { ...state.regData, ...extraData };
-
     try {
         let endpoint = '/users/register';
         let body = {
-            username: finalData.username,
-            password: finalData.password,
-            email: finalData.email,
+            username: finalData.username, password: finalData.password, email: finalData.email,
             roleChoice: state.selectedRole === 'ADMIN' ? 1 : (state.selectedRole === 'CUSTOMER' ? 2 : 3)
         };
-
         if (state.selectedRole === 'GYM_OWNER') {
             endpoint = '/owners/onboard';
-            body = {
-                username: finalData.username,
-                password: finalData.password,
-                pan: finalData.pan,
-                gst: finalData.gst,
-                aadhar: finalData.aadhar,
-                location: finalData.location
-            };
+            body = { ...body, pan: finalData.pan, gst: finalData.gst, aadhar: finalData.aadhar, location: finalData.location };
         }
-
-        const res = await fetch(API_BASE + endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
+        const res = await fetch(API_BASE + endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         const json = await res.json();
-        if (json.success) {
-            alert('Registration Successful! Please login.');
-            showLogin();
-        } else { throw new Error(json.error || 'Registration failed'); }
+        if (json.success) { alert('Success! Please login.'); showLogin(); } else { throw new Error(json.error || 'Registration failed'); }
     } catch (err) { showAuthError(err.message); }
 }
 
-document.getElementById('forgot-password-form').onsubmit = async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target));
-    try {
-        const res = await fetch(`${API_BASE}/users/password`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        const json = await res.json();
-        if (json.success) {
-            alert('Password updated successfully!');
-            showLogin();
-        } else { throw new Error(json.error || 'Update failed'); }
-    } catch (err) { showAuthError(err.message); }
-};
+function showAuthError(msg) { const e = document.getElementById('auth-error'); e.innerText = msg; e.classList.remove('hidden'); }
 
-document.getElementById('logout-btn').onclick = () => {
-    localStorage.clear();
-    window.location.reload();
-};
-
-function showAuthError(msg) {
-    const errorEl = document.getElementById('auth-error');
-    errorEl.innerText = msg;
-    errorEl.classList.remove('hidden');
-}
-
-// --- DASHBOARD HELPERS ---
+// --- DASHBOARD CORE ---
 
 async function apiCall(endpoint, method = 'GET', body = null) {
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.token}`
-    };
+    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` };
     const opts = { method, headers };
     if (body) opts.body = JSON.stringify(body);
     const res = await fetch(API_BASE + endpoint, opts);
-    return res.json();
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'API Error');
+    return json;
 }
 
 async function fetchNotifications() {
-    const list = document.getElementById('notif-list');
     try {
         const res = await apiCall(`/notifications/${state.user.userId}`);
+        const list = document.getElementById('notif-list');
         const notifs = res.notifications || [];
-        if (notifs.length === 0) { list.innerHTML = '<div class="notif-item">No new notifications</div>'; return; }
-        list.innerHTML = notifs.map(n => `<div class="notif-item"><time style="font-size:0.75rem; display:block; margin-bottom:0.25rem;">${n.timestamp}</time>${n.message}</div>`).join('');
-    } catch (e) { console.error("Notif error", e); }
+        if (notifs.length === 0) { list.innerHTML = '<div class="notif-item">No new alerts</div>'; return; }
+        list.innerHTML = notifs.map(n => `<div class="notif-item"><small>${n.timestamp}</small><p>${n.message}</p></div>`).join('');
+    } catch (e) { console.error(e); }
 }
 
-document.getElementById('refresh-notifs').addEventListener('click', fetchNotifications);
+document.getElementById('logout-btn').onclick = () => { localStorage.clear(); window.location.reload(); };
 
-// --- VIEW RENDERERS ---
-
-function renderCustomerProfile(container) {
-    container.innerHTML = `
-        <div class="fade-in" style="max-width: 600px">
-            <h2 style="margin-bottom: 2rem">Profile Settings</h2>
-            <div class="card" style="border: 4px solid black; padding: 2rem">
-                <p><strong>Username:</strong> ${state.user.username}</p>
-                <p><strong>Role:</strong> ${state.user.role}</p>
-                <p><strong>User ID:</strong> ${state.user.userId}</p>
-            </div>
-        </div>
-    `;
-}
+// --- CUSTOMER VIEWS ---
 
 async function renderCustomerBookings(container) {
-    container.innerHTML = 'Loading your workouts...';
     try {
         const res = await apiCall(`/customers/${state.user.userId}/plan`);
-        if (!res || res.length === 0) { container.innerHTML = '<p>No bookings found.</p>'; return; }
-        let html = `<table><thead><tr><th>Booking ID</th><th>Slot</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
-        res.forEach(b => {
-            html += `<tr><td>${b.bookingId}</td><td>${b.scheduleId}</td><td>${b.status}</td><td>${b.status !== 'CANCELLED' ? `<button class="btn btn-sm btn-outline" style="color:red; border-color:red" onclick="cancelBooking('${b.bookingId}')">Cancel</button>` : '-'}</td></tr>`;
+        const bookings = res.bookings || [];
+        if (bookings.length === 0) { container.innerHTML = '<p>No active bookings.</p>'; return; }
+        let h = `<table><thead><tr><th>ID</th><th>Slot</th><th>Status</th><th>Action</th></tr></thead><tbody>`;
+        bookings.forEach(b => {
+            h += `<tr><td>${b.bookingId}</td><td>${b.scheduleId}</td><td><span class="badge">${b.status}</span></td><td>
+                ${b.status !== 'CANCELLED' ? `<button class="btn btn-sm btn-outline" style="color:red" onclick="cancelBooking('${b.bookingId}')">Cancel</button>` : '-'}
+            </td></tr>`;
         });
-        html += '</tbody></table>';
-        container.innerHTML = html;
-        window.cancelBooking = async (id) => { if (confirm('Cancel?')) { await apiCall(`/customers/bookings/${id}`, 'DELETE'); renderCustomerBookings(container); } };
+        container.innerHTML = h + `</tbody></table>`;
+        window.cancelBooking = async (id) => { if (confirm('Cancel workout?')) { await apiCall(`/customers/bookings/${id}`, 'DELETE'); renderCustomerBookings(container); } };
     } catch (e) { container.innerHTML = e.message; }
 }
 
 async function renderBrowseGyms(container) {
-    container.innerHTML = 'Fetching centers...';
     try {
         const res = await apiCall('/centers');
-        const gyms = res.centers || [];
-        let html = `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">`;
-        gyms.forEach(g => {
-            html += `<div class="role-card"><h3>${g.name}</h3><p>${g.city}</p><br><button class="btn btn-primary full-width" onclick="viewSlots('${g.centerId}')">Select Center</button></div>`;
+        const centers = res.centers || [];
+        let h = `<div class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))">`;
+        centers.forEach(c => {
+            h += `<div class="role-card"><h3>${c.name}</h3><p>${c.city}</p><br><button class="btn btn-primary full-width" onclick="loadSlots('${c.centerId}')">View Slots</button></div>`;
         });
-        html += '</div><div id="slots-area" style="margin-top: 4rem"></div>';
-        container.innerHTML = html;
-        window.viewSlots = async (cid) => {
-            const list = await apiCall(`/slots/center/${cid}`);
-            const slotsArea = document.getElementById('slots-area');
-            let t = `<h3>Slots at Center ${cid}</h3><table><thead><tr><th>Time</th><th>Price</th><th>Seats</th><th>Action</th></tr></thead><tbody>`;
-            (list.slots || []).forEach(s => {
-                const isFull = s.availableSeats <= 0;
-                t += `<tr><td>${s.startTime} - ${s.endTime}</td><td>$${s.price}</td><td>${s.availableSeats}/${s.capacity}</td><td>${!isFull ? `<button class="btn btn-sm btn-primary" onclick="bookSlot('${s.slotId}')">Book</button>` : `<button class="btn btn-sm btn-outline" onclick="joinWaitlist('${s.slotId}')">Waitlist</button>`}</td></tr>`;
+        container.innerHTML = h + `</div><div id="slot-list" style="margin-top:2rem"></div>`;
+        window.loadSlots = async (cid) => {
+            const sRes = await apiCall(`/slots/center/${cid}`);
+            const slots = sRes.slots || [];
+            let st = `<h3>Slots at Center ${cid}</h3><table><thead><tr><th>Time</th><th>Price</th><th>Seats</th><th>Action</th></tr></thead><tbody>`;
+            slots.forEach(s => {
+                const full = s.availableSeats <= 0;
+                st += `<tr><td>${s.startTime} - ${s.endTime}</td><td>₹${s.price}</td><td>${s.availableSeats}/${s.capacity}</td><td>
+                    ${!full ? `<button class="btn btn-sm btn-primary" onclick="bookNow('${s.slotId}')">Book</button>` : `<button class="btn btn-sm btn-outline" onclick="waitlistNow('${s.slotId}')">Waitlist</button>`}
+                </td></tr>`;
             });
-            t += '</tbody></table>';
-            slotsArea.innerHTML = t;
+            document.getElementById('slot-list').innerHTML = st + `</tbody></table>`;
         };
-        window.bookSlot = async (id) => { const r = await apiCall(`/customers/${state.user.userId}/bookings`, 'POST', { slotId: id }); alert(r.success ? 'Success!' : r.error); };
-        window.joinWaitlist = async (id) => { const r = await apiCall('/bookings/waitlist', 'POST', { userId: state.user.userId, slotId: id }); alert(r.message); };
+        window.bookNow = async (sid) => { const r = await apiCall(`/customers/${state.user.userId}/bookings`, 'POST', { slotId: sid }); alert(r.message); renderPaymentHistory(container); };
+        window.waitlistNow = async (sid) => { const r = await apiCall('/bookings/waitlist', 'POST', { userId: state.user.userId, slotId: sid }); alert(r.message); };
     } catch (e) { container.innerHTML = e.message; }
 }
 
@@ -337,33 +243,97 @@ async function renderCustomerWaitlist(container) {
     try {
         const res = await apiCall(`/bookings/waitlist/${state.user.userId}`);
         const list = res.waitlist || [];
-        if (list.length === 0) { container.innerHTML = '<p>No active waitlists.</p>'; return; }
-        container.innerHTML = `<h3>My Active Waitlists</h3><ul>` + list.map(i => `<li style="margin-bottom:1rem; border-bottom:1px solid #eee; padding-bottom:0.5rem">${i}</li>`).join('') + `</ul>`;
+        if (list.length === 0) { container.innerHTML = '<p>You are not on any waitlists.</p>'; return; }
+        container.innerHTML = `<h3>Positions</h3><ul>` + list.map(l => `<li style="padding:1rem; border-bottom:1px solid #eee">${l}</li>`).join('') + `</ul>`;
     } catch (e) { container.innerHTML = e.message; }
 }
 
-// --- ADMIN / OWNER VIEWS (Simplified) ---
+async function renderPaymentHistory(container) {
+    try {
+        const res = await apiCall(`/payments/history/${state.user.userId}`);
+        const history = res.history || [];
+        if (history.length === 0) { container.innerHTML = '<p>No transaction history.</p>'; return; }
+        let h = `<table><thead><tr><th>Txn ID</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead><tbody>`;
+        history.forEach(p => {
+            h += `<tr><td style="font-family:var(--font-mono)">${p.transactionId}</td><td>₹${p.amount}</td><td>${p.method}</td><td>${p.status}</td><td>${p.timestamp}</td></tr>`;
+        });
+        container.innerHTML = h + `</tbody></table>`;
+    } catch (e) { container.innerHTML = e.message; }
+}
+
+function renderCustomerProfile(container) {
+    container.innerHTML = `<div class="role-card" style="max-width:400px"><h3>My Details</h3><p><strong>Name:</strong> ${state.user.username}</p><p><strong>UID:</strong> ${state.user.userId}</p><p><strong>Role:</strong> ${state.user.role}</p></div>`;
+}
+
+// --- GYM OWNER VIEWS ---
+
+async function renderOwnerCenters(container) {
+    try {
+        const res = await apiCall(`/owners/${state.user.userId}/centers`);
+        const centers = res.centers || [];
+        if (centers.length === 0) { container.innerHTML = '<p>No centers added yet.</p>'; return; }
+        let h = `<table><thead><tr><th>ID</th><th>Name</th><th>City</th><th>Status</th></tr></thead><tbody>`;
+        centers.forEach(c => {
+            h += `<tr><td>${c.centerId}</td><td>${c.name}</td><td>${c.city}</td><td>${c.approved ? 'APPROVED' : 'PENDING'}</td></tr>`;
+        });
+        container.innerHTML = h + `</tbody></table>`;
+    } catch (e) { container.innerHTML = e.message; }
+}
+
+function renderAddCenter(container) {
+    container.innerHTML = `<h3>Onboard New Gym</h3><form id="add-center-form"><div class="input-group"><label>Center Name</label><input type="text" name="name" required></div><div class="input-group"><label>Location/City</label><input type="text" name="location" required></div><button type="submit" class="btn btn-primary">Submit for Approval</button></form>`;
+    document.getElementById('add-center-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        try { const r = await apiCall(`/owners/${state.user.userId}/centers`, 'POST', data); alert(r.message); renderOwnerCenters(container); } catch (err) { alert(err.message); }
+    };
+}
+
+async function renderOwnerRevenue(container) {
+    try {
+        const res = await apiCall(`/payments/revenue/${state.user.userId}`);
+        container.innerHTML = `<div class="role-card" style="text-align:center"><h2>Total Revenue Generated</h2><h1 style="font-size:4rem; margin:2rem 0">₹${res.revenue || 0}</h1><p>Calculated from all confirmed bookings across your centers.</p></div>`;
+    } catch (e) { container.innerHTML = e.message; }
+}
+
+// --- ADMIN VIEWS ---
+
 async function renderPendingOwners(container) {
-    const res = await apiCall('/admin/owners/pending');
-    const owners = res.pendingOwners || [];
-    if (owners.length === 0) { container.innerHTML = 'All clear!'; return; }
-    let html = `<table><thead><tr><th>ID</th><th>PAN</th><th>Action</th></tr></thead><tbody>`;
-    owners.forEach(o => html += `<tr><td>${o.userId}</td><td>${o.panNumber}</td><td><button class="btn btn-primary btn-sm" onclick="approveOwner('${o.userId}')">Approve</button></td></tr>`);
-    container.innerHTML = html + `</tbody></table>`;
-    window.approveOwner = async (id) => { await apiCall(`/admin/owners/${id}/approve`, 'PUT'); renderPendingOwners(container); };
+    try {
+        const res = await apiCall('/admin/owners/pending');
+        const list = res.pendingOwners || [];
+        if (list.length === 0) { container.innerHTML = 'No pending owner approvals.'; return; }
+        let h = `<table><thead><tr><th>ID</th><th>Email</th><th>PAN</th><th>Action</th></tr></thead><tbody>`;
+        list.forEach(o => h += `<tr><td>${o.userId}</td><td>${o.email}</td><td>${o.panNumber}</td><td><button class="btn btn-sm btn-primary" onclick="admApproveOwner('${o.userId}')">Approve</button></td></tr>`);
+        container.innerHTML = h + '</tbody></table>';
+        window.admApproveOwner = async (id) => { await apiCall(`/admin/owners/${id}/approve`, 'PUT'); renderPendingOwners(container); };
+    } catch (e) { container.innerHTML = e.message; }
+}
+
+async function renderApprovedOwners(container) {
+    try {
+        const res = await apiCall('/admin/owners?approved=true');
+        const list = res.owners || [];
+        container.innerHTML = `<table><thead><tr><th>ID</th><th>Name</th></tr></thead><tbody>` + list.map(o => `<tr><td>${o.userId}</td><td>${o.name}</td></tr>`).join('') + `</tbody></table>`;
+    } catch (e) { container.innerHTML = e.message; }
 }
 
 async function renderPendingCenters(container) {
-    const res = await apiCall('/admin/centers/pending');
-    const centers = res.pendingCenters || [];
-    if (centers.length === 0) { container.innerHTML = 'None pending.'; return; }
-    let html = `<table><thead><tr><th>Name</th><th>City</th><th>Action</th></tr></thead><tbody>`;
-    centers.forEach(c => html += `<tr><td>${c.name}</td><td>${c.city}</td><td><button class="btn btn-primary btn-sm" onclick="approveCenter('${c.centerId}')">Approve</button></td></tr>`);
-    container.innerHTML = html + `</tbody></table>`;
-    window.approveCenter = async (id) => { await apiCall(`/admin/centers/${id}/approve`, 'PUT'); renderPendingCenters(container); };
+    try {
+        const res = await apiCall('/admin/centers/pending');
+        const list = res.pendingCenters || [];
+        if (list.length === 0) { container.innerHTML = 'No pending center approvals.'; return; }
+        let h = `<table><thead><tr><th>ID</th><th>Name</th><th>Owner</th><th>Action</th></tr></thead><tbody>`;
+        list.forEach(c => h += `<tr><td>${c.centerId}</td><td>${c.name}</td><td>${c.ownerId}</td><td><button class="btn btn-sm btn-primary" onclick="admApproveCenter('${c.centerId}')">Approve</button></td></tr>`);
+        container.innerHTML = h + '</tbody></table>';
+        window.admApproveCenter = async (id) => { await apiCall(`/admin/centers/${id}/approve`, 'PUT'); renderPendingCenters(container); };
+    } catch (e) { container.innerHTML = e.message; }
 }
 
-function renderOwnerCenters(container) { container.innerHTML = '<p>Your centers management dashboard.</p>'; }
-function renderAddCenter(container) { container.innerHTML = '<p>Form to add new center business info.</p>'; }
-function renderOwnerRevenue(container) { container.innerHTML = '<p>Revenue visualization coming soon.</p>'; }
-function renderAdminLogs(container) { container.innerHTML = '<p>System operations log.</p>'; }
+async function renderApprovedCenters(container) {
+    try {
+        const res = await apiCall('/admin/centers?approved=true');
+        const list = res.centers || [];
+        container.innerHTML = `<table><thead><tr><th>ID</th><th>Name</th><th>City</th></tr></thead><tbody>` + list.map(c => `<tr><td>${c.centerId}</td><td>${c.name}</td><td>${c.city}</td></tr>`).join('') + `</tbody></table>`;
+    } catch (e) { container.innerHTML = e.message; }
+}

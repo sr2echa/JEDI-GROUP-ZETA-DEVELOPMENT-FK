@@ -245,4 +245,33 @@ public class GymOwnerService implements GymOwnerInterface {
     public static List<SlotMaster> getAllSlots() {
         return new GymAdminDAOImpl().viewPendingSlots();
     }
+
+    /**
+     * Gets the owner revenue.
+     *
+     * @param ownerId the owner id
+     * @return the owner revenue
+     */
+    public double getOwnerRevenue(String ownerId) {
+        double total = 0;
+        List<GymCenter> centers = viewMyCenters(ownerId);
+        com.flipfit.dao.PaymentDAO paymentDAO = new com.flipfit.dao.impl.PaymentDAOImpl();
+        for (GymCenter center : centers) {
+            List<com.flipfit.bean.PaymentRecord> payments = paymentDAO.getCenterRevenue(center.getCenterId());
+            for (com.flipfit.bean.PaymentRecord p : payments) {
+                total += p.getAmount();
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Gets the gym owner by id.
+     *
+     * @param ownerId the owner id
+     * @return the gym owner
+     */
+    public static GymOwner getOwnerById(String ownerId) {
+        return new GymAdminDAOImpl().getOwnerById(ownerId);
+    }
 }

@@ -123,16 +123,20 @@ public class CustomerCLIMenu {
         List<Map<String, Object>> bookings = (List<Map<String, Object>>) response.get("bookings");
 
         if (bookings == null || bookings.isEmpty()) {
-            System.out.println("\n[INFO] No bookings found.");
+            CLIUtils.printError("No active bookings in your fitness plan.");
             return;
         }
 
-        System.out.println("\n--- Your Fitness Plan ---");
+        CLIUtils.printHeader("Your Fitness Plan");
+        List<String> headers = Arrays.asList("Booking ID", "Slot ID", "Status");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> booking : bookings) {
-            System.out.println(" • Booking ID: " + booking.get("bookingId") +
-                    " | Slot: " + booking.get("scheduleId") +
-                    " | Status: " + booking.get("status"));
+            rows.add(Arrays.asList(
+                    String.valueOf(booking.get("bookingId")),
+                    String.valueOf(booking.get("scheduleId")),
+                    String.valueOf(booking.get("status"))));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void handlePendingPayments(Scanner sc, String userId) throws Exception {
@@ -199,17 +203,22 @@ public class CustomerCLIMenu {
         List<Map<String, Object>> history = (List<Map<String, Object>>) response.get("history");
 
         if (history == null || history.isEmpty()) {
-            System.out.println("\n[INFO] No payment history found.");
+            CLIUtils.printError("No payment history found.");
             return;
         }
 
-        System.out.println("\n--- Payment History ---");
+        CLIUtils.printHeader("Payment History");
+        List<String> headers = Arrays.asList("TXN ID", "Amount", "Method", "Status", "Date");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> payment : history) {
-            System.out.println(" • TXN ID: " + payment.get("transactionId") +
-                    " | Amount: ₹" + payment.get("amount") +
-                    " | Status: " + payment.get("status") +
-                    " | Date: " + payment.get("timestamp"));
+            rows.add(Arrays.asList(
+                    String.valueOf(payment.get("transactionId")),
+                    "₹" + payment.get("amount"),
+                    String.valueOf(payment.get("method")),
+                    String.valueOf(payment.get("status")),
+                    String.valueOf(payment.get("timestamp"))));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void viewNotifications(Scanner sc, String userId) throws Exception {
