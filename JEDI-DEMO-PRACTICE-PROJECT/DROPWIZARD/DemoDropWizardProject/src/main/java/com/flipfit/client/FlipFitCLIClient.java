@@ -32,16 +32,14 @@ public class FlipFitCLIClient {
         System.out.println("=".repeat(60));
 
         while (!exit) {
-            clearScreen();
-            System.out.println(ANSI_CYAN + "\n" + "=".repeat(60) + ANSI_RESET);
-            System.out.println(ANSI_YELLOW + "      FlipFit Application - Main Menu" + ANSI_RESET);
-            System.out.println(ANSI_CYAN + "=".repeat(60) + ANSI_RESET);
-            System.out.println("1. Login");
-            System.out.println("2. Register as Customer");
-            System.out.println("3. Register as Gym Owner");
-            System.out.println("4. Change Password");
-            System.out.println("5. Exit");
-            System.out.print(ANSI_GREEN + "Choice: " + ANSI_RESET);
+            CLIUtils.clear();
+            CLIUtils.printBox("FLIPFIT - PREMIUM FITNESS PORTAL", Arrays.asList(
+                    "1. Login to Account",
+                    "2. Register as New Customer",
+                    "3. Register as Gym Owner",
+                    "4. Reset/Change Password",
+                    "5. Exit Application"));
+            System.out.print(CLIUtils.GREEN + "Select an option: " + CLIUtils.RESET);
 
             int choice = getIntInput(sc);
 
@@ -84,17 +82,17 @@ public class FlipFitCLIClient {
             Map<String, Object> response = HttpClientUtil.post("/users/login", credentials);
 
             if (response.get("success") != null && (Boolean) response.get("success")) {
-                // Set Auth Token
                 HttpClientUtil.setAuthToken(username + "+admin");
 
-                clearScreen();
-                System.out.println(ANSI_CYAN + "\n" + "=".repeat(60) + ANSI_RESET);
+                CLIUtils.clear();
                 String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                System.out.printf(ANSI_YELLOW + "Welcome %s" + ANSI_RESET + "%" + (52 - username.length()) + "s%n",
-                        username, time);
-                System.out.println(ANSI_CYAN + "=".repeat(60) + ANSI_RESET);
 
-                System.out.println("\n" + ANSI_GREEN + "✓ " + response.get("message") + ANSI_RESET);
+                CLIUtils.printBox("WELCOME BACK", Arrays.asList(
+                        "User: " + username,
+                        "Time: " + time,
+                        "Role: " + response.get("role"),
+                        "Status: Authenticated Successfully"));
+
                 String role = (String) response.get("role");
                 String userId = (String) response.get("userId");
 
@@ -110,8 +108,8 @@ public class FlipFitCLIClient {
                         break;
                 }
             } else {
-                System.out.println(ANSI_RED + "\n✗ Login failed: " + response.get("error") + ANSI_RESET);
-                System.out.println("Press Enter to continue...");
+                CLIUtils.printError("Login Failed: " + response.get("error"));
+                System.out.println("\nPress Enter to return to main menu...");
                 sc.nextLine();
             }
         } catch (Exception e) {

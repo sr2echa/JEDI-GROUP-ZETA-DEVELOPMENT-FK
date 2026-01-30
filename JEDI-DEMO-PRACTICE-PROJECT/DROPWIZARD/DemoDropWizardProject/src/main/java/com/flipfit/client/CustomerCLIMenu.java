@@ -11,15 +11,16 @@ public class CustomerCLIMenu {
         boolean back = false;
 
         while (!back) {
-            System.out.println("\n--- Customer Dashboard (" + userId + ") ---");
-            System.out.println("1. Browse and Book Slots");
-            System.out.println("2. View My Plan");
-            System.out.println("3. Pay for Pending Bookings");
-            System.out.println("4. Cancel Booking");
-            System.out.println("5. View Payment History");
-            System.out.println("6. View Notifications");
-            System.out.println("7. Back to Main Menu");
-            System.out.print("Choice: ");
+            CLIUtils.clear();
+            CLIUtils.printBox("CUSTOMER PORTAL", Arrays.asList(
+                    "1. Browse and Book Slots",
+                    "2. View My Fitness Plan",
+                    "3. Pay for Pending Bookings",
+                    "4. Cancel Existing Booking",
+                    "5. View Payment History",
+                    "6. View My Notifications",
+                    "7. Return to Main Menu"));
+            System.out.print(CLIUtils.GREEN + "Select an option: " + CLIUtils.RESET);
 
             int choice = getIntInput(sc);
 
@@ -61,16 +62,20 @@ public class CustomerCLIMenu {
         List<Map<String, Object>> centers = (List<Map<String, Object>>) response.get("centers");
 
         if (centers == null || centers.isEmpty()) {
-            System.out.println("\n[INFO] No gym centers available.");
+            CLIUtils.printError("No gym centers available.");
             return;
         }
 
-        System.out.println("\n--- Available Gym Centers ---");
+        CLIUtils.printHeader("Available Gym Centers");
+        List<String> headers = Arrays.asList("Center ID", "Name", "Location");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> center : centers) {
-            System.out.println(" • ID: " + center.get("centerId") +
-                    " | Name: " + center.get("name") +
-                    " | City: " + center.get("city"));
+            rows.add(Arrays.asList(
+                    String.valueOf(center.get("centerId")),
+                    String.valueOf(center.get("name")),
+                    String.valueOf(center.get("city"))));
         }
+        CLIUtils.printTable(headers, rows);
 
         System.out.print("\nEnter Center ID to view slots: ");
         String centerId = sc.nextLine();
@@ -79,17 +84,21 @@ public class CustomerCLIMenu {
         List<Map<String, Object>> slots = (List<Map<String, Object>>) slotsResponse.get("slots");
 
         if (slots == null || slots.isEmpty()) {
-            System.out.println("\n[INFO] No slots available for this center.");
+            CLIUtils.printError("No slots available for this center.");
             return;
         }
 
-        System.out.println("\n--- Available Slots ---");
+        CLIUtils.printHeader("Available Slots");
+        List<String> slotHeaders = Arrays.asList("Slot ID", "Time Range", "Available", "Price");
+        List<List<String>> slotRows = new ArrayList<>();
         for (Map<String, Object> slot : slots) {
-            System.out.println(" • Slot ID: " + slot.get("slotId") +
-                    " | Time: " + slot.get("startTime") + " - " + slot.get("endTime") +
-                    " | Seats: " + slot.get("availableSeats") + "/" + slot.get("capacity") +
-                    " | Price: ₹" + slot.get("price"));
+            slotRows.add(Arrays.asList(
+                    String.valueOf(slot.get("slotId")),
+                    slot.get("startTime") + " - " + slot.get("endTime"),
+                    slot.get("availableSeats") + "/" + slot.get("capacity"),
+                    "₹" + slot.get("price")));
         }
+        CLIUtils.printTable(slotHeaders, slotRows);
 
         System.out.print("\nEnter Slot ID to book: ");
         String slotId = sc.nextLine();

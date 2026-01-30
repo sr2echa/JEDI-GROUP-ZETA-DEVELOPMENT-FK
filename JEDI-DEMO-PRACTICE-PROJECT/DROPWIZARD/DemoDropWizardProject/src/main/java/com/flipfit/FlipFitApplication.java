@@ -12,6 +12,7 @@ import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import io.dropwizard.assets.AssetsBundle;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -34,7 +35,8 @@ public class FlipFitApplication extends Application<FlipFitConfiguration> {
 
     @Override
     public void initialize(Bootstrap<FlipFitConfiguration> bootstrap) {
-        // Add initialization code here
+        // Serve assets from /assets as root
+        bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
     }
 
     @Override

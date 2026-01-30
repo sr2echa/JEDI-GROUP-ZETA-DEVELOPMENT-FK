@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipFit | Premium Gym Experience</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Auth Section -->
+    <div id="auth-view" class="container center-content">
+        <div class="auth-container fade-in">
+            <h1 id="auth-title">FlipFit</h1>
+            <p id="auth-subtitle" class="subtitle">Enter your credentials to access the portal</p>
+
+            <div id="register-progress" class="progress-container hidden">
+                <div class="progress-bar" id="reg-progress-bar"></div>
+            </div>
+
+            <div id="auth-forms">
+                <!-- Login Stage -->
+                <div id="login-stage" class="stage active">
+                    <form id="login-form">
+                        <div class="input-group">
+                            <label for="login-username">Username</label>
+                            <input type="text" id="login-username" name="username" required
+                                placeholder="Enter username">
+                        </div>
+                        <div class="input-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" required
+                                placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width">Login</button>
+                    </form>
+                    <div class="links">
+                        <a onclick="showRegister()">No account? Register here</a><br><br>
+                        <a onclick="showForgotPassword()">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <!-- Registration Stage 1: Role -->
+                <div id="reg-stage-1" class="stage">
+                    <h3>Step 1: Choose Your Role</h3>
+                    <div class="role-options">
+                        <div class="role-card" id="role-customer" onclick="selectRole('CUSTOMER')">
+                            <h2>Customer</h2>
+                            <p>For individuals looking to book workouts</p>
+                        </div>
+                        <div class="role-card" id="role-owner" onclick="selectRole('GYM_OWNER')">
+                            <h2>Owner</h2>
+                            <p>For fitness business owners</p>
+                        </div>
+                    </div>
+                    <div class="navigation-btns">
+                        <button class="btn btn-outline" onclick="showLogin()">Back</button>
+                        <button class="btn btn-primary" onclick="nextStage(2)" id="role-next-btn" disabled>Next</button>
+                    </div>
+                </div>
+
+                <!-- Registration Stage 2: Details -->
+                <div id="reg-stage-2" class="stage">
+                    <h3>Step 2: Basic Account Details</h3>
+                    <form id="reg-basic-form">
+                        <div class="input-group">
+                            <label>Username</label>
+                            <input type="text" name="username" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Password</label>
+                            <input type="password" name="password" required>
+                        </div>
+                    </form>
+                    <div class="navigation-btns">
+                        <button class="btn btn-outline" onclick="nextStage(1)">Back</button>
+                        <button class="btn btn-primary" onclick="validateBasicAndNext()">Next</button>
+                    </div>
+                </div>
+
+                <!-- Registration Stage 3: Extra Info (Owner Only) -->
+                <div id="reg-stage-3" class="stage">
+                    <h3>Step 3: Verification Details</h3>
+                    <form id="reg-extra-form">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label>PAN Number</label>
+                                <input type="text" name="pan">
+                            </div>
+                            <div class="input-group">
+                                <label>GST Number</label>
+                                <input type="text" name="gst">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label>Aadhar Number</label>
+                                <input type="text" name="aadhar">
+                            </div>
+                            <div class="input-group">
+                                <label>Location</label>
+                                <input type="text" name="location">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="navigation-btns">
+                        <button class="btn btn-outline" onclick="nextStage(2)">Back</button>
+                        <button class="btn btn-primary" onclick="submitRegister()">Complete Registration</button>
+                    </div>
+                </div>
+
+                <!-- Forgot Password Stage -->
+                <div id="forgot-password-stage" class="stage">
+                    <h3>Reset Password</h3>
+                    <form id="forgot-password-form">
+                        <div class="input-group">
+                            <label>Username</label>
+                            <input type="text" name="username" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Old Password</label>
+                            <input type="password" name="oldPassword" required>
+                        </div>
+                        <div class="input-group">
+                            <label>New Password</label>
+                            <input type="password" name="newPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width">Update Password</button>
+                    </form>
+                    <div class="links">
+                        <a onclick="showLogin()">Back to Login</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="auth-error" class="error-message hidden"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section (Hidden by default) -->
+    <div id="dashboard-view" class="hidden">
+        <header class="navbar">
+            <div class="brand">FlipFit</div>
+            <div class="user-info">
+                <span id="user-display" style="font-weight: 700">User</span>
+                <span id="role-badge" class="badge">ROLE</span>
+                <button id="logout-btn" class="btn btn-sm btn-outline">Logout</button>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <aside class="sidebar">
+                <nav>
+                    <ul id="nav-links">
+                        <!-- Dynamic Links -->
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="content-area">
+                <div id="page-header">
+                    <h2 id="page-title">Dashboard</h2>
+                    <p id="page-desc" style="color: var(--text-secondary)">Overview of your activities</p>
+                </div>
+                <div id="content-body">
+                    <div class="empty-state">Loading your dashboard...</div>
+                </div>
+            </main>
+
+            <aside class="notif-drawer">
+                <h3>Notifications</h3>
+                <div id="notif-list" class="notif-list">
+                    <div class="notif-item">Fetching notifications...</div>
+                </div>
+                <button id="refresh-notifs" class="btn btn-sm btn-ghost full-width"
+                    style="margin-top: 1rem">Refresh</button>
+            </aside>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

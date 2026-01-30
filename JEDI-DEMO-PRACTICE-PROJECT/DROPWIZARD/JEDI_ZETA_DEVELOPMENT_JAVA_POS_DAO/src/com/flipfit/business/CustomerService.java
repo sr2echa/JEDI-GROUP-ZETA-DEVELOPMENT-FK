@@ -22,8 +22,6 @@ public class CustomerService implements CustomerInterface {
     /** The notification service. */
     private NotificationService notificationService = new NotificationService();
 
-    private BookingService bookingService = new BookingService();
-
     /**
      * Book workout.
      *
@@ -59,9 +57,6 @@ public class CustomerService implements CustomerInterface {
             notificationService.sendNotification(booking.getUserId(),
                     "Your booking " + bookingId + " has been cancelled.",
                     NotificationType.CANCELLATION);
-
-            // Trigger Waitlist Promotion
-            bookingService.promoteUserFromWaitlist(booking.getScheduleId());
         }
     }
 

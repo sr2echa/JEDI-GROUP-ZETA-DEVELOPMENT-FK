@@ -11,21 +11,19 @@ public class AdminCLIMenu {
         boolean back = false;
 
         while (!back) {
-            FlipFitCLIClient.clearScreen();
-            System.out.println(FlipFitCLIClient.ANSI_CYAN + "\n" + "=".repeat(60) + FlipFitCLIClient.ANSI_RESET);
-            System.out.println(FlipFitCLIClient.ANSI_YELLOW + "      Admin Dashboard" + FlipFitCLIClient.ANSI_RESET);
-            System.out.println(FlipFitCLIClient.ANSI_CYAN + "=".repeat(60) + FlipFitCLIClient.ANSI_RESET);
-            System.out.println("1. View Pending Gym Owners");
-            System.out.println("2. Approve Gym Owner");
-            System.out.println("3. View Pending Centers");
-            System.out.println("4. Approve Gym Center");
-            System.out.println("5. View Pending Slots");
-            System.out.println("6. Approve Slot");
-            System.out.println("7. View All Owners (by status)");
-            System.out.println("8. View All Centers (by status)");
-            System.out.println("9. View Notifications");
-            System.out.println("10. Back to Main Menu");
-            System.out.print(FlipFitCLIClient.ANSI_GREEN + "Choice: " + FlipFitCLIClient.ANSI_RESET);
+            CLIUtils.clear();
+            CLIUtils.printBox("ADMIN DASHBOARD", Arrays.asList(
+                    "1. View Pending Gym Owners",
+                    "2. Approve Gym Owner",
+                    "3. View Pending Centers",
+                    "4. Approve Gym Center",
+                    "5. View Pending Slots",
+                    "6. Approve Slot",
+                    "7. View All Owners (by status)",
+                    "8. View All Centers (by status)",
+                    "9. View Notifications",
+                    "10. Back to Main Menu"));
+            System.out.print(CLIUtils.GREEN + "Select an option: " + CLIUtils.RESET);
 
             int choice = getIntInput(sc);
 
@@ -81,16 +79,20 @@ public class AdminCLIMenu {
         List<Map<String, Object>> owners = (List<Map<String, Object>>) response.get("pendingOwners");
 
         if (owners == null || owners.isEmpty()) {
-            System.out.println("\n[INFO] No pending gym owners.");
+            CLIUtils.printError("No pending gym owners found.");
             return;
         }
 
-        System.out.println("\n--- Pending Gym Owners ---");
+        CLIUtils.printHeader("Pending Gym Owners");
+        List<String> headers = Arrays.asList("Owner ID", "Name", "PAN Number");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> owner : owners) {
-            System.out.println(" • ID: " + owner.get("userId") +
-                    " | Name: " + owner.get("name") +
-                    " | PAN: " + owner.get("panNumber"));
+            rows.add(Arrays.asList(
+                    String.valueOf(owner.get("userId")),
+                    String.valueOf(owner.get("name")),
+                    String.valueOf(owner.get("panNumber"))));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void approveOwner(Scanner sc) throws Exception {
@@ -100,9 +102,9 @@ public class AdminCLIMenu {
         Map<String, Object> response = HttpClientUtil.put("/admin/owners/" + ownerId + "/approve", new HashMap<>());
 
         if (response.get("success") != null && (Boolean) response.get("success")) {
-            System.out.println("\n✓ " + response.get("message"));
+            CLIUtils.printSuccess(String.valueOf(response.get("message")));
         } else {
-            System.out.println("\n✗ Approval failed: " + response.get("error"));
+            CLIUtils.printError("Approval failed: " + response.get("error"));
         }
     }
 
@@ -112,17 +114,21 @@ public class AdminCLIMenu {
         List<Map<String, Object>> centers = (List<Map<String, Object>>) response.get("pendingCenters");
 
         if (centers == null || centers.isEmpty()) {
-            System.out.println("\n[INFO] No pending gym centers.");
+            CLIUtils.printError("No pending gym centers found.");
             return;
         }
 
-        System.out.println("\n--- Pending Gym Centers ---");
+        CLIUtils.printHeader("Pending Gym Centers");
+        List<String> headers = Arrays.asList("Center ID", "Name", "City", "Owner ID");
+        List<List<String>> rows = new ArrayList<>();
         for (Map<String, Object> center : centers) {
-            System.out.println(" • Center ID: " + center.get("centerId") +
-                    " | Name: " + center.get("name") +
-                    " | City: " + center.get("city") +
-                    " | Owner ID: " + center.get("ownerId"));
+            rows.add(Arrays.asList(
+                    String.valueOf(center.get("centerId")),
+                    String.valueOf(center.get("name")),
+                    String.valueOf(center.get("city")),
+                    String.valueOf(center.get("ownerId"))));
         }
+        CLIUtils.printTable(headers, rows);
     }
 
     private void approveCenter(Scanner sc) throws Exception {
